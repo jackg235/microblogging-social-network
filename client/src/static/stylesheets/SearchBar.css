@@ -1,0 +1,78 @@
+.search {
+    width: 25rem;
+    height: 2rem;
+    text-align: left;
+    position: relative;
+  }
+  .search-box {
+    
+    height: fit-content;
+    border: 1px solid transparent;
+    border-radius: 1px;
+    font-size: 1rem;
+    width: 100%;
+    padding: 1rem;
+    transition: width 0.3s;
+  }
+  .search-box:focus {
+    width: 100%;
+    outline: none;
+    border: 3px solid #80b7ff;
+  }
+  .search-btn {
+    height: 2rem;
+    width: 2em;
+    margin-top: -1em;
+    position: absolute;
+    top: 50%;
+    margin-left: 1em;
+    opacity: 0.2;
+    background-color: transparent;
+    border: 0;
+    
+  }
+  .search-btn:hover {
+    outline: none;
+    opacity: 0.4;
+    cursor: pointer;
+  }
+  .search-btn:focus {
+    outline: none;
+    opacity: 0.6;
+  }
+  
+  ul.options {
+    display: block;
+    list-style: none;
+    width: 28rem;
+    height: 3rem;
+    transition: width 0.3s;
+    position: absolute;
+    text-align: left;
+    left: -3em;
+  }
+  
+  ul.options li {
+    display: block;
+    background: white;
+    margin: 10px auto;
+    padding: 10px;
+    font-size: 1rem;
+    width: 100%;
+    border-radius: 1px;
+  }
+  ul.options li:hover {
+    font-weight: bold;
+    color:rgb(172, 220, 238);
+    cursor: pointer;
+    transition: 0.3s all;
+  }
+  
+  ul.options li.option-active {
+    background: whitesmoke;
+    font-size: 1.5rem;
+    color: rgb(172, 220, 238);
+  }
+  .no-options {
+    color: white;
+  }

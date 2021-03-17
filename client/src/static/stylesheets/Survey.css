@@ -1,0 +1,16 @@
+
+.survey-page  {
+    background-color: rgba(139, 183, 249, 1);
+    height: 100vh;
+}
+
+.survey-page .survey-component {
+    background-color : white;
+    padding: 2rem;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    position: absolute;
+    width:90%;
+    left:5%;
+    top:10%;
+}

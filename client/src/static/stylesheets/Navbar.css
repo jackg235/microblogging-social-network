@@ -1,0 +1,22 @@
+  /*--- navigation bar ---*/
+  .navbar {
+    background:rgb(172, 220, 238);
+  }
+  .nav-link,
+  .navbar-brand {
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+  }
+  .nav-link {
+    margin-right: 1em !important;
+    color: rgb(0, 0, 0);
+  }
+  .nav-link:hover {
+    color: rgb(255, 255, 255);
+  }
+  .navbar-collapse {
+    justify-content: flex-end;
+  }
+  .nav-item {
+      color: black;
+  }

@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600,700,800');
+
+.welcome-page  {
+    background-color: rgba(139, 183, 249, 1);
+    height: 100vh;
+}
+
+.welcome-page .login-form {
+    background-color : white;
+    padding: 2rem;
+    width:60%;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    position: absolute;
+    left: 20%;
+    top: 10%;
+}
+
+.welcome-page .registration-form {
+    background-color : white;
+    padding: 2rem;
+    width:60%;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    position: absolute;
+    left: 20%;
+    top: 10%;
+}
+

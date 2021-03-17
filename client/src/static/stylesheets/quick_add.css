@@ -1,0 +1,10 @@
+.quickadd {
+    left: 50%;
+    position: absolute;
+    top: 60%;
+    transform: translate(-50%, -40%);
+    height:300;
+    width: 200;
+    border-width: 1ch;
+    border-color: black;
+  }
