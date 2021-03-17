@@ -4,9 +4,7 @@
     "description": "Outer directory ",
     "main": "index.js",
     "scripts": {
-        "test-server": "cd server && npm test",
-        "test-client": "cd client && npm test",
-        "test": "concurrently \"npm test-server\" \"npm test-client\""
+        "test": "jest && eslint --ext .js,.jsx ."
     },
     "repository": {
         "type": "git",
