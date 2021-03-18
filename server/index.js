@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // console.log that your server is up and running
-//app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(port, () => console.log(`Listening on port ${port}`));
 
 app.get('/testAPI', routes.testAPI)
 
