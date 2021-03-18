@@ -18,4 +18,10 @@ app.get('/testAPI', routes.testAPI)
 
 app.post('/verifyLogin', routes.verifyLogin)
 
+<<<<<<< HEAD
 app.post('/verifyRegister', routes.verifyRegister)
+
+module.exports = app;
+=======
+app.post('/verifyRegister', routes.verifyRegister)
+>>>>>>> master

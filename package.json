@@ -1,0 +1,22 @@
+{
+    "name": "project-microblogging-and-streaming-social-network-whiteboarders",
+    "version": "1.0.0",
+    "description": "Outer directory ",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest && eslint --ext .js,.jsx ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/cis557/project-microblogging-and-streaming-social-network-whiteboarders.git"
+    },
+    "dependencies": {
+        "concurrently": "^5.2.0"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/cis557/project-microblogging-and-streaming-social-network-whiteboarders/issues"
+    },
+    "homepage": "https://github.com/cis557/project-microblogging-and-streaming-social-network-whiteboarders#readme"
+}

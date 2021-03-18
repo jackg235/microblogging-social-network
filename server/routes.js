@@ -6,7 +6,7 @@ function testAPI(req, res) {
     res.send('Goettle is King')
 }
 
-function getProspectiveStudentMockDB() {
+function getMockDB() {
     var mockDB = {}
     mockDB['jackgoettle23@gmail.com'] = {
         'password': 'sexy',
@@ -26,7 +26,7 @@ function verifyLogin(req, res) {
     var pw = req.body.password;
     console.log('attempting to login...')
     console.log('e: ' + email + ', pw: ' + pw)
-    var mockDB = getProspectiveStudentMockDB()
+    var mockDB = getMockDB()
         // will need to throw server error 400 if server error
     if (email in mockDB && pw == mockDB[email]['password']) {
         var json = mockDB[email]
@@ -48,7 +48,6 @@ function verifyLogin(req, res) {
 function signJWT(email, first, last, scopes) {
     return jwt.sign({
         sub: email,
-        iss: 'collegetalks.com',
         context: {
             scopes: scopes,
             user: {
@@ -69,7 +68,7 @@ function verifyRegister(req, res) {
     var last = req.body.last
     console.log('attempting to register...')
     console.log('e: ' + email + ', pw: ' + pw + ', first: ' + first + ', last: ' + last)
-    var mockDB = getProspectiveStudentMockDB()
+    var mockDB = getMockDB()
         // will need to throw server error 400 if server error
     if (email in mockDB) {
         console.log('ERR: user exists... ')
