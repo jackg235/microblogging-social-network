@@ -11,8 +11,13 @@
         "url": "git+https://github.com/cis557/project-microblogging-and-streaming-social-network-whiteboarders.git"
     },
     "dependencies": {
+        "body-parser": "^1.19.0",
         "concurrently": "^5.2.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "express-jwt": "^6.0.0",
         "jest": "^26.6.3",
+        "jsonwebtoken": "^8.5.1",
         "jwt-decode": "^3.1.2",
         "supertest": "^6.1.3"
     },
