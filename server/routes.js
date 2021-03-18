@@ -13,10 +13,10 @@ function getMockDB() {
         'first': 'jack',
         'last': 'goettle'
     }
-    mockDB['jgoettle@seas.upenn.edu'] = {
-        'password': 'beast',
-        'first': 'jack',
-        'last': 'goettle'
+    mockDB['dagmawi@seas.upenn.edu'] = {
+        'password': 'dag',
+        'first': 'Dag',
+        'last': 'Dereje'
     }
     return mockDB
 }
