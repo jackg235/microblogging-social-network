@@ -8,5 +8,4 @@ script:
 branches:
   only:
     - test
-    - development
     - master
