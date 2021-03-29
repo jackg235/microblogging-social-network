@@ -1,14 +1,14 @@
 const jwt = require('jsonwebtoken');
-const { chatToken, videoToken, voiceToken } = require('../chat/tokens')
+const {chatToken, videoToken, voiceToken} = require('../chat/tokens')
 const config = require('../chat/config')
 
 const sendTokenResponse = (token, res) => {
     res.set('Content-Type', 'application/json');
-    res.send(
-        JSON.stringify({
-            token: token.toJwt()
-        })
-    );
+    res.status(200).send({
+        token: token.toJwt(),
+        success: true,
+        err: null
+    })
 };
 
 function getToken(req, res) {

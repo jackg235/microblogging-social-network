@@ -1,8 +1,8 @@
 import React from 'react'
 import RouteProtector from "../../hoc/RouteProtector";
-import {logout} from "../../slices/Authentification";
 import {connect} from "react-redux";
-import getVideoChatToken from '../../slices/Video'
+import {getVideoChatToken} from '../../slices/Video'
+import Video from 'twilio-video';
 
 class Room extends React.Component {
 
@@ -16,6 +16,8 @@ class Room extends React.Component {
     }
 
     render() {
+        console.log(this.state)
+        console.log(this.props)
         return (
             <div>
 
@@ -25,9 +27,7 @@ class Room extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const {first, last, email} = state.auth
-    console.log(first)
-    return {first, last, email}
+    return state
 }
 
 function mapDispatchToProps(dispatch) {

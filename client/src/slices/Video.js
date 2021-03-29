@@ -27,6 +27,8 @@ export const {
     tokenRetrieveFailure
 } = videoSlice.actions
 
+export default videoSlice.reducer
+
 // get a video chat token
 export function getVideoChatToken(username, room) {
     console.log('attempting to add user ' + username + ' to room ' + room)
@@ -46,6 +48,7 @@ export function getVideoChatToken(username, room) {
             .then(res => {
                 console.log('get a video chat token success = ' + res.success)
                 if (res.success) {
+                    console.log(res)
                     dispatch(tokenRetrieveSuccess(res));
                 } else {
                     dispatch(tokenRetrieveFailure(res))
@@ -53,5 +56,3 @@ export function getVideoChatToken(username, room) {
             })
     }
 }
-
-export default videoSlice.reducer
