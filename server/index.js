@@ -31,6 +31,8 @@ app.delete('/posts/delete', postRoutes.delete)
 
 app.get('/posts/get', postRoutes.get)
 
+app.get('/posts/getAll', postRoutes.getAll)
+
 app.post('/posts/addComment', postRoutes.addComment)
 
 app.delete('/posts/deleteComment', postRoutes.deleteComment)
