@@ -1,7 +1,6 @@
 import {
     createSlice
 } from '@reduxjs/toolkit'
-import { getAll } from '../../../server/routes/posts'
 import TokenManagement from '../TokenManagement'
 
 export const initialState = {
