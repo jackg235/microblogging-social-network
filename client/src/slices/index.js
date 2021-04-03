@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux'
-import postReducer from './Posts'
+import postReducer from './reducers/PostReducer'
 import authReducer from './reducers/AuthenticationReducer'
 import videoReducer from './reducers/VideoReducer'
 

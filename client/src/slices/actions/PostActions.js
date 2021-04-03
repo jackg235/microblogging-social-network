@@ -1,68 +1,25 @@
-import {
-    createSlice
-} from '@reduxjs/toolkit'
-import TokenManagement from '../TokenManagement'
-
-export const initialState = {
-    postsError: null,
-    allPosts: [],
-    // do we need to keep state for getPost? like a currPost?
-}
-
-const postsSlice = createSlice({
-    name: 'posts',
-    initialState,
-    reducers: {
-        postSuccess: (state, {
-            payload
-        }) => {
-            state.allPosts = payload
-            state.postsError = null
-        },
-        postFailure: (state, {
-            payload
-        }) => {
-            state.postsError = payload.err
-        },
-        getPostSuccess: (state) => {
-            state.postsError = null
-        },
-        getPostFailure: (state, {
-            payload
-        }) => {
-            state.postsError = payload.err
-        },
-    }
-})
-export const {
-    postSuccess,
-    postFailure,
-    getPostSuccess,
-    getPostFailure,
-} = postsSlice.actions
-
-export default postsSlice.reducer
-
 // attempts to create a new blog post
+import {getPostFailure, getPostSuccess, postFailure, postSuccess} from "../reducers/PostReducer";
+
 export function createPost(title, content, posterId) {
     console.log('attempting to create a post called... ' + title + ' by... ' + posterId)
     return function (dispatch) {
         const likes = new Set();
         const comments = {};
         return fetch(`http://localhost:5000/posts/new`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    title,
-                    content,
-                    posterId,
-                    likes,
-                    comments
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
+            method: 'POST',
+            body: JSON.stringify({
+                title,
+                content,
+                posterId,
+                likes,
+                comments
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(res => res.json())
             .then(res => {
                 console.log('create post success = ' + res.success)
@@ -83,16 +40,16 @@ export function deletePost(postId, posterId) {
     console.log('attempting to delete a post with id... ' + postId + ' by... ' + posterId)
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/delete`, {
-                method: 'DELETE',
-                body: JSON.stringify({
-                    postId,
-                    posterId,
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
+            method: 'DELETE',
+            body: JSON.stringify({
+                postId,
+                posterId,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(res => res.json())
             .then(res => {
                 console.log('delete post success = ' + res.success)
@@ -112,16 +69,16 @@ export function getPost(postId, posterId) {
     console.log('attempting to get a post with id... ' + postId + ' by... ' + posterId)
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/get`, {
-                method: 'GET',
-                body: JSON.stringify({
-                    postId,
-                    posterId,
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
+            method: 'GET',
+            body: JSON.stringify({
+                postId,
+                posterId,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(res => res.json())
             .then(res => {
                 console.log('get post success = ' + res.success)
@@ -141,12 +98,12 @@ export function getAllPosts() {
     console.log('attempting to get all posts... ')
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/getAll`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(res => res.json())
             .then(res => {
                 console.log('get all posts success = ' + res.success)
@@ -167,19 +124,19 @@ export function addComment(commenterId, content, postId, posterId) {
     console.log('attempting to add a comment from... ' + commenterId + ' on a post by... ' + posterId);
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/addComment`, {
-                // should this be changed to a put or patch maybe?
-                method: 'POST',
-                body: JSON.stringify({
-                    commenterId,
-                    content,
-                    postId,
-                    posterId,
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
+            // should this be changed to a put or patch maybe?
+            method: 'POST',
+            body: JSON.stringify({
+                commenterId,
+                content,
+                postId,
+                posterId,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(res => res.json())
             .then(res => {
                 console.log('add comment success = ' + res.success)
@@ -199,18 +156,18 @@ export function deleteComment(commenterId, commentId, postId, posterId) {
     console.log('attempting to delete a comment from... ' + commenterId + ' on a post by... ' + posterId);
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/deleteComment`, {
-                method: 'DELETE',
-                body: JSON.stringify({
-                    commenterId,
-                    commentId,
-                    postId,
-                    posterId,
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
+            method: 'DELETE',
+            body: JSON.stringify({
+                commenterId,
+                commentId,
+                postId,
+                posterId,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(res => res.json())
             .then(res => {
                 console.log('delete comment success = ' + res.success)
@@ -230,18 +187,18 @@ export function likePost(likerId, postId, posterId) {
     console.log(likerId + ' is attempting to like a post from... ' + posterId);
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/like`, {
-                // should this be changed to a put or patch maybe?
-                method: 'POST',
-                body: JSON.stringify({
-                    likerId,
-                    postId,
-                    posterId,
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
+            // should this be changed to a put or patch maybe?
+            method: 'POST',
+            body: JSON.stringify({
+                likerId,
+                postId,
+                posterId,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(res => res.json())
             .then(res => {
                 console.log('like post success = ' + res.success)
@@ -261,17 +218,17 @@ export function unlikePost(unlikerId, postId, posterId) {
     console.log(unlikerId + ' is attempting to unlike a post from... ' + posterId);
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/unlike`, {
-                method: 'DELETE',
-                body: JSON.stringify({
-                    unlikerId,
-                    postId,
-                    posterId,
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            })
+            method: 'DELETE',
+            body: JSON.stringify({
+                unlikerId,
+                postId,
+                posterId,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(res => res.json())
             .then(res => {
                 console.log('unlike post success = ' + res.success)
