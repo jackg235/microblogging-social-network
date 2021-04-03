@@ -1,7 +1,7 @@
 import React from 'react'
 import RouteProtector from "../../hoc/RouteProtector";
 import {connect} from "react-redux";
-import {getVideoChatToken} from '../../slices/Video'
+import {getVideoChatToken} from '../../slices/actions/VideoActions'
 import Video from 'twilio-video';
 
 class Room extends React.Component {

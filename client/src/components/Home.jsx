@@ -2,7 +2,7 @@ import React from 'react'
 import SearchBar from './SearchBar'
 import {connect} from 'react-redux'
 import RouteProtector from '../hoc/RouteProtector'
-import {logout} from '../slices/Authentification'
+import {logout} from '../slices/actions/AuthenticationActions'
 import {Redirect} from 'react-router-dom'
 import Navbar from './Navbar'
 import {
