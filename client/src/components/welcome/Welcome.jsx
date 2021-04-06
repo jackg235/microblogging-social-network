@@ -1,10 +1,10 @@
 import React from 'react';
 import {LoginForm} from './LoginForm'
-import '../static/stylesheets/Welcome.css'
+import '../../static/stylesheets/Welcome.css'
 import {RegistrationForm} from './RegistrationForm';
-import ReturnProtector from '../hoc/ReturnProtector'
+import ReturnProtector from '../../hoc/ReturnProtector'
 import {connect} from 'react-redux'
-import {logout} from '../slices/actions/AuthenticationActions'
+import {logout} from '../../slices/actions/AuthenticationActions'
 
 class Welcome extends React.Component {
 

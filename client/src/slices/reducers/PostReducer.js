@@ -1,7 +1,6 @@
 import {
     createSlice
 } from '@reduxjs/toolkit'
-import TokenManagement from '../TokenManagement'
 
 export const initialState = {
     postsError: null,

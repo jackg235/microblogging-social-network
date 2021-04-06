@@ -1,7 +1,7 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom'
 import {connect} from 'react-redux'
-import {register} from '../slices/actions/AuthenticationActions'
+import {register} from '../../slices/actions/AuthenticationActions'
 
 class RegistrationForm extends React.Component {
     constructor(props) {
