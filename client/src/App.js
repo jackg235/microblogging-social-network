@@ -1,8 +1,7 @@
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 import React from 'react';
-import Splash from './components/Splash';
 import Home from './components/Home'
-import Welcome from './components/Welcome'
+import Welcome from './components/welcome/Welcome'
 import Room from './components/video/Room'
 import './static/stylesheets/App.css';
 
