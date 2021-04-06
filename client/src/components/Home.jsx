@@ -47,6 +47,7 @@ class Home extends React.Component {
                     <p>My email is {email}</p>
                     <button onClick={this.logoutClick}>Click me to log out</button>
                     <Link to="/video">Click me to go to video chat</Link>
+                    <Link to="/profile">Click me to go to profile</Link>
                 </div>
                 <div>
                 </div>
