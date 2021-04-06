@@ -1,5 +1,6 @@
 const {MongoClient} = require('mongodb');
 
+// dummy function that lists the databases in mongo
 async function listDatabases(client) {
     databasesList = await client.db().admin().listDatabases();
 
