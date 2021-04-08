@@ -12,6 +12,7 @@ class RegistrationForm extends React.Component {
             last: '',
             email: '',
             password: '',
+            username: '',
             error: null,
             submitted: false
         };
@@ -26,8 +27,8 @@ class RegistrationForm extends React.Component {
     handleSubmit(e) {
         e.preventDefault()
         this.setState({submitted: true})
-        const {email, password, first, last} = this.state;
-        this.props.submitForm(email, password, first, last)
+        const {email, password, first, last, username} = this.state;
+        this.props.submitForm(email, password, first, last, username)
     }
 
     render() {
@@ -64,6 +65,11 @@ class RegistrationForm extends React.Component {
                             <label>Email address</label>
                             <input onChange={this.handleChange} id='email' type="email" className="form-control"
                                    placeholder="Email" required/>
+                        </div>
+                        <div className="form-group text-left">
+                            <label>Username</label>
+                            <input onChange={this.handleChange} id='username' type="text" className="form-control"
+                                   placeholder="Username" required/>
                         </div>
 
                         <div className="form-group text-left">
@@ -114,6 +120,12 @@ class RegistrationForm extends React.Component {
                         </div>
 
                         <div className="form-group text-left">
+                            <label>Username</label>
+                            <input onChange={this.handleChange} id='username' type="text" className="form-control"
+                                   placeholder="Username" required/>
+                        </div>
+
+                        <div className="form-group text-left">
                             <label>Password</label>
                             <input onChange={this.handleChange} id='password' type="password" className="form-control"
                                    placeholder="Password" required/>
@@ -145,7 +157,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     console.log('dispatching')
     return ({
-        submitForm: (email, password, first, last) => dispatch(register(email, password, first, last))
+        submitForm: (email, password, first, last, username) => dispatch(register(email, password, first, last, username))
     })
 }
 

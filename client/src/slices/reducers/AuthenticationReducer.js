@@ -7,7 +7,8 @@ export const initialState = {
     error: null,
     email: '',
     first: '',
-    last: ''
+    last: '',
+    username: ''
 }
 
 const authSlice = createSlice({
@@ -21,6 +22,7 @@ const authSlice = createSlice({
             state.first = payload.first
             state.last = payload.last
             state.email = payload.email
+            state.username = payload.username
         },
         loginFailure: (state, {
             payload
@@ -35,6 +37,7 @@ const authSlice = createSlice({
             state.first = payload.first
             state.last = payload.last
             state.email = payload.email
+            state.username = payload.username
         },
         registrationFailure: (state, {
             payload
@@ -51,6 +54,7 @@ const authSlice = createSlice({
             state.first = payload.first
             state.last = payload.last
             state.email = payload.email
+            state.username = payload.username
         },
         authenticateFailure: (state, {
             payload

@@ -4,17 +4,21 @@ const authRoutes = require("./routes/auth.js");
 const postRoutes = require("./routes/posts.js");
 const chatRoutes = require("./routes/chat")
 const cors = require('cors');
+const {init} = require('./data_layer/MongoAccessor')
 //var passport = require('passport');
 
-const app = express();
+const
+    app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
-// console.log that your server is up and running
-app.listen(port, () => console.log(`Listening on port ${port}`));
+init().then(() => {
+    // console.log that server is up and running
+    app.listen(port, () => console.log(`Listening on port ${port}`));
+})
 
 // ---------- auth routes ---------- //
 app.get('/testAPI', authRoutes.testAPI)

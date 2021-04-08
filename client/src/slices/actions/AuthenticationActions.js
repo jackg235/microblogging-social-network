@@ -41,7 +41,7 @@ export function login(email, password) {
 }
 
 // registers a new user
-export function register(email, password, first, last) {
+export function register(email, password, first, last, username) {
     console.log('attempting to register user... ' + email)
     return function (dispatch) {
         return fetch(`http://localhost:5000/verifyRegister`, {
@@ -50,7 +50,8 @@ export function register(email, password, first, last) {
                 email,
                 password,
                 first,
-                last
+                last,
+                username
             }),
             headers: {
                 'Content-Type': 'application/json',
