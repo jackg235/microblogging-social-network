@@ -1,5 +1,6 @@
 var jwt = require('jsonwebtoken');
 const expressjwt = require("express-jwt");
+const {addUser} = require("../data_layer/MongoAccessor")
 
 function testAPI(req, res) {
     console.log('testing api')
@@ -22,12 +23,12 @@ function getMockDB() {
 }
 
 function verifyLogin(req, res) {
-    var email = req.body.email;
-    var pw = req.body.password;
+    const email = req.body.email;
+    const pw = req.body.password;
     console.log('attempting to login...')
     console.log('e: ' + email + ', pw: ' + pw)
     var mockDB = getMockDB()
-        // will need to throw server error 400 if server error
+    // will need to throw server error 400 if server error
     if (email in mockDB && pw == mockDB[email]['password']) {
         var json = mockDB[email]
         let token = signJWT(email, json['first'], json['last'], [])
@@ -62,30 +63,30 @@ function signJWT(email, first, last, scopes) {
 }
 
 function verifyRegister(req, res) {
-    var email = req.body.email;
-    var pw = req.body.password;
-    var first = req.body.first
-    var last = req.body.last
+    const email = req.body.email;
+    const pw = req.body.password;
+    const first = req.body.first
+    const last = req.body.last
+    const username = req.body.username;
     console.log('attempting to register...')
-    console.log('e: ' + email + ', pw: ' + pw + ', first: ' + first + ', last: ' + last)
-    var mockDB = getMockDB()
-        // will need to throw server error 400 if server error
-    if (email in mockDB) {
-        console.log('ERR: user exists... ')
-        res.status(200).send({
-            token: null,
-            success: false,
-            err: 'User already exists'
+    console.log('e: ' + email + ', pw: ' + pw + ', first: ' + first + ', last: ' + last + ', username: ' + username)
+    addUser(first, last, email, username, pw)
+        .then((err) => {
+            if (err) {
+                res.status(200).send({
+                    token: null,
+                    success: false,
+                    err: err
+                })
+            } else {
+                let token = signJWT(email, first, last, [])
+                res.status(200).send({
+                    token: token,
+                    success: true,
+                    err: null
+                })
+            }
         })
-    } else {
-        let token = signJWT(email, first, last, [])
-            // write to userdb
-        res.status(200).send({
-            token: token,
-            success: true,
-            err: null
-        })
-    }
 }
 
 module.exports = {

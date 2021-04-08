@@ -1,4 +1,17 @@
+const {newUser} = require('../data_model/User')
+
 const {MongoClient} = require('mongodb');
+const uri = "mongodb+srv://jackgoettle:jackpassword@cluster0.enuas.mongodb.net/test?retryWrites=true&w=majority";
+const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
+let db;
+const dbname = 'whiteboarders'
+
+async function init() {
+    console.log('connecting to mongodb')
+    // Connect to the MongoDB cluster
+    await client.connect();
+    db = client.db(dbname)
+}
 
 // dummy function that lists the databases in mongo
 async function listDatabases(client) {
@@ -9,8 +22,6 @@ async function listDatabases(client) {
 };
 
 async function main() {
-    const uri = "mongodb+srv://jackgoettle:jackpassword@cluster0.enuas.mongodb.net/test?retryWrites=true&w=majority";
-    const client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
     try {
         // Connect to the MongoDB cluster
@@ -21,9 +32,28 @@ async function main() {
 
     } catch (e) {
         console.error(e);
-    } finally {
-        await client.close();
     }
 }
 
 main().catch(console.error);
+
+async function addUser(first, last, email, username, password) {
+    const user = newUser(first, last, email, username, password);
+    console.log(user)
+    try {
+        // insert user
+        db.collection('users').insertOne(user, (err) => {
+            if (err) {
+                console.log(err)
+                return err;
+            }
+        });
+
+    } catch (e) {
+        console.error(e);
+        return e;
+    }
+    return null;
+}
+
+module.exports = {addUser, init}
