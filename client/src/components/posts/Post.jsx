@@ -7,23 +7,22 @@ import { Link } from 'react-router-dom';
 
 
 // import DeletePost from './DeletePost';
-// import PostDialog from './PostDialog';
 // import LikeButton from './LikeButton';
 // MUI Stuff
 // import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-// Icons
-// import ChatIcon from '@material-ui/icons/Chat';
-import DefaultProPic from '../../default_propic.jpg'
+import Button from '@material-ui/core/Button';
+import CommentList from './CommentList';
+import CreateComment from './CreateComment';
 
 import { connect } from 'react-redux';
 
 const styles = {
   image: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
     display: 'inline-block',
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -32,6 +31,15 @@ const styles = {
     padding: 25,
     objectFit: 'cover',
     display: 'inline-block',
+  },
+  hidePost: {
+    backgroundColor: 'yellow',
+  },
+  deletePost: {
+    backgroundColor: 'red',
+  },
+  postContainer: {
+      border: '2px solid rgba(0, 0, 0, 0.5)',
   }
 };
 
@@ -43,29 +51,35 @@ class Post extends Component {
       post: {
         postId,
         posterId,
+        first,
+        userImg,
         title,
         content,
         timestamp,
-        likes,
-        comments
+        numLikes,
+        comments,
       },
-    //   user: {
-    //     authenticated,
-    //     credentials: { handle }
-    //   }
+      auth: {
+        authenticated,
+        email,
+      }
     } = this.props;
 
     // code to display delete button only to owner of post
-
-    // const deleteButton =
-    //   authenticated && posterId === handle ? (
-    //     <DeletePost postId={postId} />
-    //   ) : null;
+    const deleteButton =
+      authenticated && posterId === email ? (
+        <Button 
+        // onclick=deletePost(postId)
+        className={classes.deletePost}
+        >
+            {'Delete'}
+        </Button>
+      ) : null;
 
     return (
-    <div>
+    <div className={classes.postContainer}>
         <CardMedia
-          image={DefaultProPic}
+          image={userImg}
           title="Profile image"
           className={classes.image}
           style={styles.image}
@@ -77,9 +91,8 @@ class Post extends Component {
             // to={`/users/${posterId}`}
             color="primary"
           >
-            {posterId}
+            {first}
           </Typography>
-          {/* {deleteButton} */}
           <Typography variant="body2" color="textSecondary">
             {/* {dayjs(timestamp).fromNow()} */}
             {timestamp}
@@ -87,13 +100,22 @@ class Post extends Component {
           <Typography variant="title1">{title}</Typography>
           <Typography variant="body1">{content}</Typography>
           {/* <LikeButton postId={postId} /> */}
-          <span>{likes} Likes</span>
-          <span>{comments} comments</span>
-          {/* <PostDialog
+          <span>{numLikes} Likes </span>
+          <span>{comments.length} comments </span>
+          <CommentList comments={comments} />
+        </CardContent>
+          
+        <CardContent className={classes.content}>
+          <CreateComment 
             postId={postId}
-            posterId={posterId}
-            openDialog={this.props.openDialog}
-          /> */}
+          />
+          <Button 
+            // onclick=hidePost(postId)
+            className={classes.hidePost}
+          >
+              {'Hide Post'}
+          </Button>
+          {deleteButton}
         </CardContent>
     </div>
     );
@@ -108,7 +130,7 @@ class Post extends Component {
 // };
 
 const mapStateToProps = (state) => ({
-  user: state.user
+  auth: state.auth
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(Post));
