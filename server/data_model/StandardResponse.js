@@ -1,18 +1,17 @@
-class StandardResponse {
-    constructor(data, err) {
-        this.data = data;
-        this.err = err;
-    }
-
-    okay = function(data) {
-        return new StandardResponse(data, null)
-    }
-
-    err = function(data, err) {
-        return new StandardResponse(data, err)
-    }
-
-    err = function(err) {
-        return new StandardResponse(null, err)
+function responseOkay(data, token) {
+    return {
+        data: data,
+        token: token,
+        err: null
     }
 }
+
+function responseError(data, token, error) {
+    return {
+        data: data,
+        token: token,
+        err: error
+    }
+}
+
+module.exports = {responseOkay, responseError}

@@ -1,33 +1,24 @@
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const expressjwt = require("express-jwt");
-const {addUser} = require("../data_layer/MongoAccessor")
+const {addUser} = require("../data_layer/UserMethods")
+const {responseError, responseOkay} = require('../data_model/StandardResponse')
+const {newUser} = require('../data_model/User')
 
 function testAPI(req, res) {
     console.log('testing api')
     res.send('Goettle is King')
 }
 
-function getMockDB() {
-    var mockDB = {}
-    mockDB['jackgoettle23@gmail.com'] = {
-        'password': 'sexy',
-        'first': 'jack',
-        'last': 'goettle'
-    }
-    mockDB['dagmawi@seas.upenn.edu'] = {
-        'password': 'dag',
-        'first': 'Dag',
-        'last': 'Dereje'
-    }
-    return mockDB
-}
-
 function verifyLogin(req, res) {
+    const body = req.body
     const email = req.body.email;
     const pw = req.body.password;
-    console.log('attempting to login...')
+    console.log('Logging in...')
     console.log('e: ' + email + ', pw: ' + pw)
-    var mockDB = getMockDB()
+    let token = signJWT("", "", "", [])
+    const resJSON = responseOkay(null, token)
+    res.status(200).send(resJSON)
+    /*var mockDB = getMockDB()
     // will need to throw server error 400 if server error
     if (email in mockDB && pw == mockDB[email]['password']) {
         var json = mockDB[email]
@@ -43,7 +34,24 @@ function verifyLogin(req, res) {
             success: false,
             err: 'Incorrect email or password'
         })
-    }
+    } */
+}
+
+function verifyRegister(req, res) {
+    console.log('Registering new user...')
+    const body = req.body
+    const user = newUser(body.first, body.last, body.email, body.username, body.password);
+    addUser(user)
+        .then((err) => {
+            if (err) {
+                const resJSON = responseError(null, null, err)
+                res.status(400).send(resJSON)
+            } else {
+                let token = signJWT(body.email, body.first, body.last, [])
+                const resJSON = responseOkay(null, token)
+                res.status(200).send(resJSON)
+            }
+        })
 }
 
 function signJWT(email, first, last, scopes) {
@@ -60,33 +68,6 @@ function signJWT(email, first, last, scopes) {
     }, "mykey", {
         expiresIn: 60
     })
-}
-
-function verifyRegister(req, res) {
-    const email = req.body.email;
-    const pw = req.body.password;
-    const first = req.body.first
-    const last = req.body.last
-    const username = req.body.username;
-    console.log('attempting to register...')
-    console.log('e: ' + email + ', pw: ' + pw + ', first: ' + first + ', last: ' + last + ', username: ' + username)
-    addUser(first, last, email, username, pw)
-        .then((err) => {
-            if (err) {
-                res.status(200).send({
-                    token: null,
-                    success: false,
-                    err: err
-                })
-            } else {
-                let token = signJWT(email, first, last, [])
-                res.status(200).send({
-                    token: token,
-                    success: true,
-                    err: null
-                })
-            }
-        })
 }
 
 module.exports = {

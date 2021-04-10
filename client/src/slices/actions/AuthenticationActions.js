@@ -26,9 +26,9 @@ export function login(email, password) {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('auth login success = ' + res.success)
+                console.log('auth login error = ' + res.err)
                 // if the login was successful, set the token in localStorage and add user data to state
-                if (res.success) {
+                if (!res.err) {
                     TokenManagement.setToken(res.token)
                     const user = TokenManagement.getUser()
                     dispatch(loginSuccess(user));
@@ -60,9 +60,9 @@ export function register(email, password, first, last, username) {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('registration success = ' + res.success)
+                console.log('registration error = ' + res.err)
                 // if the login was successful, set the token in localStorage and add user data to state
-                if (res.success) {
+                if (!res.err) {
                     TokenManagement.setToken(res.token)
                     const user = TokenManagement.getUser()
                     dispatch(registrationSuccess(user))
