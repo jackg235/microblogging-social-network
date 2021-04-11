@@ -5,7 +5,8 @@ const {responseError, responseOkay} = require('../data_model/StandardResponse')
 
 function newPost(req, res) {
     const body = req.body
-    const post = PostModel.newPost(body.username, body.title, body.content, body.media);
+    //const post = PostModel.newPost(body.username, body.title, body.content, body.media);
+    const post = null
     PostMethods.newPost(post)
         .then((err) => {
             if (err) {

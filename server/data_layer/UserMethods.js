@@ -1,21 +1,35 @@
-const {db} = require('./MongoAccessor')
+const UserModel = require('../data_model/User')
 
-async function addUser(user) {
-    console.log(user)
+async function createUser(user) {
+    const newUser = new UserModel(user)
     try {
-        // insert user
-        db.collection('users').insertOne(user, (err) => {
-            if (err) {
-                console.log(err)
-                return err;
-            }
-        });
-
+        const data = await newUser.save()
+        console.log('The following user has been added to the DB: ')
+        console.log(data)
+        return null;
     } catch (e) {
-        console.error(e);
-        return e;
+        console.log(e)
+        return "Error: can't register a new user with provided username and/or email."
     }
-    return null;
+}
+
+async function loginUser(email, password) {
+    try {
+        const response = await UserModel.find({email: email, password: password})
+        if (response.length == 0) {
+            return {
+                data: null,
+                err: "Error: can't login with provided credentials"
+            };
+        }
+        return {
+            data: response[0],
+            err: null
+        };
+    } catch (e) {
+        console.log(e)
+        return "Error (unknown)"
+    }
 }
 
 async function getUserPosts(username) {
@@ -40,4 +54,4 @@ async function getFollowingPosts(username) {
     return null
 }
 
-module.exports = {addUser, getUserPosts, getFollowingPosts}
+module.exports = {createUser, loginUser, getUserPosts, getFollowingPosts}

@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const expressjwt = require("express-jwt");
-const {addUser} = require("../data_layer/UserMethods")
+const {createUser, loginUser} = require("../data_layer/UserMethods")
 const {responseError, responseOkay} = require('../data_model/StandardResponse')
-const {newUser} = require('../data_model/User')
+const UserModel = require('../data_model/User')
 
 function testAPI(req, res) {
     console.log('testing api')
@@ -11,37 +11,26 @@ function testAPI(req, res) {
 
 function verifyLogin(req, res) {
     const body = req.body
-    const email = req.body.email;
-    const pw = req.body.password;
     console.log('Logging in...')
-    console.log('e: ' + email + ', pw: ' + pw)
-    let token = signJWT("", "", "", [])
-    const resJSON = responseOkay(null, token)
-    res.status(200).send(resJSON)
-    /*var mockDB = getMockDB()
-    // will need to throw server error 400 if server error
-    if (email in mockDB && pw == mockDB[email]['password']) {
-        var json = mockDB[email]
-        let token = signJWT(email, json['first'], json['last'], [])
-        res.status(200).send({
-            token: token,
-            success: true,
-            err: null
+    console.log('e: ' + body.email + ', pw: ' + body.password)
+    loginUser(body.email, body.password)
+        .then((response) => {
+            if (response.err) {
+                const resJSON = responseError(null, null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                const user = response.data
+                let token = signJWT(user.email, user.first, user.last, [])
+                const resJSON = responseOkay(user, token)
+                res.status(200).send(resJSON)
+            }
         })
-    } else {
-        res.status(200).send({
-            token: null,
-            success: false,
-            err: 'Incorrect email or password'
-        })
-    } */
 }
 
 function verifyRegister(req, res) {
     console.log('Registering new user...')
     const body = req.body
-    const user = newUser(body.first, body.last, body.email, body.username, body.password);
-    addUser(user)
+    createUser(body)
         .then((err) => {
             if (err) {
                 const resJSON = responseError(null, null, err)
