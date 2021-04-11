@@ -4,7 +4,7 @@ const authRoutes = require("./routes/auth.js");
 const postRoutes = require("./routes/posts.js");
 const chatRoutes = require("./routes/chat")
 const cors = require('cors');
-const {init} = require('./data_layer/MongoAccessor')
+const db = require('./data_layer/MongoAccessor')
 //var passport = require('passport');
 
 const
@@ -15,10 +15,10 @@ app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-init().then(() => {
-    // console.log that server is up and running
-    app.listen(port, () => console.log(`Listening on port ${port}`));
-})
+db._connect()
+app.listen(port, () => console.log(`Listening on port ${port}`));
+
+//app.listen(port, () => console.log(`Listening on port ${port}`));
 
 // ---------- auth routes ---------- //
 app.get('/testAPI', authRoutes.testAPI)
@@ -34,8 +34,6 @@ app.post('/posts/new', postRoutes.new)
 app.delete('/posts/delete', postRoutes.delete)
 
 app.get('/posts/get', postRoutes.get)
-
-app.get('/posts/getAll', postRoutes.getAll)
 
 app.post('/posts/addComment', postRoutes.addComment)
 

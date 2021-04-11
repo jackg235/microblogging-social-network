@@ -1,15 +1,22 @@
-function newUser(first, last, email, username, password) {
-    const user = {
-        first: first,
-        last: last,
-        email: email,
-        password: password,
-        username: username,
-        following: [],
-        posts: [],
-        registrationDate: new Date().toLocaleDateString()
-    }
-    return user
-}
+const mongoose = require('mongoose');
 
-module.exports = {newUser}
+// User schema
+let userSchema = new mongoose.Schema({
+    first: {type: String, required: true},
+    last: {type: String, required: true},
+    email: {type: String, required: true, unique: true},
+    password: {type: String, required: true},
+    username: {type: String, required: true, unique: true},
+    registrationDate: {type: Date, default: Date.now()},
+    following: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
+    posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
+    img:
+        {
+            data: Buffer,
+            contentType: String
+        }
+});
+
+userSchema.index({email: 1, username: 1}, {unique: true})
+
+module.exports = mongoose.model('User', userSchema, 'users')
