@@ -1,13 +1,10 @@
 let mongoose = require('mongoose');
-const uri = "mongodb+srv://jackgoettle:jackpassword@cluster0.enuas.mongodb.net/whiteboarders?retryWrites=true&w=majority";
 
 class Database {
-    constructor() {
-        this._connect()
-    }
-
-    _connect() {
-        mongoose.connect(uri)
+    _connect(dbname) {
+        const uri = `mongodb+srv://jackgoettle:jackpassword@cluster0.enuas.mongodb.net/${dbname}?retryWrites=true&w=majority`;
+        console.log(uri)
+        mongoose.connect(uri, {useNewUrlParser: true})
             .then(() => {
                 console.log('Database connection successful')
             })

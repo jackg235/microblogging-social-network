@@ -1,39 +1,39 @@
 {
-    "name": "server",
-    "version": "1.0.0",
-    "description": "Application layer for handling frontend requests",
-    "main": "index.js",
-    "scripts": {
-        "start": "node index.js",
-        "test": "cross-env NODE_ENV=test jest --testTimeout=360"
-    },
-    "author": "Jack Goettle",
-    "license": "ISC",
-    "dependencies": {
-        "async": "^3.2.0",
-        "body-parser": "^1.19.0",
-        "concurrently": "^5.2.0",
-        "cors": "^2.8.5",
-        "cross-env": "^7.0.3",
-        "express": "^4.17.1",
-        "express-jwt": "6.0.0",
-        "jest": "^26.6.3",
-        "jQuery": "^1.7.4",
-        "jsonwebtoken": "*",
-        "jwt-decode": "^3.1.2",
-        "mongodb": "^3.6.5",
-        "mongoose": "^5.12.3",
-        "mysql": "^2.18.1",
-        "supertest": "^6.1.3",
-        "twilio": "^3.59.0"
-    },
-    "jest": {
-        "testEnvironment": "node",
-        "coveragePathIgnorePatterns": [
-            "/node_modules/"
-        ]
-    },
-    "devDependencies": {
-        "@shelf/jest-mongodb": "^1.2.3"
-    }
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Application layer for handling frontend requests",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "cross-env NODE_ENV=test jest --testTimeout=30000"
+  },
+  "author": "Jack Goettle",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.0",
+    "body-parser": "^1.19.0",
+    "concurrently": "^5.2.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "express": "^4.17.1",
+    "express-jwt": "6.0.0",
+    "jest": "^26.6.3",
+    "jQuery": "^1.7.4",
+    "jsonwebtoken": "*",
+    "jwt-decode": "^3.1.2",
+    "mongodb": "^3.6.5",
+    "mongoose": "^5.12.3",
+    "mysql": "^2.18.1",
+    "supertest": "^6.1.3",
+    "twilio": "^3.59.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
+  "devDependencies": {
+    "@shelf/jest-mongodb": "^1.2.3"
+  }
 }

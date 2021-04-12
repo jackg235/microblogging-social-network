@@ -15,7 +15,7 @@ app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-db._connect()
+db._connect('whiteboarders') // set to 'whiteboarders' for deployment mode, 'test' for testing
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 //app.listen(port, () => console.log(`Listening on port ${port}`));
