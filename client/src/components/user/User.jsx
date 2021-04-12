@@ -45,10 +45,7 @@ class User extends React.Component {
                                     component={Link}
                                     to={`/users/${username}`}>
                                     {username}
-                                </Typography>}
-                            
-                        />
-                        
+                                </Typography>} />
                     </Card>
                 </Grid>
         )
