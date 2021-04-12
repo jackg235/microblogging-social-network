@@ -13,9 +13,9 @@ import { Grid } from '@material-ui/core';
 
 const styles = {
     card: {
-        // backgroundColor: 'red'
+        backgroundColor: '#e3e3e3'
     }
-};
+}
 
 class User extends React.Component {
     render() {
@@ -36,7 +36,7 @@ class User extends React.Component {
 
         return (
                 <Grid item>
-                    <Card variant='outlined' className={classes}>
+                    <Card variant='outlined'>
                         <CardHeader
                             style={styles.card}
                             avatar={<Avatar variant="rounded" src={userImg} alt={username}/>}
