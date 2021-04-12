@@ -2,6 +2,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const authRoutes = require("./routes/auth.js");
 const postRoutes = require("./routes/posts.js");
+const userRoutes = require("./routes/users.js");
 const chatRoutes = require("./routes/chat")
 const cors = require('cors');
 const db = require('./data_layer/MongoAccessor')
@@ -20,9 +21,13 @@ app.post('/verifyLogin', authRoutes.verifyLogin)
 
 app.post('/verifyRegister', authRoutes.verifyRegister)
 
-app.get('/users/:username', authRoutes.getAccount)
-
 app.delete('/users/:username', authRoutes.deleteAccount)
+
+// ---------- user routes ---------- //
+
+app.get('/users/:username', userRoutes.getAccount)
+
+app.post('/users/follow', userRoutes.follow)
 
 // ---------- post routes ---------- //
 

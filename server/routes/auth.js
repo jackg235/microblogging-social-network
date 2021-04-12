@@ -1,8 +1,6 @@
 const jwt = require('jsonwebtoken');
-const expressjwt = require("express-jwt");
-const {createUser, loginUser, getUser, deleteUser} = require("../data_layer/UserMethods")
+const {createUser, loginUser, deleteUser} = require("../data_layer/UserMethods")
 const {responseError, responseOkay} = require('../data_model/StandardResponse')
-const UserModel = require('../data_model/User')
 
 function testAPI(req, res) {
     console.log('testing api')
@@ -44,21 +42,6 @@ function verifyRegister(req, res) {
         })
 }
 
-function getAccount(req, res) {
-    const username = req.params.username
-    console.log('Getting user: ' + username)
-    getUser(username)
-        .then(response => {
-            if (response.err) {
-                const resJSON = responseError(null, response.err)
-                res.status(400).send(resJSON)
-            } else {
-                const resJSON = responseOkay(response.data)
-                res.status(200).send(resJSON)
-            }
-        })
-}
-
 function deleteAccount(req, res) {
     const username = req.params.username
     console.log('Deleting user ' + username)
@@ -94,6 +77,5 @@ module.exports = {
     testAPI: testAPI,
     verifyLogin: verifyLogin,
     verifyRegister: verifyRegister,
-    deleteAccount: deleteAccount,
-    getAccount: getAccount
+    deleteAccount: deleteAccount
 }

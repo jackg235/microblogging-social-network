@@ -59,6 +59,34 @@ async function deleteUser(username) {
     }
 }
 
+async function followUser(username, userIDToFollow) {
+    console.log("toggling follow for " + username)
+    try {
+        const response = await UserModel.find({username: username})
+        const following = response[0].following
+        // unfollow the user if already being followed
+        if (following.includes(userIDToFollow)) {
+            console.log('toggling unfollow')
+            const index = following.indexOf(userIDToFollow);
+            if (index > -1) {
+                following.splice(index, 1);
+            }
+            console.log(following)
+        }
+        // follow user if not in following
+        else {
+            console.log('toggling follow')
+            following.push(userIDToFollow)
+        }
+        const res = await UserModel.updateOne({username: username}, {following: following});
+        return modelResponse(res, null)
+    } catch (e) {
+        console.error(e);
+        return modelResponse(null, e)
+    }
+    return null
+}
+
 async function getUserPosts(username) {
     console.log("getting posts for user " + username)
     try {
@@ -81,4 +109,4 @@ async function getFollowingPosts(username) {
     return null
 }
 
-module.exports = {createUser, loginUser, getUserPosts, getFollowingPosts, getUser, deleteUser}
+module.exports = {createUser, loginUser, getUserPosts, getFollowingPosts, getUser, deleteUser, followUser}

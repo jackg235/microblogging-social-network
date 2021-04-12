@@ -27,7 +27,7 @@ describe('Authentication Get Endpoints', () => {
     })
 })
 
-describe('Authentication Post Endpoints', () => {
+describe('Authentication Endpoints', () => {
     it('should register a new user', async (done) => {
         const res = await request(app)
             .post('/verifyRegister')
@@ -35,7 +35,7 @@ describe('Authentication Post Endpoints', () => {
         expect(res.statusCode).toEqual(200)
         done()
     })
-    it('should register a user with a duplicated email or username', async (done) => {
+    it('should fail to register a user with a duplicated email or username', async (done) => {
         const res = await request(app)
             .post('/verifyRegister')
             .send(testUserJSON)
@@ -69,21 +69,6 @@ describe('Authentication Post Endpoints', () => {
                 email: testUserJSON.email,
                 password: "bad password"
             })
-        expect(res.statusCode).toEqual(400)
-        done()
-    })
-    it('should retrieve a user', async (done) => {
-        const res = await request(app)
-            .get(`/users/${testUserJSON.username}`)
-        expect(res.statusCode).toEqual(200)
-        const user = JSON.parse(res.text).data;
-        expect(user).toMatchObject(testUserJSON);
-        done()
-    })
-    it('should fail to retrieve a user who doesnt exist', async (done) => {
-        const badUsername = "badUsername"
-        const res = await request(app)
-            .get(`/users/${badUsername}`)
         expect(res.statusCode).toEqual(400)
         done()
     })
