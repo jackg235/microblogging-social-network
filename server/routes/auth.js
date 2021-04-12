@@ -1,49 +1,60 @@
-var jwt = require('jsonwebtoken');
-const expressjwt = require("express-jwt");
-const {addUser} = require("../data_layer/MongoAccessor")
+const jwt = require('jsonwebtoken');
+const {createUser, loginUser, deleteUser} = require("../data_layer/UserMethods")
+const {responseError, responseOkay} = require('../data_model/StandardResponse')
 
 function testAPI(req, res) {
     console.log('testing api')
     res.send('Goettle is King')
 }
 
-function getMockDB() {
-    var mockDB = {}
-    mockDB['jackgoettle23@gmail.com'] = {
-        'password': 'sexy',
-        'first': 'jack',
-        'last': 'goettle'
-    }
-    mockDB['dagmawi@seas.upenn.edu'] = {
-        'password': 'dag',
-        'first': 'Dag',
-        'last': 'Dereje'
-    }
-    return mockDB
+function verifyLogin(req, res) {
+    const body = req.body
+    console.log('Logging in...')
+    console.log('e: ' + body.email + ', pw: ' + body.password)
+    loginUser(body.email, body.password)
+        .then((response) => {
+            if (response.err) {
+                const resJSON = responseError(null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                const user = response.data
+                let token = signJWT(user.email, user.first, user.last, [])
+                user['token'] = token
+                const resJSON = responseOkay(user)
+                res.status(200).send(resJSON)
+            }
+        })
 }
 
-function verifyLogin(req, res) {
-    const email = req.body.email;
-    const pw = req.body.password;
-    console.log('attempting to login...')
-    console.log('e: ' + email + ', pw: ' + pw)
-    var mockDB = getMockDB()
-    // will need to throw server error 400 if server error
-    if (email in mockDB && pw == mockDB[email]['password']) {
-        var json = mockDB[email]
-        let token = signJWT(email, json['first'], json['last'], [])
-        res.status(200).send({
-            token: token,
-            success: true,
-            err: null
+function verifyRegister(req, res) {
+    console.log('Registering new user...')
+    const body = req.body
+    createUser(body)
+        .then((response) => {
+            if (response.err) {
+                const resJSON = responseError(null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                let token = signJWT(body.email, body.first, body.last, [])
+                const resJSON = responseOkay(token)
+                res.status(200).send(resJSON)
+            }
         })
-    } else {
-        res.status(200).send({
-            token: null,
-            success: false,
-            err: 'Incorrect email or password'
+}
+
+function deleteAccount(req, res) {
+    const username = req.params.username
+    console.log('Deleting user ' + username)
+    deleteUser(username)
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                const resJSON = responseOkay(response.data)
+                res.status(200).send(resJSON)
+            }
         })
-    }
 }
 
 function signJWT(email, first, last, scopes) {
@@ -62,35 +73,9 @@ function signJWT(email, first, last, scopes) {
     })
 }
 
-function verifyRegister(req, res) {
-    const email = req.body.email;
-    const pw = req.body.password;
-    const first = req.body.first
-    const last = req.body.last
-    const username = req.body.username;
-    console.log('attempting to register...')
-    console.log('e: ' + email + ', pw: ' + pw + ', first: ' + first + ', last: ' + last + ', username: ' + username)
-    addUser(first, last, email, username, pw)
-        .then((err) => {
-            if (err) {
-                res.status(200).send({
-                    token: null,
-                    success: false,
-                    err: err
-                })
-            } else {
-                let token = signJWT(email, first, last, [])
-                res.status(200).send({
-                    token: token,
-                    success: true,
-                    err: null
-                })
-            }
-        })
-}
-
 module.exports = {
     testAPI: testAPI,
     verifyLogin: verifyLogin,
-    verifyRegister: verifyRegister
+    verifyRegister: verifyRegister,
+    deleteAccount: deleteAccount
 }

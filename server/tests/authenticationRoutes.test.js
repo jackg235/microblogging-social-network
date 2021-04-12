@@ -1,10 +1,25 @@
 const request = require('supertest')
-const app = require('../index')
-var jwt = require('jsonwebtoken');
-var decode = require('jwt-decode');
+const mongoose = require('mongoose')
+const app = require('../app')
+const UserModel = require('../data_model/User')
+
+const testUserJSON = {
+    first: "jack",
+    last: "goettle",
+    username: "test",
+    email: "test@gmail.com",
+    password: "password"
+}
+const testUserJSON2 = {
+    first: "dag",
+    last: "dereje",
+    username: "test2",
+    email: "test2@gmail.com",
+    password: "password"
+}
 
 describe('Authentication Get Endpoints', () => {
-    it('should test API', async(done) => {
+    it('should test API', async (done) => {
         const res = await request(app)
             .get('/testAPI')
         expect(res.statusCode).toEqual(200)
@@ -12,53 +27,70 @@ describe('Authentication Get Endpoints', () => {
     })
 })
 
-describe('Authentication Post Endpoints', () => {
-    it('should login a user', async(done) => {
+describe('Authentication Endpoints', () => {
+    it('should register a new user', async (done) => {
+        const res = await request(app)
+            .post('/verifyRegister')
+            .send(testUserJSON)
+        expect(res.statusCode).toEqual(200)
+        done()
+    })
+    it('should fail to register a user with a duplicated email or username', async (done) => {
+        const res = await request(app)
+            .post('/verifyRegister')
+            .send(testUserJSON)
+        expect(res.statusCode).toEqual(400)
+        done()
+    })
+    it('should login a user that exists in the database', async (done) => {
         const res = await request(app)
             .post('/verifyLogin')
             .send({
-                email: "jackgoettle23@gmail.com",
-                password: "sexy"
+                email: testUserJSON.email,
+                password: testUserJSON.password
             })
         expect(res.statusCode).toEqual(200)
-        expect(res.body.success).toBe(true)
         done()
     })
-    it('should fail to login a user', async(done) => {
+    it('should fail to login a user that does not in the database', async (done) => {
         const res = await request(app)
             .post('/verifyLogin')
             .send({
-                email: "reginald@gmail.com",
-                password: "password"
+                email: "bad email",
+                password: "bad password"
             })
-        expect(res.statusCode).toEqual(200)
-        expect(res.body.success).toBe(false)
+        expect(res.statusCode).toEqual(400)
         done()
     })
-    it('should register a user', async(done) => {
+    it('should fail to login a user that enters an incorrect password', async (done) => {
         const res = await request(app)
-            .post('/verifyRegister')
+            .post('/verifyLogin')
             .send({
-                email: "address@gmail.com",
-                password: "password",
-                first: "jack",
-                last: "goettle"
+                email: testUserJSON.email,
+                password: "bad password"
             })
-        expect(res.statusCode).toEqual(200)
-        expect(res.body.success).toBe(true)
+        expect(res.statusCode).toEqual(400)
         done()
     })
-    it('should fail to register a user', async(done) => {
+    it('should delete a user', async (done) => {
         const res = await request(app)
             .post('/verifyRegister')
-            .send({
-                email: "jackgoettle23@gmail.com",
-                password: "password",
-                first: "jack",
-                last: "goettle"
-            })
+            .send(testUserJSON2)
         expect(res.statusCode).toEqual(200)
-        expect(res.body.success).toBe(false)
+        const res2 = await request(app).delete(`/users/${testUserJSON2.username}`)
+        expect(res2.statusCode).toEqual(200)
+        done()
+    })
+    it('should fail to delete a user that doesnt exist', async (done) => {
+        const badUsername = "badUsername"
+        const res = await request(app).delete(`/users/${badUsername}`)
+        expect(res.statusCode).toEqual(400)
+        done()
+    })
+    afterAll(async (done) => {
+        await UserModel.deleteOne({username: "test"})
+        await UserModel.deleteOne({username: "test2"})
+        await mongoose.connection.close()
         done()
     })
 })
