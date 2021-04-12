@@ -1,15 +1,13 @@
 import React from 'react';
-import SearchBar from './SearchBar';
 import {connect} from 'react-redux';
 import RouteProtector from '../hoc/RouteProtector';
 import {logout} from '../slices/actions/AuthenticationActions';
-import {matchPath, Redirect} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import Navbar from './Navbar';
-import Post from './posts/Post';
 import DefaultProPic from '../default_propic.jpg';
 import User from './user/User';
 import TextField from '@material-ui/core/TextField';
-import { Divider, Grid, GridList } from '@material-ui/core';
+import { Divider, Grid } from '@material-ui/core';
 
 const styles = {
     grid: {
@@ -74,6 +72,74 @@ const followersMock = [
     },
 ];
 
+const followersMock2 = [
+    {
+        userImg: DefaultProPic,
+        username: 'user1',
+        firstName: 'F1',
+        lastName: 'L1',
+        regDate: '04/07/21',
+        followers: [],
+        following: [],
+        blocking: [],
+        hidden: [],
+    },
+    {
+        userImg: DefaultProPic,
+        username: 'user2',
+        firstName: 'F2',
+        lastName: 'L2',
+        regDate: '04/08/21',
+        followers: [],
+        following: [],
+        blocking: [],
+        hidden: [],
+    },{
+        userImg: DefaultProPic,
+        username: 'user3',
+        firstName: 'F3',
+        lastName: 'L3',
+        regDate: '04/09/21',
+        followers: [],
+        following: [],
+        blocking: [],
+        hidden: [],
+    },
+    {
+        userImg: DefaultProPic,
+        username: 'user322r23r4',
+        firstName: 'F4',
+        lastName: 'L4',
+        regDate: '04/10/21',
+        followers: [],
+        following: [],
+        blocking: [],
+        hidden: [],
+    },
+    {
+        userImg: DefaultProPic,
+        username: 'user5',
+        firstName: 'F5',
+        lastName: 'L5',
+        regDate: '04/11/21',
+        followers: [],
+        following: [],
+        blocking: [],
+        hidden: [],
+    },
+    {
+        userImg: DefaultProPic,
+        username: 'user6',
+        firstName: 'F5',
+        lastName: 'L5',
+        regDate: '04/11/21',
+        followers: [],
+        following: [],
+        blocking: [],
+        hidden: [],
+    },
+];
+
 class Explore extends React.Component {
     constructor(props) {
         super(props);
@@ -92,7 +158,6 @@ class Explore extends React.Component {
 
     getFollowers() {
         // do something to get Arr of User
-        // dummy data below
         return followersMock;
     }
 
@@ -103,7 +168,7 @@ class Explore extends React.Component {
 
     getSuggested() {
         // do something to get a suggested Arr of User
-        return followersMock;
+        return followersMock2;
     }
 
     logoutClick() {
@@ -117,7 +182,7 @@ class Explore extends React.Component {
 
         splitQuery.forEach(word => 
             {
-                if (word !== '') {
+                if (word !== '' && !Number.isInteger(parseInt(word))) {
                     userArr.forEach(user => {
                         if (user.firstName.includes(word) || user.lastName.includes(word) || user.username.includes(word)) {
                             if (!matches.includes(user)) {
@@ -139,26 +204,27 @@ class Explore extends React.Component {
     }
 
     render() {
-        if (!this.props.authenticated) {
-            return <Redirect to='/'/>
-        }
+        // if (!this.props.authenticated) {
+        //     return <Redirect to='/'/>
+        // }
 
         return (
             <div>
                 <Navbar/>
+                <span>&nbsp;</span>
                 <Grid container spacing={3} direction="row">
                     <Grid item xs={2}>
                         <h1>Explore</h1>        
                     </Grid>
                 </Grid>
-                <Divider/>
-                <Grid container style={styles.grid} direction="row" justify="space-evenly" alignItems="center">
+                <span>&nbsp;</span>
+                <Grid container direction="row" justify="space-evenly" alignItems="stretch">
                     <div>
-                        <Grid container spacing={1} style={styles.grid} direction="column" justify="space-evenly" alignItems="center">
+                        <Grid container spacing={1} style={styles.grid} direction="column" justify="space-evenly" alignItems="stretch">
                             <Grid item>
                                 <h3>Followers</h3>
                             </Grid>
-                            <Grid item>
+                            <Grid item xs={12}>
                                 <TextField
                                     size="small" 
                                     label="Search followers" 
@@ -190,7 +256,7 @@ class Explore extends React.Component {
                     
                     {/* following  */}
                     <div>
-                        <Grid container spacing={1} style={styles.grid} direction="column" justify="space-evenly" alignItems="center">
+                        <Grid container spacing={1} style={styles.grid} direction="column" justify="space-evenly" alignItems="stretch">
                             <Grid item>
                                 <h3>Following</h3>
                             </Grid>
@@ -226,7 +292,7 @@ class Explore extends React.Component {
 
                     {/* suggested  */}
                     <div>
-                        <Grid container spacing={1} style={styles.grid} direction="column" justify="space-evenly" alignItems="center">
+                        <Grid container spacing={1} style={styles.grid} direction="column" justify="space-evenly" alignItems="stretch">
                             <Grid item>
                                 <h3>Suggested</h3>
                             </Grid>
@@ -266,16 +332,18 @@ class Explore extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    const {first, last, email, username, authenticated} = state.auth;
-    return {first, last, email, username, authenticated};
-}
+// function mapStateToProps(state) {
+//     const {first, last, email, username, authenticated} = state.auth;
+//     return {first, last, email, username, authenticated};
+// }
 
-function mapDispatchToProps(dispatch) {
-    return ({
-        logoutUser: () => dispatch(logout())
-    })
-}
+// function mapDispatchToProps(dispatch) {
+//     return ({
+//         logoutUser: () => dispatch(logout())
+//     })
+// }
 
-const ExploreConnected = connect(mapStateToProps, mapDispatchToProps)(Explore)
-export default RouteProtector(ExploreConnected);
+// const ExploreConnected = connect(mapStateToProps, mapDispatchToProps)(Explore)
+// export default RouteProtector(ExploreConnected);
+
+export default Explore;
