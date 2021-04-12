@@ -6,7 +6,6 @@ import {logout} from '../slices/actions/AuthenticationActions';
 import {matchPath, Redirect} from 'react-router-dom';
 import Navbar from './Navbar';
 import Post from './posts/Post';
-import CreatePost from './posts/CreatePost';
 import DefaultProPic from '../default_propic.jpg';
 import User from './user/User';
 import TextField from '@material-ui/core/TextField';
@@ -79,24 +78,16 @@ class Explore extends React.Component {
     constructor(props) {
         super(props);
 
-        // props is user obj
-        const {
-            user,
-            authenticated,
-        } = this.props;
-
-        // this.state = {
-        //     followers: getFollowers(this.props.followers),
-        //     following: getFollowing(this.props.following),
-        //     suggested: getSuggested()
-        // }
-
         this.state = {
             followers: this.getFollowers(),
             following: this.getFollowing(),
             suggested: this.getSuggested()
         }
-        this.logoutClick = this.logoutClick.bind(this)
+        this.logoutClick = this.logoutClick.bind(this);
+    }
+
+    logoutClick() {
+        this.props.logoutUser()
     }
 
     getFollowers() {
@@ -148,8 +139,9 @@ class Explore extends React.Component {
     }
 
     render() {
-        // should have mock data for followers, following, and suggested
-        // but using the same data for now
+        if (!this.props.authenticated) {
+            return <Redirect to='/'/>
+        }
 
         return (
             <div>
@@ -241,7 +233,7 @@ class Explore extends React.Component {
                             <Grid item>
                                 <TextField
                                     size="small" 
-                                    label="Search suggested" 
+                                    label="Press enter to search" 
                                     type="search" 
                                     variant="outlined"
                                     onKeyDown={(e) => {
@@ -274,4 +266,16 @@ class Explore extends React.Component {
     }
 }
 
-export default Explore;
+function mapStateToProps(state) {
+    const {first, last, email, username, authenticated} = state.auth;
+    return {first, last, email, username, authenticated};
+}
+
+function mapDispatchToProps(dispatch) {
+    return ({
+        logoutUser: () => dispatch(logout())
+    })
+}
+
+const ExploreConnected = connect(mapStateToProps, mapDispatchToProps)(Explore)
+export default RouteProtector(ExploreConnected);
