@@ -1,15 +1,13 @@
 import React from 'react';
-import SearchBar from './SearchBar';
 import {connect} from 'react-redux';
 import RouteProtector from '../hoc/RouteProtector';
 import {logout} from '../slices/actions/AuthenticationActions';
-import {matchPath, Redirect} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import Navbar from './Navbar';
-import Post from './posts/Post';
 import DefaultProPic from '../default_propic.jpg';
 import User from './user/User';
 import TextField from '@material-ui/core/TextField';
-import { Divider, Grid, GridList } from '@material-ui/core';
+import { Divider, Grid } from '@material-ui/core';
 
 const styles = {
     grid: {
