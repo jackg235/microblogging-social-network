@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const expressjwt = require("express-jwt");
-const {createUser, loginUser} = require("../data_layer/UserMethods")
+const {createUser, loginUser, getUser, deleteUser} = require("../data_layer/UserMethods")
 const {responseError, responseOkay} = require('../data_model/StandardResponse')
 const UserModel = require('../data_model/User')
 
@@ -16,12 +16,13 @@ function verifyLogin(req, res) {
     loginUser(body.email, body.password)
         .then((response) => {
             if (response.err) {
-                const resJSON = responseError(null, null, response.err)
+                const resJSON = responseError(null, response.err)
                 res.status(400).send(resJSON)
             } else {
                 const user = response.data
                 let token = signJWT(user.email, user.first, user.last, [])
-                const resJSON = responseOkay(user, token)
+                user['token'] = token
+                const resJSON = responseOkay(user)
                 res.status(200).send(resJSON)
             }
         })
@@ -31,13 +32,43 @@ function verifyRegister(req, res) {
     console.log('Registering new user...')
     const body = req.body
     createUser(body)
-        .then((err) => {
-            if (err) {
-                const resJSON = responseError(null, null, err)
+        .then((response) => {
+            if (response.err) {
+                const resJSON = responseError(null, response.err)
                 res.status(400).send(resJSON)
             } else {
                 let token = signJWT(body.email, body.first, body.last, [])
-                const resJSON = responseOkay(null, token)
+                const resJSON = responseOkay(token)
+                res.status(200).send(resJSON)
+            }
+        })
+}
+
+function getAccount(req, res) {
+    const username = req.params.username
+    console.log('Getting user: ' + username)
+    getUser(username)
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                const resJSON = responseOkay(response.data)
+                res.status(200).send(resJSON)
+            }
+        })
+}
+
+function deleteAccount(req, res) {
+    const username = req.params.username
+    console.log('Deleting user ' + username)
+    deleteUser(username)
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                const resJSON = responseOkay(response.data)
                 res.status(200).send(resJSON)
             }
         })
@@ -62,5 +93,7 @@ function signJWT(email, first, last, scopes) {
 module.exports = {
     testAPI: testAPI,
     verifyLogin: verifyLogin,
-    verifyRegister: verifyRegister
+    verifyRegister: verifyRegister,
+    deleteAccount: deleteAccount,
+    getAccount: getAccount
 }

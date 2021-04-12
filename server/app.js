@@ -20,6 +20,10 @@ app.post('/verifyLogin', authRoutes.verifyLogin)
 
 app.post('/verifyRegister', authRoutes.verifyRegister)
 
+app.get('/users/:username', authRoutes.getAccount)
+
+app.delete('/users/:username', authRoutes.deleteAccount)
+
 // ---------- post routes ---------- //
 
 app.post('/posts/new', postRoutes.new)

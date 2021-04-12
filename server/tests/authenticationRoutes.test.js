@@ -10,6 +10,14 @@ const testUserJSON = {
     email: "test@gmail.com",
     password: "password"
 }
+const testUserJSON2 = {
+    first: "dag",
+    last: "dereje",
+    username: "test2",
+    email: "test2@gmail.com",
+    password: "password"
+}
+
 describe('Authentication Get Endpoints', () => {
     it('should test API', async (done) => {
         const res = await request(app)
@@ -64,8 +72,39 @@ describe('Authentication Post Endpoints', () => {
         expect(res.statusCode).toEqual(400)
         done()
     })
+    it('should retrieve a user', async (done) => {
+        const res = await request(app)
+            .get(`/users/${testUserJSON.username}`)
+        expect(res.statusCode).toEqual(200)
+        const user = JSON.parse(res.text).data;
+        expect(user).toMatchObject(testUserJSON);
+        done()
+    })
+    it('should fail to retrieve a user who doesnt exist', async (done) => {
+        const badUsername = "badUsername"
+        const res = await request(app)
+            .get(`/users/${badUsername}`)
+        expect(res.statusCode).toEqual(400)
+        done()
+    })
+    it('should delete a user', async (done) => {
+        const res = await request(app)
+            .post('/verifyRegister')
+            .send(testUserJSON2)
+        expect(res.statusCode).toEqual(200)
+        const res2 = await request(app).delete(`/users/${testUserJSON2.username}`)
+        expect(res2.statusCode).toEqual(200)
+        done()
+    })
+    it('should fail to delete a user that doesnt exist', async (done) => {
+        const badUsername = "badUsername"
+        const res = await request(app).delete(`/users/${badUsername}`)
+        expect(res.statusCode).toEqual(400)
+        done()
+    })
     afterAll(async (done) => {
-        await UserModel.deleteMany({username: "test"})
+        await UserModel.deleteOne({username: "test"})
+        await UserModel.deleteOne({username: "test2"})
         await mongoose.connection.close()
         done()
     })

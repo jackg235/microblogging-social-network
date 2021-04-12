@@ -1,15 +1,13 @@
-function responseOkay(data, token) {
+function responseOkay(data) {
     return {
         data: data,
-        token: token,
         err: null
     }
 }
 
-function responseError(data, token, error) {
+function responseError(data, error) {
     return {
         data: data,
-        token: token,
         err: error
     }
 }
