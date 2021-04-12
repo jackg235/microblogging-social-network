@@ -15,7 +15,7 @@ function App() {
                 <Route exact path="/login" render={() => <Welcome page='Login'/>}/>
                 <Route exact path="/register" render={() => <Welcome page='Registration'/>}/>
                 <Route exact path="/video" render={() => <Room/>}/>
-                <Route exact path="/profile" render={() => <Profile/>}/>
+                <Route exact path="/profile/:id" render={(props) => <Profile profileId={props.match.params.id}/>}/>
                 <Route exact path="/explore" render={() => <Explore/>}/>
             </div>
         </Router>
