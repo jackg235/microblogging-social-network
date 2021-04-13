@@ -6,14 +6,9 @@ import {Redirect} from 'react-router-dom';
 import Navbar from './Navbar';
 import DefaultProPic from '../default_propic.jpg';
 import User from './user/User';
+import ExploreCol from './explore/ExploreCol';
 import TextField from '@material-ui/core/TextField';
 import { Divider, Grid } from '@material-ui/core';
-
-const styles = {
-    grid: {
-        // put some stuffs here
-    }
-};
 
 const followersMock = [
     {
@@ -130,8 +125,8 @@ const followersMock2 = [
     {
         userImg: DefaultProPic,
         username: 'user6',
-        firstName: 'F5',
-        lastName: 'L5',
+        firstName: 'bryan',
+        lastName: 'Nguyen3',
         regDate: '04/11/21',
         followers: [],
         following: [],
@@ -143,17 +138,7 @@ const followersMock2 = [
 class Explore extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            followers: this.getFollowers(),
-            following: this.getFollowing(),
-            suggested: this.getSuggested()
-        }
         this.logoutClick = this.logoutClick.bind(this);
-    }
-
-    logoutClick() {
-        this.props.logoutUser()
     }
 
     getFollowers() {
@@ -172,35 +157,7 @@ class Explore extends React.Component {
     }
 
     logoutClick() {
-        this.props.logoutUser()
-    }
-
-    search(query, userArr) {
-
-        const splitQuery = query.split(' ');
-        const matches = [];
-
-        splitQuery.forEach(word => 
-            {
-                if (word !== '' && !Number.isInteger(parseInt(word))) {
-                    userArr.forEach(user => {
-                        if (user.firstName.includes(word) || user.lastName.includes(word) || user.username.includes(word)) {
-                            if (!matches.includes(user)) {
-                                matches.push(user);
-                            }
-                            else {
-                                console.log(user.firstName);
-                            }
-                        }
-                    });
-                }
-            }
-        );
-        
-        const matchesUserComponents = matches.map((user) => <User user={user}/>)
-        console.log(matches);
-        return matches;
-        // now matches has the users searched for, re-render with matchesUserComponents?
+        this.props.logoutUser();
     }
 
     render() {
@@ -219,116 +176,12 @@ class Explore extends React.Component {
                 </Grid>
                 <span>&nbsp;</span>
                 <Grid container direction="row" justify="space-evenly" alignItems="stretch">
-                    <div>
-                        <Grid container spacing={1} style={styles.grid} direction="column" justify="space-evenly" alignItems="stretch">
-                            <Grid item>
-                                <h3>Followers</h3>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    size="small" 
-                                    label="Search followers" 
-                                    type="search" 
-                                    variant="outlined"
-                                    onKeyDown={(e) => {
-                                        if (e.keyCode === 13) {
-                                            const query = e.target.value.trimLeft().trimRight();
-                                            if (query === '') {
-                                                this.setState(prevState => ({
-                                                    followers: this.getFollowers(),
-                                                    following: prevState.following,
-                                                    suggested: prevState.suggested
-                                                }));
-                                            }
-                                            else {
-                                                this.setState(prevState => ({
-                                                    followers: this.search(query, this.getFollowers()),
-                                                    following: prevState.following,
-                                                    suggested: prevState.suggested
-                                                }));
-                                            }
-                                        }
-                                    }} />
-                            </Grid>
-                            {this.state.followers.map((f) => <User user={f}/>)}
-                        </Grid>
-                    </div>
-                    
-                    {/* following  */}
-                    <div>
-                        <Grid container spacing={1} style={styles.grid} direction="column" justify="space-evenly" alignItems="stretch">
-                            <Grid item>
-                                <h3>Following</h3>
-                            </Grid>
-                            <Grid item>
-                                <TextField
-                                    size="small" 
-                                    label="Search following" 
-                                    type="search" 
-                                    variant="outlined"
-                                    onKeyDown={(e) => {
-                                        if (e.keyCode === 13) {
-                                            const query = e.target.value.trimLeft().trimRight();
-                                            if (query === '') {
-                                                this.setState(prevState => ({
-                                                    followers: prevState.followers,
-                                                    following: this.getFollowing(),
-                                                    suggested: prevState.suggested
-                                                }));
-                                            }
-                                            else {
-                                                this.setState(prevState => ({
-                                                    followers: prevState.followers,
-                                                    following: this.search(query, this.getFollowing()),
-                                                    suggested: prevState.suggested
-                                                }));
-                                            }
-                                        }
-                                    }} />
-                            </Grid>
-                            {this.state.following.map((f) => <User user={f}/>)}
-                        </Grid>
-                    </div>
-
-                    {/* suggested  */}
-                    <div>
-                        <Grid container spacing={1} style={styles.grid} direction="column" justify="space-evenly" alignItems="stretch">
-                            <Grid item>
-                                <h3>Suggested</h3>
-                            </Grid>
-                            <Grid item>
-                                <TextField
-                                    size="small" 
-                                    label="Press enter to search" 
-                                    type="search" 
-                                    variant="outlined"
-                                    onKeyDown={(e) => {
-                                        if (e.keyCode === 13) {
-                                            const query = e.target.value.trimLeft().trimRight();
-                                            if (query === '') {
-                                                this.setState(prevState => ({
-                                                    followers: prevState.followers,
-                                                    following: prevState.following,
-                                                    suggested: this.getSuggested()
-                                                }));
-                                            }
-                                            else {
-                                                this.setState(prevState => ({
-                                                    followers: prevState.followers,
-                                                    following: prevState.following,
-                                                    suggested: this.search(query, this.getSuggested())
-                                                }));
-                                            }
-                                        }
-                                    }} />
-                            </Grid>
-                            {this.state.suggested.map((f) => <User user={f}/>)}
-                        </Grid>
-                    </div>
+                    <ExploreCol type="followers" users={this.getFollowers()} original={this.getFollowers()} />
+                    <ExploreCol type="following" users={this.getFollowing()} original={this.getFollowing()} />
+                    <ExploreCol type="suggested" users={this.getSuggested()} original={this.getSuggested()} />
                 </Grid>
             </div>      
         )
-
     }
 }
 

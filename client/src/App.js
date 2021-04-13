@@ -6,6 +6,8 @@ import Room from './components/video/Room';
 import Profile from './components/profile/Profile';
 import './static/stylesheets/App.css';
 import Explore from './components/Explore';
+import Stream from './components/Stream';
+
 function App() {
     return (
         <Router>
@@ -17,6 +19,7 @@ function App() {
                 <Route exact path="/video" render={() => <Room/>}/>
                 <Route exact path="/profile/:id" render={(props) => <Profile profileId={props.match.params.id}/>}/>
                 <Route exact path="/explore" render={() => <Explore/>}/>
+                <Route exact path="/stream" render={() => <Stream />}/>
             </div>
         </Router>
     );
