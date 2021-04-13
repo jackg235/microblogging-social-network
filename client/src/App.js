@@ -6,6 +6,7 @@ import Lobby from './components/video/Lobby';
 import Profile from './components/profile/Profile';
 import './static/stylesheets/App.css';
 import Explore from './components/Explore';
+import Stream from './components/Stream';
 
 function App() {
     return (
@@ -16,8 +17,10 @@ function App() {
                 <Route exact path="/login" render={() => <Welcome page='Login'/>}/>
                 <Route exact path="/register" render={() => <Welcome page='Registration'/>}/>
                 <Route exact path="/video" render={() => <Lobby/>}/>
-                <Route exact path="/profile" render={() => <Profile/>}/>
+                <Route exact path="/video" render={() => <Room/>}/>
+                <Route exact path="/profile/:id" render={(props) => <Profile profileId={props.match.params.id}/>}/>
                 <Route exact path="/explore" render={() => <Explore/>}/>
+                <Route exact path="/stream" render={() => <Stream />}/>
             </div>
         </Router>
     );
