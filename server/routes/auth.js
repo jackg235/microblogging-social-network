@@ -19,8 +19,7 @@ function verifyLogin(req, res) {
             } else {
                 const user = response.data
                 let token = signJWT(user.email, user.first, user.last, [])
-                user['token'] = token
-                const resJSON = responseOkay(user)
+                const resJSON = responseOkay(user, token)
                 res.status(200).send(resJSON)
             }
         })
@@ -36,7 +35,7 @@ function verifyRegister(req, res) {
                 res.status(400).send(resJSON)
             } else {
                 let token = signJWT(body.email, body.first, body.last, [])
-                const resJSON = responseOkay(token)
+                const resJSON = responseOkay(null, token)
                 res.status(200).send(resJSON)
             }
         })
@@ -51,7 +50,7 @@ function deleteAccount(req, res) {
                 const resJSON = responseError(null, response.err)
                 res.status(400).send(resJSON)
             } else {
-                const resJSON = responseOkay(response.data)
+                const resJSON = responseOkay(response.data, null)
                 res.status(200).send(resJSON)
             }
         })

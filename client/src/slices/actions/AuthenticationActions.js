@@ -29,6 +29,7 @@ export function login(email, password) {
                 console.log('auth login error = ' + res.err)
                 // if the login was successful, set the token in localStorage and add user data to state
                 if (!res.err) {
+                    console.log(res.data)
                     TokenManagement.setToken(res.token)
                     const user = TokenManagement.getUser()
                     dispatch(loginSuccess(user));

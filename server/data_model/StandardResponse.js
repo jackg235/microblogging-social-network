@@ -1,6 +1,7 @@
-function responseOkay(data) {
+function responseOkay(data, token) {
     return {
         data: data,
+        token: token,
         err: null
     }
 }
