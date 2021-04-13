@@ -25,7 +25,6 @@ export default function RouteProtector(ComponentToRender) {
 
         render() {
             const {authenticated} = this.props
-            console.log(authenticated)
             if (!authenticated) {
                 return <Redirect to="/"/>
             }
@@ -35,7 +34,6 @@ export default function RouteProtector(ComponentToRender) {
 
     function mapStateToProps(state) {
         const {authenticated} = state.auth;
-        console.log(state.auth)
         return {authenticated}
     }
 

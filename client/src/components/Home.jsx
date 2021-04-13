@@ -19,7 +19,6 @@ class Home extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            students: ['Jack', 'Tom', 'Cantwell', 'Frankel', 'John', 'James', 'Johnnie', 'Greg'],
             first: '',
             last: '',
             email: ''
@@ -38,7 +37,7 @@ class Home extends React.Component {
 
     render() {
         const {first, last, email, authenticated} = this.props
-        
+
         const posts = [
             {
                 postId: '3',
@@ -125,7 +124,7 @@ class Home extends React.Component {
             }
         ];
 
-        const postElements = posts.map((post) => <Post key={post.postId} post={post} />)
+        const postElements = posts.map((post) => <Post key={post.postId} post={post}/>)
 
         if (!authenticated) {
             return <Redirect to='/'/>
@@ -143,7 +142,7 @@ class Home extends React.Component {
                 </div>
 
                 <div>
-                    <CreatePost />
+                    <CreatePost/>
                 </div>
 
                 <div>
@@ -156,9 +155,8 @@ class Home extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const {first, last, email} = state.auth
-    console.log(first)
-    return {first, last, email}
+    console.log(state.auth)
+    return state.auth
 }
 
 function mapDispatchToProps(dispatch) {
