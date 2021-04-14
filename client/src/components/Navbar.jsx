@@ -14,10 +14,10 @@ class Navbar extends React.Component {
     render() {
         const {
           auth: {
-            email,
+            username,
           }
         } = this.props;
-        const userProfileLink = "http://localhost:3000/profile/" + email;
+        const userProfileLink = "http://localhost:3000/profile/" + username;
 
         return (
             <nav className="mb-1 navbar navbar-expand-lg navbar-dark orange lighten-1">
