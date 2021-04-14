@@ -63,6 +63,7 @@ const authSlice = createSlice({
             state.first = payload.first
             state.last = payload.last
             state.email = payload.email
+            state.username = payload.username
         },
         authenticateFailure: (state) => {
             state.authenticated = false

@@ -89,6 +89,8 @@ export function authenticate() {
         console.log(loggedIn)
         if (loggedIn) {
             const user = TokenManagement.getUser()
+            console.log("user in authenticate function is... ")
+            console.log(user)
             dispatch(authenticateSuccess(user))
         } else {
             dispatch(authenticateFailure())

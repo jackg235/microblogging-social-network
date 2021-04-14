@@ -18,7 +18,7 @@ function verifyLogin(req, res) {
                 res.status(400).send(resJSON)
             } else {
                 const user = response.data
-                let token = signJWT(user.email, user.first, user.last, [])
+                let token = signJWT(user.email, user.first, user.last, user.username, [])
                 const resJSON = responseOkay(user, token)
                 res.status(200).send(resJSON)
             }
@@ -34,7 +34,7 @@ function verifyRegister(req, res) {
                 const resJSON = responseError(null, response.err)
                 res.status(400).send(resJSON)
             } else {
-                let token = signJWT(body.email, body.first, body.last, [])
+                let token = signJWT(body.email, body.first, body.last, body.username, [])
                 const resJSON = responseOkay(null, token)
                 res.status(200).send(resJSON)
             }
@@ -56,7 +56,7 @@ function deleteAccount(req, res) {
         })
 }
 
-function signJWT(email, first, last, scopes) {
+function signJWT(email, first, last, username, scopes) {
     return jwt.sign({
         sub: email,
         context: {
@@ -64,11 +64,12 @@ function signJWT(email, first, last, scopes) {
             user: {
                 first: first,
                 last: last,
-                email: email
+                email: email,
+                username: username,
             }
         }
     }, "mykey", {
-        expiresIn: 60
+        expiresIn: 600
     })
 }
 

@@ -26,7 +26,7 @@ export default function RouteProtector(ComponentToRender) {
         render() {
             const {authenticated} = this.props
             if (!authenticated) {
-                return <Redirect to="/"/>
+                // return <Redirect to="/"/>
             }
             return (<ComponentToRender {...this.props}/>);
         }
