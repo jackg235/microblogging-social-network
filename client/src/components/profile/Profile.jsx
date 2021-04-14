@@ -1,7 +1,12 @@
 import React from 'react'
+import RouteProtector from '../../hoc/RouteProtector'
+import {Redirect} from 'react-router-dom'
 import ProfileHeader from './ProfileHeader'
 import Navbar from '../Navbar'
 import Post from '../posts/Post'
+import {getUser} from '../../slices/actions/UserActions'
+
+import {connect} from 'react-redux'
 
 class Profile extends React.Component {
 
@@ -25,13 +30,19 @@ class Profile extends React.Component {
     }
 
     componentDidMount() {
-        //getProfileUser()
+        this.props.getProfile(this.props.profileId);
     }
 
     render() {
 
+        const { authenticated } = this.props
+
         // const postElements = posts.map((post) => <Post key={post.postId} post={post} />)
 
+
+        if (!authenticated) {
+            return <Redirect to='/'/>
+        }
         return (
             <div>
                 <Navbar/>
@@ -48,4 +59,16 @@ class Profile extends React.Component {
     }
 }
 
-export default Profile
+const mapStateToProps = (state) => ({
+    authenticated: state.auth.authenticated
+});
+
+function mapDispatchToProps(dispatch) {
+    console.log('dispatching')
+    return ({
+        getProfile: (username) => dispatch(getUser(username))
+    })
+}
+
+const ProfileConnected = connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default RouteProtector(ProfileConnected)
