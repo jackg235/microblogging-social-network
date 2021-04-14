@@ -23,6 +23,8 @@ class TokenManagement {
 
   getConfirm = () => {
     let answer = decode(this.getToken());
+    console.log("decoded token... ")
+    console.log(answer)
     return answer;
   };
 

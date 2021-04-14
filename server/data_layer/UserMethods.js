@@ -37,7 +37,7 @@ async function getUser(username) {
     try {
         const response = await UserModel.find({username: username})
         if (response.length == 0) {
-            return modelResponse(null, "Error: can't login with provided credentials")
+            return modelResponse(null, "Error: can't find user with provided credentials")
         }
         return modelResponse(response[0], null)
     } catch (e) {

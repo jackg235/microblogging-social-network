@@ -40,50 +40,9 @@ class ProfileHeader extends React.Component {
             auth: {
               authenticated,
               email,
-            }
+            },
+            currUser
         } = this.props;
-
-        const users = [
-            {
-                email: "jackgoettle23@gmail.com",
-                first: "jack",
-                last: "goettle",
-                followers: ["ddereje7@gmail.com", "bryan@gmail.com"],
-                following: ["bryan@gmail.com"],
-                userImg: DefaultProPic,
-                userSince: "04/09/21",
-            },
-            {
-                email: "ddereje7@gmail.com",
-                first: "Dag",
-                last: "Dereje",
-                followers: [],
-                following: ["jackgoettle23@gmail.com"],
-                userImg: DefaultProPic,
-                userSince: "04/10/21",
-            },
-            {
-                email: "bryan@gmail.com",
-                first: "Bryan",
-                last: "Nguyen",
-                followers: ["jackgoettle23@gmail.com"],
-                following: ["jackgoettle23@gmail.com"],
-                userImg: DefaultProPic,
-                userSince: "04/11/21",
-            }
-        ];
-        let currUser = {
-            email: "email@gmail.com",
-            first: "first",
-            last: "last",
-            userImg: DefaultProPic,
-        };
-        for (let i = 0; i < users.length; i++) {
-            if (users[i].email === profileId) {
-                currUser = users[i];
-                break;
-            }
-        }
 
         const followButton = 
             currUser.email !== email ? (
@@ -125,7 +84,7 @@ class ProfileHeader extends React.Component {
             <div>
                 <Card>
                     <CardMedia
-                        image={currUser.userImg}
+                        image={DefaultProPic}
                         title="Profile image"
                         className={classes.image}
                         style={styles.image}
@@ -137,16 +96,18 @@ class ProfileHeader extends React.Component {
                         <Button
                         // onclick={showFollowers()}
                         > 
-                            {currUser.followers.length} Followers
+                            {/* {currUser.followers.length}  */}
+                            Followers
                         </Button>
                         <Button
                         // onclick={showFollowing()}
                         > 
-                            {currUser.following.length} Following
+                            {/* {currUser.following.length}  */}
+                            Following
                         </Button>
                     </CardContent>
                     <CardContent>
-                        User Since {currUser.userSince}
+                        User Since {currUser.registrationDate}
                     </CardContent>
                     <CardContent>
                         {followButton}
@@ -163,7 +124,8 @@ class ProfileHeader extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    auth: state.auth
-  });
+    auth: state.auth,
+    currUser: state.users.profileUser,
+});
 
-  export default connect(mapStateToProps)(withStyles(styles)(ProfileHeader));
+export default connect(mapStateToProps)(withStyles(styles)(ProfileHeader));

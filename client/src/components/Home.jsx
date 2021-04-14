@@ -36,8 +36,8 @@ class Home extends React.Component {
 
 
     render() {
-        const {first, last, email, authenticated} = this.props
-
+        const {first, last, email, username, authenticated} = this.props
+        
         const posts = [
             {
                 postId: '3',
@@ -126,7 +126,7 @@ class Home extends React.Component {
 
         const postElements = posts.map((post) => <Post key={post.postId} post={post}/>)
 
-        const personalProfileLink = "/profile/" + email;
+        const personalProfileLink = "/profile/" + username;
 
         if (!authenticated) {
             return <Redirect to='/'/>
@@ -138,6 +138,7 @@ class Home extends React.Component {
                     <p>My first name is {first}</p>
                     <p>My last name is {last}</p>
                     <p>My email is {email}</p>
+                    <p>My username is {username}</p>
                     <button onClick={this.logoutClick}>Click me to log out</button>
                     <Link to="/video">Click me to go to video chat</Link>
                     <Link to={personalProfileLink}>Click me to go to your own profile</Link>
