@@ -35,7 +35,7 @@ app.post('/posts/new', postRoutes.new)
 
 app.delete('/posts/delete', postRoutes.delete)
 
-app.get('/posts/get', postRoutes.get)
+app.get('/posts/get/:postId', postRoutes.get)
 
 app.post('/posts/addComment', postRoutes.addComment)
 

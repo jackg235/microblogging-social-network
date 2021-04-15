@@ -5,26 +5,25 @@ const {responseError, responseOkay} = require('../data_model/StandardResponse')
 
 function newPost(req, res) {
     const body = req.body
-    //const post = PostModel.newPost(body.username, body.title, body.content, body.media);
-    const post = null
-    PostMethods.newPost(post)
-        .then((err) => {
-            if (err) {
-                const resJSON = responseError(null, null, err)
+    PostMethods.newPost(body)
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, response.err)
                 res.status(400).send(resJSON)
             } else {
-                const resJSON = responseOkay(null, null)
+                const resJSON = responseOkay(response.data, null)
                 res.status(200).send(resJSON)
             }
         })
 }
 
 function deletePost(req, res) {
+    const username = req.body.username
     const postId = req.body.postId
-    PostMethods.deletePost(postId)
-        .then((err) => {
-            if (err) {
-                const resJSON = responseError(null, null, err)
+    PostMethods.deletePost(username, postId)
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, null, response.err)
                 res.status(400).send(resJSON)
             } else {
                 const resJSON = responseOkay(null, null)
@@ -35,14 +34,14 @@ function deletePost(req, res) {
 }
 
 function getPost(req, res) {
-    const postId = req.body.postId
+    const postId = req.params.postId
     PostMethods.getPost(postId)
-        .then((data, err) => {
-            if (err) {
-                const resJSON = responseError(null, null, err)
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, null, response.err)
                 res.status(400).send(resJSON)
             } else {
-                const resJSON = responseOkay(data, null)
+                const resJSON = responseOkay(response.data, null)
                 res.status(200).send(resJSON)
             }
         })
