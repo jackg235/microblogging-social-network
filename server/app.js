@@ -59,4 +59,6 @@ app.get('/voice/token', chatRoutes.getVoiceToken)
 
 app.post('/voice/token', chatRoutes.postVoiceToken)
 
+app.get('/universal/token', chatRoutes.getUniversalToken)
+
 module.exports = app;
