@@ -6,7 +6,7 @@ import Lobby from './components/video/Lobby';
 import Profile from './components/profile/Profile';
 import './static/stylesheets/App.css';
 import Explore from './components/Explore';
-import Stream from './components/Stream';
+import Chat from './components/Chat';
 
 function App() {
     return (
@@ -19,7 +19,7 @@ function App() {
                 <Route exact path="/video" render={() => <Lobby/>}/>
                 <Route exact path="/profile/:id" render={(props) => <Profile profileId={props.match.params.id}/>}/>
                 <Route exact path="/explore" render={() => <Explore/>}/>
-                <Route exact path="/stream" render={() => <Stream/>}/>
+                <Route exact path="/chat" render={() => <Chat/>}/>
             </div>
         </Router>
     );

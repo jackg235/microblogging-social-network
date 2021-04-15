@@ -41,7 +41,7 @@ class Navbar extends React.Component {
                             <a className="nav-link" href="http://localhost:3000/explore">Explore</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="#">Chat</a>
+                            <a className="nav-link" href="/chat">Chat</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="/video">Stream</a>
