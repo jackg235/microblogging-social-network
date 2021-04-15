@@ -6,7 +6,7 @@ const generateToken = config => {
     return new AccessToken(
         config.twilio.accountSid,
         config.twilio.apiKey,
-        config.twilio.apiSecret
+        config.twilio.apiSecret,
     );
 };
 

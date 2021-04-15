@@ -13,7 +13,9 @@ import Badge from 'react-bootstrap/Badge';
 import '../static/stylesheets/Stream.css';
 import Card from 'react-bootstrap/Card';
 import ChatSidebar from './chat/ChatSidebar';
-import ChatWindow from './chat/ChatWindow'
+import ChatWindow from './chat/ChatWindow';
+import axios from "axios";
+const TwilioChat = require("twilio-chat");
 
 const usersMock = [
     {
@@ -79,15 +81,54 @@ class Chat extends React.Component {
         this.state = {
             contacts: this.getContactsWithMessages(this.props.auth),
             current: '',
-            client: this.getChatClient(this.props.auth)
+            client: '',
         }
 
         this.logoutClick = this.logoutClick.bind(this);
         this.updateChatWindow = this.updateChatWindow.bind(this);
     }
 
-    getChatClient(auth) {
-        return null;
+    setTwilioChatClient(token) {
+        TwilioChat.Client.create(token).then(client => {
+            this.setState(prevState => {
+                return {
+                    contacts: prevState.contacts,
+                    current: prevState.current,
+                    client: client
+                }
+            });
+        }).catch(err => {
+            console.log('hi2');
+            console.log(err);
+        });
+    }
+
+    componentDidMount() {
+        // const identity = this.props.auth.email;
+        const identity = 'b@gmail.com'
+
+        axios.get('http://localhost:5000/chat/token', {params: { identity: identity }}).then(res => {
+            try {
+                console.log('yoeorg12', res.data.token);
+                this.setTwilioChatClient(res.data.token);
+                
+            } catch (err) {
+                console.log('error getting twilio chat client');
+            }
+        }).catch(error => {
+            if (error.response) {
+                // Request made and server responded
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.log(error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log('Error', error.message);
+            }
+        });
     }
 
     getContactsWithMessages(auth) {

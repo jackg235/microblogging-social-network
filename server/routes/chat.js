@@ -21,7 +21,6 @@ function postToken(req, res) {
     const identity = req.body.identity;
     const token = chatToken(identity, config);
     sendTokenResponse(token, res);
-
 }
 
 function getVideoToken(req, res) {
