@@ -11,8 +11,6 @@ function modelResponse(data, error) {
 async function createUser(user) {
     const password = user.password
     user.password = encrypt(password)
-    console.log("CREATING USER")
-    console.log(user)
     const newUser = new UserModel(user)
     try {
         const data = await newUser.save()
@@ -30,7 +28,6 @@ function encrypt(input) {
 }
 
 async function loginUser(email, password) {
-    console.log('trying to login ' + email + ' ' + password)
     try {
         const response = await UserModel.find({email: email})
         if (response.length == 0) {
@@ -43,7 +40,6 @@ async function loginUser(email, password) {
             return modelResponse(null, "Error: can't login with provided credentials")
         }
     } catch (e) {
-        console.log(e)
         return modelResponse(null, e)
     }
 }
@@ -86,7 +82,6 @@ async function followUser(username, userIDToFollow) {
             if (index > -1) {
                 following.splice(index, 1);
             }
-            console.log(following)
         }
         // follow user if not in following
         else {

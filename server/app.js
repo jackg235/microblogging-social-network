@@ -35,7 +35,7 @@ app.post('/posts/new', postRoutes.new)
 
 app.delete('/posts/delete', postRoutes.delete)
 
-app.get('/posts/get', postRoutes.get)
+app.get('/posts/get/:postId', postRoutes.get)
 
 app.post('/posts/addComment', postRoutes.addComment)
 
@@ -58,5 +58,7 @@ app.post('/video/token', chatRoutes.postVideoToken)
 app.get('/voice/token', chatRoutes.getVoiceToken)
 
 app.post('/voice/token', chatRoutes.postVoiceToken)
+
+app.get('/universal/token', chatRoutes.getUniversalToken)
 
 module.exports = app;

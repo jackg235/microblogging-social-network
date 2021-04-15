@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const {chatToken, videoToken, voiceToken} = require('../chat/tokens')
+const {chatToken, videoToken, voiceToken, universalToken} = require('../chat/tokens')
 const config = require('../chat/config')
 
 const sendTokenResponse = (token, res) => {
@@ -50,6 +50,13 @@ function postVoiceToken(req, res) {
     sendTokenResponse(token, res);
 }
 
+function getUniversalToken(req, res) {
+    const identity = req.query.identity;
+    const room = req.query.room;
+    const token = universalToken(identity, room, config)
+    sendTokenResponse(token, res);
+}
+
 module.exports = {
     getToken: getToken,
     postToken: postToken,
@@ -57,4 +64,5 @@ module.exports = {
     postVideoToken: postVideoToken,
     getVoiceToken: getVoiceToken,
     postVoiceToken: postVoiceToken,
+    getUniversalToken: getUniversalToken
 }
