@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 
 const styles = {
     button: {
-        "text-align": "left"
+        // "text-align": "left"
     }
 }
 
@@ -19,7 +19,7 @@ class StreamWindow extends React.Component {
 
     render() {
         return (
-            <Button style={styles.button} disabled block className="pb-3" variant="outline-info">Your Stream
+            <Button disabled block className="pb-3" variant="outline-info">Your Stream
                 <Container className="mt-4" fluid>
                     <Row>
                     <Button block className="mb-2 mx-2" variant="outline-info">Person1</Button>
