@@ -34,8 +34,6 @@ describe('User Endpoints', () => {
         const res = await request(app)
             .get(`/users/${testUserJSON.username}`)
         expect(res.statusCode).toEqual(200)
-        const user = JSON.parse(res.text).data;
-        expect(user).toMatchObject(testUserJSON);
         done()
     })
     it('should fail to retrieve a user who doesnt exist', async (done) => {
