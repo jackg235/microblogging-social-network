@@ -2,6 +2,7 @@ const request = require('supertest')
 const mongoose = require('mongoose')
 const app = require('../app')
 const UserModel = require('../data_model/User')
+const bcrypt = require('bcryptjs');
 
 const testUserJSON = {
     first: "jack",

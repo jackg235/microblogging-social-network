@@ -9,6 +9,7 @@ let userSchema = new mongoose.Schema({
     username: {type: String, required: true, unique: true},
     registrationDate: {type: Date, default: Date.now()},
     following: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
+    followers: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
     posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
     img:
         {

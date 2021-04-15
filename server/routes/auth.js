@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const {createUser, loginUser, deleteUser} = require("../data_layer/UserMethods")
 const {responseError, responseOkay} = require('../data_model/StandardResponse')
+const bcrypt = require('bcryptjs');
 
 function testAPI(req, res) {
     console.log('testing api')

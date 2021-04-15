@@ -1,4 +1,5 @@
 const UserModel = require('../data_model/User')
+const bcrypt = require('bcryptjs');
 
 function modelResponse(data, error) {
     return {
@@ -8,6 +9,10 @@ function modelResponse(data, error) {
 }
 
 async function createUser(user) {
+    const password = user.password
+    user.password = encrypt(password)
+    console.log("CREATING USER")
+    console.log(user)
     const newUser = new UserModel(user)
     try {
         const data = await newUser.save()
@@ -20,13 +25,23 @@ async function createUser(user) {
     }
 }
 
+function encrypt(input) {
+    return bcrypt.hashSync(input, 10);
+}
+
 async function loginUser(email, password) {
+    console.log('trying to login ' + email + ' ' + password)
     try {
-        const response = await UserModel.find({email: email, password: password})
+        const response = await UserModel.find({email: email})
         if (response.length == 0) {
             return modelResponse(null, "Error: can't login with provided credentials")
         }
-        return modelResponse(response[0], null)
+        const user = response[0]
+        if (bcrypt.compareSync(password, user.password)) {
+            return modelResponse(user, null)
+        } else {
+            return modelResponse(null, "Error: can't login with provided credentials")
+        }
     } catch (e) {
         console.log(e)
         return modelResponse(null, e)
