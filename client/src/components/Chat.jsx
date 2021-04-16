@@ -20,6 +20,7 @@ const TwilioChat = require("twilio-chat");
 const usersMock = [
     {
         userImg: DefaultProPic,
+        email: '1@gmail.com',
         username: 'user1',
         firstName: 'F1',
         lastName: 'L1',
@@ -31,6 +32,7 @@ const usersMock = [
     },
     {
         userImg: DefaultProPic,
+        email: '2@gmail.com',
         username: 'user2',
         firstName: 'F2',
         lastName: 'L2',
@@ -41,6 +43,7 @@ const usersMock = [
         hidden: [],
     },{
         userImg: DefaultProPic,
+        email: '3@gmail.com',
         username: 'user3',
         firstName: 'F3',
         lastName: 'L3',
@@ -52,6 +55,7 @@ const usersMock = [
     },
     {
         userImg: DefaultProPic,
+        email: '4@gmail.com',
         username: 'user322r23r4',
         firstName: 'F4',
         lastName: 'L4',
@@ -63,6 +67,7 @@ const usersMock = [
     },
     {
         userImg: DefaultProPic,
+        email: '5@gmail.com',
         username: 'user5',
         firstName: 'F5',
         lastName: 'L5',
@@ -80,42 +85,46 @@ class Chat extends React.Component {
 
         this.state = {
             contacts: this.getContactsWithMessages(this.props.auth),
-            current: '',
-            client: '',
+            // current: '',
         }
 
         this.logoutClick = this.logoutClick.bind(this);
         this.updateChatWindow = this.updateChatWindow.bind(this);
     }
 
+    renewTokensAsNeeded = (client) => {
+        client.on('tokenAboutToExpire', () => {
+            this.getToken().then(token => {
+                client.updateToken(token);
+            });
+        });
+
+        client.on('tokenExpired', () => {
+            this.getToken().then(token => {
+                client.updateToken(token);
+            });
+        });
+    };
+
     setTwilioChatClient(token) {
         TwilioChat.Client.create(token).then(client => {
+            // console.log(client);
+
+            this.renewTokensAsNeeded(client);
             this.setState(prevState => {
-                return {
-                    contacts: prevState.contacts,
-                    current: prevState.current,
-                    client: client
-                }
+                return { client: client }
             });
         }).catch(err => {
-            console.log('hi2');
             console.log(err);
         });
     }
 
-    componentDidMount() {
+    getToken() {
         // const identity = this.props.auth.email;
-        const identity = 'b@gmail.com'
-
-        axios.get('http://localhost:5000/chat/token', {params: { identity: identity }}).then(res => {
-            try {
-                console.log('yoeorg12', res.data.token);
-                this.setTwilioChatClient(res.data.token);
-                
-            } catch (err) {
-                console.log('error getting twilio chat client');
-            }
-        }).catch(error => {
+        const identity = 'b@gmail.com';
+        const token = axios.get('http://localhost:5000/universal/token', {params: { identity: identity }})
+            .then(res => res.data.token)
+            .catch(error => {
             if (error.response) {
                 // Request made and server responded
                 console.log(error.response.data);
@@ -129,6 +138,16 @@ class Chat extends React.Component {
                 console.log('Error', error.message);
             }
         });
+        return token;
+    }
+
+    getMe = () => {
+        return 'b@gmail.com';
+        // return this.props.auth.email;
+    };
+
+    componentDidMount() {
+        this.getToken().then(token => {this.setTwilioChatClient(token)});
     }
 
     getContactsWithMessages(auth) {
@@ -142,14 +161,9 @@ class Chat extends React.Component {
     }
 
     updateChatWindow(user) {
+
         this.setState(prevState => {
-            return {
-                // should I use this or fetch contacts again in case they've changed?
-                // contacts: prevState.users,
-                contacts: this.getContactsWithMessages(this.props.auth),
-                current: user,
-                client: prevState.client,
-            }
+            return { current: user }
         });
     }
 
@@ -157,8 +171,6 @@ class Chat extends React.Component {
         // if (!this.props.auth.authenticated) {
         //     return <Redirect to='/'/>
         // }
-
-        const ChatClient = null;
 
         return (
             <div>
@@ -174,7 +186,7 @@ class Chat extends React.Component {
                             <ChatSidebar users={this.state.contacts} currMessaging={this.updateChatWindow}/>
                         </Col>
                         <Col classname="stream-sidebar">
-                            <ChatWindow current={this.state.current}/>
+                            <ChatWindow current={this.state.current} client={this.state.client} getMe={this.getMe}/>
                         </Col>
                     </Row>
                 </Container>

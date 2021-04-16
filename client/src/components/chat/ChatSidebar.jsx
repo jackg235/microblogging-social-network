@@ -19,15 +19,28 @@ class ChatSidebar extends React.Component {
         }
     }
 
-    render() {
+    componentDidUpdate() {
+        if (this.state.users === undefined && this.props.users !== undefined) {
+            this.setState({ users: this.props.users });
+        }
+        // console.log('show this once please');
+    }
 
-        return (
-            <Button disabled block className="pb-3" variant="outline-info">
-                <Container className="mt-4" fluid>
-                    {this.state.users.map((u) => <SidebarUser user={u} currMessaging={this.props.currMessaging}/>)}
-                </Container>
-            </Button>
-        )
+    render() {
+        if (this.props.users === undefined) {
+            return null;
+        } else {
+            return (
+                <Button disabled block className="pb-3" variant="outline-info"><p></p>
+                    <Container className="mt-4" fluid>
+                        {this.state.users.map((u) => <SidebarUser user={u} currMessaging={this.props.currMessaging}/>)}
+                    </Container>
+                </Button>
+            )
+        }
+
+
+        
     }
 }
 
