@@ -14,8 +14,7 @@ import '../static/stylesheets/Stream.css';
 import Card from 'react-bootstrap/Card';
 import ChatSidebar from './chat/ChatSidebar';
 import ChatWindow from './chat/ChatWindow';
-import axios from "axios";
-const TwilioChat = require("twilio-chat");
+
 
 const usersMock = [
     {
@@ -84,70 +83,69 @@ class Chat extends React.Component {
         super(props);
 
         this.state = {
-            contacts: this.getContactsWithMessages(this.props.auth),
-            // current: '',
+            contacts: []
         }
-
         this.logoutClick = this.logoutClick.bind(this);
         this.updateChatWindow = this.updateChatWindow.bind(this);
     }
 
-    renewTokensAsNeeded = (client) => {
-        client.on('tokenAboutToExpire', () => {
-            this.getToken().then(token => {
-                client.updateToken(token);
-            });
-        });
+    // renewTokensAsNeeded = (client) => {
+    //     client.on('tokenAboutToExpire', () => {
+    //         this.getToken().then(token => {
+    //             client.updateToken(token);
+    //         });
+    //     });
 
-        client.on('tokenExpired', () => {
-            this.getToken().then(token => {
-                client.updateToken(token);
-            });
-        });
-    };
+    //     client.on('tokenExpired', () => {
+    //         this.getToken().then(token => {
+    //             client.updateToken(token);
+    //         });
+    //     });
+    // };
 
-    setTwilioChatClient(token) {
-        TwilioChat.Client.create(token).then(client => {
-            // console.log(client);
+    // getTwilioChatClient(token) {
+    //     return TwilioChat.Client.create(token).then(client => {
+    //         // console.log(client);
 
-            this.renewTokensAsNeeded(client);
-            this.setState(prevState => {
-                return { client: client }
-            });
-        }).catch(err => {
-            console.log(err);
-        });
-    }
+    //         this.renewTokensAsNeeded(client);
+    //         // this.setState(prevState => {
+    //         //     return { client: client }
+    //         // });
+    //         return client;
+    //     }).catch(err => {
+    //         console.log(err);
+    //     });
+    // }
 
-    getToken() {
-        // const identity = this.props.auth.email;
-        const identity = 'b@gmail.com';
-        const token = axios.get('http://localhost:5000/universal/token', {params: { identity: identity }})
-            .then(res => res.data.token)
-            .catch(error => {
-            if (error.response) {
-                // Request made and server responded
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            } else if (error.request) {
-                // The request was made but no response was received
-                console.log(error.request);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Error', error.message);
-            }
-        });
-        return token;
-    }
+    // getToken() {
+    //     // const identity = this.props.auth.email;
+    //     const identity = 'b@gmail.com';
+    //     const token = axios.get('http://localhost:5000/universal/token', {params: { identity: identity }})
+    //         .then(res => res.data.token)
+    //         .catch(error => {
+    //         if (error.response) {
+    //             // Request made and server responded
+    //             console.log(error.response.data);
+    //             console.log(error.response.status);
+    //             console.log(error.response.headers);
+    //         } else if (error.request) {
+    //             // The request was made but no response was received
+    //             console.log(error.request);
+    //         } else {
+    //             // Something happened in setting up the request that triggered an Error
+    //             console.log('Error', error.message);
+    //         }
+    //     });
+    //     return token;
+    // }
 
-    getMe = () => {
+    getIdentity = () => {
         return 'b@gmail.com';
         // return this.props.auth.email;
     };
 
-    componentDidMount() {
-        this.getToken().then(token => {this.setTwilioChatClient(token)});
+    deleteConvo = (email) => {
+        
     }
 
     getContactsWithMessages(auth) {
@@ -155,23 +153,26 @@ class Chat extends React.Component {
         return usersMock;
     }
 
+    componentDidMount() {
+        console.log('main mounted');
+        this.setState({ contacts: this.getContactsWithMessages(this.props.auth)});
+    }
+
+
     // something w redux?
     logoutClick() {
         this.props.logoutUser();
     }
 
     updateChatWindow(user) {
-
-        this.setState(prevState => {
-            return { current: user }
-        });
+        this.setState({ current: user });
     }
 
     render() {
         // if (!this.props.auth.authenticated) {
         //     return <Redirect to='/'/>
         // }
-
+        console.log('rerender');
         return (
             <div>
                 <Navbar/>
@@ -186,7 +187,7 @@ class Chat extends React.Component {
                             <ChatSidebar users={this.state.contacts} currMessaging={this.updateChatWindow}/>
                         </Col>
                         <Col classname="stream-sidebar">
-                            <ChatWindow current={this.state.current} client={this.state.client} getMe={this.getMe}/>
+                            <ChatWindow current={this.state.current} email={this.getIdentity()}/>
                         </Col>
                     </Row>
                 </Container>
