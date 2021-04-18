@@ -151,10 +151,11 @@ class ChatWindow extends React.Component {
 
         const sendMessageComponent = this.state.channel !== undefined ? 
             <Row className="mt-2">
+                {/* <input type="hidden" value="something"/> */}
                 <Col xs={11}>
                     <Form className="mb-1">
                         <Form.Group>
-                            <Form.Control onKeyDown={this.handleKeyDown} style={styles.form} id="send-inpt" placeholder="Enter message" />
+                            <Form.Control autoComplete="off" onKeyDown={this.handleKeyDown} style={styles.form} id="send-inpt" placeholder="Enter message" />
                         </Form.Group>
                     </Form>
                 </Col>
