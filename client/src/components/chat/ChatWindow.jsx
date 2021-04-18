@@ -119,11 +119,28 @@ class ChatWindow extends React.Component {
 
     render() {
         const userTo = this.props.current !== undefined ? this.props.current.username : '';
-        const messageComps = this.state.messages.length !== 0 ? this.state.messages.map(message =>
-            <Row key={message.sid}>
-                <ChatMessage message={message} />
-            </Row>
-        ): '';
+
+        const sendingStyle = {
+            span: 5
+        }
+
+        const receiveStyle = {
+            span: 5,
+            offset: 7
+        }
+
+        const messageComps = this.state.messages.length !== 0 ? this.state.messages.map(message => {
+            const author = message.state.author;
+            const styling = author.trim().toLowerCase() === this.props.email.trim().toLowerCase() ? sendingStyle : receiveStyle;
+            // const styling = author.trim().toLowerCase() === this.props.email.trim().toLowerCase() ? receiveStyle : sendingStyle;
+            return (
+                <Row key={message.sid}>
+                    <Col xs={styling}>
+                        <ChatMessage message={message} />
+                    </Col>
+                </Row>
+            )
+        }): '';
 
         const sendMessageComponent = this.state.channel !== undefined ? 
             <Row className="mt-2">
@@ -140,21 +157,18 @@ class ChatWindow extends React.Component {
                 
             </Row> : '';
 
-        const dummyDiv = <div style={{ float:"left", clear: "both" }}
-                id="dummy">
-            </div>;
-
         return (
-            <Button style={styles.button} disabled block className="pb-3" variant="outline-info">
+            <Button style={styles.button} disabled block className="" variant="outline-info">
                 <Container className="mt-4" fluid>
                     
                     <Row>
                         <Button onClick={this.onClick} block className="mb-2 mx-2" variant="outline-info">Click to print this.state to console</Button>
                     </Row>
                     {messageComps}
+                    {sendMessageComponent}
                 </Container>
-                {sendMessageComponent}
-                {dummyDiv}
+                {/* used to scroll to the bottom on new message received */}
+                <div style={{ float:"left", clear: "both" }} id="dummy" />
             </Button>
             
         )

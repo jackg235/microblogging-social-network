@@ -9,11 +9,11 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 const styles = {
     img: {
-        // 'min-width': '100%',
-        // 'min-height': '100%',
+        'min-width': '80%',
+        'min-height': '80%',
         'height': 'auto',
         'width': '1.75vmax'
-    }
+    },
 }
 
 class SidebarUser extends React.Component {
@@ -28,12 +28,12 @@ class SidebarUser extends React.Component {
 
     render() {
         return (
-            <Row>
+            <Row className="flex-nowrap overflow-hidden">
                 <Col xs={2}>
-                    <Image className="mt-1" style={styles.img} src={this.props.user.userImg} rounded /> 
+                    <Image className="" style={styles.img} src={this.props.user.userImg} rounded /> 
                 </Col>
                 <Col xs={8}>
-                    <Button onClick={this.onClick} block className="mb-2" variant="outline-info">{this.props.user.username}</Button>
+                    <Button onClick={this.onClick} block className="mb-2 overflow-hidden" variant="outline-info">{this.props.user.username}</Button>
                 </Col>
                 <Col xs={2}>
                     <DeleteForeverIcon onClick={() => (this.props.deleteConvo(this.props.user.email))} className="mt-2"/>
