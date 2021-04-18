@@ -100,7 +100,7 @@ class ChatWindow extends React.Component {
         console.log('channel',this.state.channel);
     }
 
-    sendMessage(ev) {
+    sendMessage() {
         const input = document.getElementById('send-inpt').value
         document.getElementById('send-inpt').value = null;
         document.getElementById('send-inpt').focus();
@@ -115,6 +115,13 @@ class ChatWindow extends React.Component {
     // scroll down on component update
     scrollToBottom = () => {
         document.getElementById('dummy').scrollIntoView({ behavior: "smooth" });
+    }
+
+    handleKeyDown = (ev) => {
+        if (ev.keyCode === 13) {
+            ev.preventDefault();
+            this.sendMessage();
+        }
     }
 
     render() {
@@ -147,7 +154,7 @@ class ChatWindow extends React.Component {
                 <Col xs={11}>
                     <Form className="mb-1">
                         <Form.Group>
-                            <Form.Control style={styles.form} id="send-inpt" placeholder="Enter message" />
+                            <Form.Control onKeyDown={this.handleKeyDown} style={styles.form} id="send-inpt" placeholder="Enter message" />
                         </Form.Group>
                     </Form>
                 </Col>
