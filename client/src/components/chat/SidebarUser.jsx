@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
 import Col from 'react-bootstrap/Col';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 const styles = {
     img: {
@@ -31,8 +32,11 @@ class SidebarUser extends React.Component {
                 <Col xs={2}>
                     <Image className="mt-1" style={styles.img} src={this.props.user.userImg} rounded /> 
                 </Col>
-                <Col>
-                    <Button onClick={this.onClick} block className="mb-2 mx-2" variant="outline-info">{this.props.user.username}</Button>
+                <Col xs={8}>
+                    <Button onClick={this.onClick} block className="mb-2" variant="outline-info">{this.props.user.username}</Button>
+                </Col>
+                <Col xs={2}>
+                    <DeleteForeverIcon onClick={() => (this.props.deleteConvo(this.props.user.email))} className="mt-2"/>
                 </Col>
             </Row>
         )

@@ -5,129 +5,158 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
+import ChatMessage from './ChatMessage';
+import Form from 'react-bootstrap/Form';
+import { getChatClient, getChannel } from "./TwilioUtils"
 
 const styles = {
     button: {
-        "text-align": "left"
+        "text-align": "left",
+        "overflow-y": "scroll",
+        "overflow-x": "hidden",
+        "max-height": "75vh"
+    },
+    form: {
+        "width": "100%",
     }
 }
 
 class ChatWindow extends React.Component {
     constructor(props) {
         super(props);
-
+        this.messagesEndRef = React.createRef();
         this.state = {
             messages: []
         };
-
+        
         this.onClick = this.onClick.bind(this);
-    }
-
-    getChannel(cli) {
-        console.log(cli);
-        return cli.getChannelByUniqueName(`${this.props.current.email}:${this.props.getMe()}`).then(room => {
-            console.log(room);
-            return room;
-        }).catch(e => {
-            return cli.getChannelByUniqueName(`${this.props.getMe()}:${this.props.current.email}`).then(room => {
-                console.log(room);
-                return room;
-            }).catch(e => {
-                // Make new channel
-                return cli.createChannel(
-                    {
-                        uniqueName: `${this.props.getMe()}:${this.props.current.email}`,
-                        friendlyName: `${this.props.getMe()}:${this.props.current.email}`,
-                    }
-                ).then(room => {
-                    console.log(room);
-                    return room;
-                }).catch(e => {
-                    console.log('error making or finding channels...');
-                });
-            });
-        });
+        this.sendMessage = this.sendMessage.bind(this);
+        this.handleMessageAdded = this.handleMessageAdded.bind(this);
     }
 
     handleMessageAdded(message) {
+        console.log(message);
         const { messages } = this.state;
         this.setState(prevState => {
+            console.log(messages, message);
+            console.log('dog what?');
             return {
                 messages: [...messages, message],
             }
         });
     }
 
+    // get the client once
+    componentDidMount() {
+        getChatClient().then(client => {
+            this.setState({ client: client });
+        }).catch(err => console.log(err));
+    }
+
 
     componentDidUpdate(prevProps) {
-        console.log('yoooooooo?');
         if (prevProps.current !== this.props.current) {
+            const email = this.props.current.email;
 
-            // event listener
-            this.props.client.on('channelJoined', (channel) => {
+            getChannel(this.state.client, this.props.email, this.props.current.email).then((channel) => {
+                console.log();
+                
+                if (channel._events.messageAdded.length !== 2) {
+                    channel.on('messageAdded', this.handleMessageAdded);
+                }
+                
+                console.log('here', channel);
+
+                if (channel.channelState.status !== 'joined') {
+                    console.log('joining now');
+                    channel.join().catch(e => {
+                        console.log('error joining channel');
+                    });
+                } else {
+                    console.log('joined old channel');
+                }
+
                 channel.getMessages().then(messages => {
                     this.setState(prevState => {
                         return {
+                            current: this.props.current,
+                            channel: channel,
                             messages: messages.items || [],
                         }
                     });
                 })
-            });
-
-            const email = this.props.current.email;
-
-            console.log('state', JSON.stringify(this.state));
-
-            this.getChannel(this.props.client).then((channel) => {
-                console.log('here', channel);
-                channel.on('messageAdded', this.handleMessageAdded);
-                if (channel.channelState.status !== 'joined') {
-                    channel.join().then(() => {
-                        this.setState(prevState => {
-                            console.log('32898');
-                            return {
-                                current: this.props.current,
-                                channel: channel,
-                            }
-                        });
-                    }).catch(e => {
-                        console.log('error joining channel');
-                    });
-                } else {
-                    this.setState(prevState => {
-                        return {
-                            current: this.props.current,
-                            channel: channel
-                        }
-                    });
-                }
             }).catch(e => {
                 console.log('222');
                 alert(e, 'error getting channel');
             });
         }
+        this.scrollToBottom();
     }
 
     onClick() {
-        console.log(this.props.client);
-        console.log(this.state.current);
-        console.log(this.state.messages);
-        console.log(this.state.channel);
+        console.log('client', this.state.client);
+        console.log('current',this.state.current);
+        console.log('messages',this.state.messages);
+        console.log('channel',this.state.channel);
+    }
+
+    sendMessage(ev) {
+        const input = document.getElementById('send-inpt').value
+        document.getElementById('send-inpt').value = null;
+        document.getElementById('send-inpt').focus();
+        console.log(input);
+
+        const channel = this.state.channel;
+        console.log(channel);
+
+        channel.sendMessage(input.trimLeft().trimRight());
+    }
+
+    // scroll down on component update
+    scrollToBottom = () => {
+        document.getElementById('dummy').scrollIntoView({ behavior: "smooth" });
     }
 
     render() {
         const userTo = this.props.current !== undefined ? this.props.current.username : '';
+        const messageComps = this.state.messages.length !== 0 ? this.state.messages.map(message =>
+            <Row key={message.sid}>
+                <ChatMessage message={message} />
+            </Row>
+        ): '';
+
+        const sendMessageComponent = this.state.channel !== undefined ? 
+            <Row className="mt-2">
+                <Col xs={11}>
+                    <Form className="mb-1">
+                        <Form.Group>
+                            <Form.Control style={styles.form} id="send-inpt" placeholder="Enter message" />
+                        </Form.Group>
+                    </Form>
+                </Col>
+                <Col xs={1}>
+                    <Button onClick={this.sendMessage} variant="primary">Send</Button>
+                </Col>
+                
+            </Row> : '';
+
+        const dummyDiv = <div style={{ float:"left", clear: "both" }}
+                id="dummy">
+            </div>;
+
         return (
-            <Button style={styles.button} disabled block className="pb-3" variant="outline-info">{userTo}
+            <Button style={styles.button} disabled block className="pb-3" variant="outline-info">
                 <Container className="mt-4" fluid>
+                    
                     <Row>
-                    <Button onClick={this.onClick} block className="mb-2 mx-2" variant="outline-info">Message1</Button>
+                        <Button onClick={this.onClick} block className="mb-2 mx-2" variant="outline-info">Click to print this.state to console</Button>
                     </Row>
-                    <Row>
-                    <Button block className="mb-2 mx-2" variant="outline-info">Message2</Button>
-                    </Row>
+                    {messageComps}
                 </Container>
+                {sendMessageComponent}
+                {dummyDiv}
             </Button>
+            
         )
     }
 }
