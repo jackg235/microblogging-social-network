@@ -73,7 +73,7 @@ class CommentList extends Component {
                       <Typography
                         variant="h5"
                         component={Link}
-                        // to={`/users/${commenterId}`}
+                        to={`/profile/${comment.username}`}
                         color="primary"
                       >
                         {comment.username}
