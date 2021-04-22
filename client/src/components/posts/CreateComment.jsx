@@ -8,6 +8,8 @@ import TextField from '@material-ui/core/TextField';
 // Redux stuff
 import { connect } from 'react-redux';
 
+import {addComment, getComments} from '../../slices/actions/PostActions'
+
 const styles = (theme) => ({
 //   ...theme
 });
@@ -32,10 +34,15 @@ class CreateComment extends Component {
   };
   handleSubmit = (event) => {
     event.preventDefault();
-    // this.props.submitComment(this.props.postId, { content: this.state.content });
+    this.props.addComment(
+      this.props.auth.username,
+      this.state.content,
+      this.props.postId, 
+    )
 
     // likely a better way to do this (componentWillReceiveProps??)
     this.setState({ content: '', open: false, errors: {} });
+    this.props.getComments()
   };
 
   render() {
@@ -82,6 +89,13 @@ const mapStateToProps = (state) => ({
   auth: state.auth
 });
 
+function mapDispatchToProps(dispatch) {
+  return ({
+      addComment: (commenterId, content, postId) => dispatch(addComment(commenterId, content, postId)),
+      getComments: () => dispatch(getComments()),
+  })
+}
+
 export default connect(
-  mapStateToProps,
+  mapStateToProps, mapDispatchToProps
 )(withStyles(styles)(CreateComment));

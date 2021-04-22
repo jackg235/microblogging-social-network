@@ -3,6 +3,7 @@ import SearchBar from './SearchBar'
 import {connect} from 'react-redux'
 import RouteProtector from '../hoc/RouteProtector'
 import {logout} from '../slices/actions/AuthenticationActions'
+import {getAllPosts} from '../slices/actions/PostActions'
 import {Redirect} from 'react-router-dom'
 import Navbar from './Navbar'
 import Post from './posts/Post'
@@ -27,7 +28,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        // this.props.getFollowingPosts();
+        this.props.getFollowingPosts();
     }
 
     logoutClick() {
@@ -36,95 +37,24 @@ class Home extends React.Component {
 
 
     render() {
-        const {first, last, email, username, authenticated} = this.props
-        
-        const posts = [
-            {
-                postId: '3',
-                posterId: 'jackgoettle23@gmail.com',
-                first: 'jack',
-                userImg: DefaultProPic,
-                title: 'Goal of my Blog',
-                content: 'I think Im gonna make this a sports blog',
-                timestamp: '06:49pm 04/07/21',
-                numLikes: 0,
-                comments: [
-                    {
-                        commentId: '3',
-                        commenterId: 'dagmawi@seas.upenn.edu',
-                        postId: '3',
-                        first: 'Dag',
-                        userImg: DefaultProPic,
-                        content: 'Go ravens!',
-                        timestamp: '07:12pm 04/07/21',
-                    },
-                ],
-            },
-            {
-                postId: '2',
-                posterId: 'dagmawi@seas.upenn.edu',
-                first: 'Dag',
-                userImg: DefaultProPic,
-                title: 'My Second Blog Post!',
-                content: 'Im blue, da boo dee da boo da, bu da bu dee da bu da',
-                timestamp: '06:30pm 04/07/21',
-                numLikes: 0,
-                comments: [
-                    {
-                        commentId: '2',
-                        commenterId: 'dagmawi@seas.upenn.edu',
-                        postId: '2',
-                        first: 'Dag',
-                        userImg: DefaultProPic,
-                        content: 'Commenting on my own post!',
-                        timestamp: '06:39pm 04/07/21',
-                    },
-                    {
-                        commentId: '1',
-                        commenterId: 'jackgoettle23@gmail.com',
-                        postId: '2',
-                        first: 'jack',
-                        userImg: DefaultProPic,
-                        content: 'jack is commenting on dags post',
-                        timestamp: '06:35pm 04/07/21',
-                    },
-                ],
-            },
-            {
-                postId: '1',
-                posterId: 'jackgoettle23@gmail.com',
-                first: 'jack',
-                userImg: DefaultProPic,
-                title: 'Jacks Blog Post',
-                content: 'yoooo first post on da blog!',
-                timestamp: '05:22pm 04/07/21',
-                numLikes: 0,
-                comments: [
-                    {
-                        commentId: '0',
-                        commenterId: 'dagmawi@seas.upenn.edu',
-                        postId: '1',
-                        first: 'Dag',
-                        userImg: DefaultProPic,
-                        content: 'nice blog post jack!',
-                        timestamp: '05:30pm 04/07/21',
-                    },
-                ],
-            },
-            {
-                postId: '0',
-                posterId: 'dagmawi@seas.upenn.edu',
-                first: 'Dag',
-                userImg: DefaultProPic,
-                title: 'Welcome to my Blog Posts',
-                content: 'this is where imma post stuff',
-                timestamp: '03:49pm 04/07/21',
-                numLikes: 0,
-                comments: [],
-            }
-        ];
+        const {first, last, email, username, authenticated} = this.props.auth
+        const allComments = this.props.posts.allComments
+        const { allPosts } = this.props.posts
 
-        const postElements = posts.map((post) => <Post key={post.postId} post={post}/>)
+        const postElements = allPosts.map((post) => {
+            const commentIds = post.comments
+            let comments = []
+            for (let i = 0; i < commentIds.length; i++) {
+                for (let j = 0; j < allComments.length; j++) {
+                    if (allComments[j]._id === commentIds[i]) {
+                        comments.push(allComments[j])
+                        break
+                    }
+                }
+            }
+            // console.log(comments)
+            return <Post key={post.postId} post={post} postComments={comments}/>
+        })
 
         const personalProfileLink = "/profile/" + username;
 
@@ -157,14 +87,17 @@ class Home extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    console.log(state.auth)
-    return state.auth
-}
+const mapStateToProps = (state) => ({
+    // console.log(state.auth)
+    auth: state.auth,
+    posts: state.posts
+    // return state.auth
+})
 
 function mapDispatchToProps(dispatch) {
     return ({
-        logoutUser: () => dispatch(logout())
+        logoutUser: () => dispatch(logout()),
+        getFollowingPosts: () => dispatch(getAllPosts()),
     })
 }
 

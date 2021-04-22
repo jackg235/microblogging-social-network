@@ -1,5 +1,6 @@
 const PostModel = require('../data_model/Post')
 const UserModel = require('../data_model/User')
+const PostCommentModel = require('../data_model/PostComment')
 
 function modelResponse(data, error) {
     return {
@@ -56,6 +57,28 @@ async function getPost(postId) {
     }
 }
 
+async function getPosts() {
+    try {
+        const response = await PostModel.find()
+        // so most recent posts appear first
+        response.reverse()
+        return modelResponse(response, null)
+    } catch (e) {
+        return modelResponse(null, e);
+    }
+}
+
+async function getUserPosts(username) {
+    try {
+        const response = await PostModel.find({username: username})
+        // so most recent posts appear first
+        response.reverse()
+        return modelResponse(response, null)
+    } catch (e) {
+        return modelResponse(null, e);
+    }
+}
+
 async function likePost(postId, username) {
     try {
         // TO DO
@@ -77,15 +100,27 @@ async function unlikePost(postId) {
     return null
 }
 
-async function addComment(postId, content) {
+async function addComment(commenter, postId, content) {
     console.log("commenting on post " + postId)
-    try {
-        // TO DO
-    } catch (e) {
-        console.error(e);
-        return e;
+    const comment = {
+        username: commenter,
+        postId: postId,
+        content: content,
     }
-    return null
+    const newComment = new PostCommentModel(comment)
+    try {
+        // save the new comment to comment db
+        const data = await newComment.save()
+        const commentId = data._id
+        // save the new comment to the post's comment list
+        const postData = await PostModel.find({_id: postId})
+        const comments = postData[0].comments
+        comments.push(commentId)
+        await PostModel.updateOne({_id: postId}, {comments: comments});
+        return modelResponse(data, null)
+    } catch (e) {
+        return modelResponse(null, e)
+    }
 }
 
 async function deleteComment(postId, commentId) {
@@ -99,4 +134,15 @@ async function deleteComment(postId, commentId) {
     return null
 }
 
-module.exports = {newPost, deletePost, getPost, likePost, unlikePost, addComment, deleteComment}
+async function getComments() {
+    try {
+        const response = await PostCommentModel.find()
+        // so most recent comments appear first
+        response.reverse()
+        return modelResponse(response, null)
+    } catch (e) {
+        return modelResponse(null, e);
+    }
+}
+
+module.exports = {newPost, deletePost, getPost, getPosts, getUserPosts, likePost, unlikePost, addComment, deleteComment, getComments}

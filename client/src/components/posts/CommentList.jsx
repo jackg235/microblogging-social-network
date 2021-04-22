@@ -9,6 +9,9 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
 import { connect } from 'react-redux';
+// import {getComment} from '../../slices/actions/PostActions'
+
+import DefaultProPic from '../../default_propic.jpg'
 
 const styles = (theme) => ({
   commentImage: {
@@ -36,19 +39,18 @@ class CommentList extends Component {
         classes,
         auth: {
             authenticated,
-            email,
+            username,
         }
     } = this.props;
 
     return (
       <Grid container>
         {comments.map((comment, index) => {
-          const { content, timestamp, userImg, commenterId, first } = comment;
 
           const deleteButton =
-          authenticated && commenterId === email ? (
+          authenticated && comment.username === username ? (
             <Button 
-            // onclick=deleteComment(commentId)
+            // onclick=deleteComment(comment._id)
             className={classes.deleteComment}
             >
                 {'Delete Comment'}
@@ -56,12 +58,12 @@ class CommentList extends Component {
           ) : null;
 
           return (
-            <Fragment key={timestamp}>
+            <Fragment key={comment.commentDate}>
               <Grid item sm={12}>
                 <Grid container className={classes.commentContainer}>
                   <Grid item sm={2}>
                     <img
-                      src={userImg}
+                      src={DefaultProPic}
                       alt="comment"
                       className={classes.commentImage}
                     />
@@ -74,14 +76,14 @@ class CommentList extends Component {
                         // to={`/users/${commenterId}`}
                         color="primary"
                       >
-                        {first}
+                        {comment.username}
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        {/* {dayjs(timestamp).format('h:mm a, MMMM DD YYYY')} */}
-                        {timestamp}
+                        {/* {dayjs(comment.commentDate).format('h:mm a, MMMM DD YYYY')} */}
+                        {comment.commentDate}
                       </Typography>
                       <hr className={classes.invisibleSeparator} />
-                      <Typography variabnt="body1">{content}</Typography>
+                      <Typography variabnt="body1">{comment.content}</Typography>
                       {deleteButton}
                     </div>
                   </Grid>
@@ -101,6 +103,12 @@ class CommentList extends Component {
 
 const mapStateToProps = (state) => ({
     auth: state.auth
-  });
+});
 
-export default connect(mapStateToProps)(withStyles(styles)(CommentList));
+function mapDispatchToProps(dispatch) {
+  return ({
+      // getComment: (commentId) => dispatch(getComment(commentId)),
+  })
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(CommentList));

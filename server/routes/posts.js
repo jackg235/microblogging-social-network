@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const PostModel = require('../data_model/Post')
 const PostMethods = require('../data_layer/PostMethods')
 const {responseError, responseOkay} = require('../data_model/StandardResponse')
@@ -48,10 +49,43 @@ function getPost(req, res) {
 
 }
 
+function getPosts(req, res) {
+    // const username = req.params.username
+    console.log('attempting to get posts for home feed')
+    PostMethods.getPosts()
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                const resJSON = responseOkay(response.data, null)
+                res.status(200).send(resJSON)
+            }
+        })
+
+}
+
+function getUserPosts(req, res) {
+    const username = req.params.username
+    console.log('attempting to get posts for profile page')
+    PostMethods.getUserPosts(username)
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                const resJSON = responseOkay(response.data, null)
+                res.status(200).send(resJSON)
+            }
+        })
+
+}
+
 function addComment(req, res) {
     const postId = req.body.postId
     const content = req.body.content
-    PostMethods.addComment(postId, content)
+    const commenter = req.body.commenterId
+    PostMethods.addComment(commenter, postId, content)
         .then((err) => {
             if (err) {
                 const resJSON = responseError(null, null, err)
@@ -72,6 +106,23 @@ function deleteComment(req, res) {
                 res.status(400).send(resJSON)
             } else {
                 const resJSON = responseOkay(null, null)
+                res.status(200).send(resJSON)
+            }
+        })
+
+}
+
+function getComments(req, res) {
+    // PostMethods.getComments(mongoose.Types.ObjectId(commentId))
+    PostMethods.getComments()
+        .then(response => {
+            if (response.err) {
+                console.log(response.err)
+                const resJSON = responseError(null, null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                console.log(response)
+                const resJSON = responseOkay(response.data, null)
                 res.status(200).send(resJSON)
             }
         })
@@ -113,8 +164,11 @@ module.exports = {
     new: newPost,
     delete: deletePost,
     get: getPost,
+    getPosts: getPosts,
+    getUserPosts: getUserPosts,
     addComment: addComment,
     deleteComment: deleteComment,
+    getComments: getComments,
     like: likePost,
     unlike: unlikePost
 }

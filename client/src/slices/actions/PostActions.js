@@ -1,17 +1,27 @@
 // attempts to create a new blog post
-import {getPostFailure, getPostSuccess, postFailure, postSuccess} from "../reducers/PostReducer";
+import {
+    getPostFailure, 
+    getPostSuccess, 
+    postFailure, 
+    postSuccess, 
+    getUserPostsSuccess, 
+    getUserPostsFailure, 
+    getCommentsSuccess, 
+    getCommentsFailure
+} from "../reducers/PostReducer";
 
-export function createPost(title, content, posterId) {
-    console.log('attempting to create a post called... ' + title + ' by... ' + posterId)
+export function createPost(title, content, username) {
+    console.log('attempting to create a post called... ' + title + ' by... ' + username)
+    console.log(content)
     return function (dispatch) {
-        const likes = new Set();
-        const comments = {};
+        const likes = [];
+        const comments = [];
         return fetch(`http://localhost:5000/posts/new`, {
             method: 'POST',
             body: JSON.stringify({
                 title,
                 content,
-                posterId,
+                username,
                 likes,
                 comments
             }),
@@ -22,14 +32,16 @@ export function createPost(title, content, posterId) {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('create post success = ' + res.success)
+                console.log('create post error = ' + res.err)
+                console.log('post: ')
+                console.log(res.data)
                 // if the post was created successfully, update allPosts in state
-                if (res.success) {
-                    // dispatch(postSuccess());
-                    getAllPosts()
-                } else {
+                if (res.err) {
                     // failed to create post
                     dispatch(postFailure(res))
+                } else {
+                    // dispatch(postSuccess());
+                    dispatch(getAllPosts())
                 }
             })
     }
@@ -52,28 +64,24 @@ export function deletePost(postId, posterId) {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('delete post success = ' + res.success)
+                console.log('delete post error = ' + res.err)
                 // if the post was deleted successfully, update allPosts in state
-                if (res.success) {
-                    getAllPosts();
-                } else {
+                if (res.err) {
                     // failed to delete post
                     dispatch(postFailure(res))
+                } else {
+                    dispatch(getAllPosts());
                 }
             })
     }
 }
 
 // attempts to get the specified blog post
-export function getPost(postId, posterId) {
-    console.log('attempting to get a post with id... ' + postId + ' by... ' + posterId)
+export function getPost(postId) {
+    console.log('attempting to get a post with id... ' + postId)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/get`, {
+        return fetch(`http://localhost:5000/posts/get/${postId}`, {
             method: 'GET',
-            body: JSON.stringify({
-                postId,
-                posterId,
-            }),
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
@@ -81,13 +89,13 @@ export function getPost(postId, posterId) {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('get post success = ' + res.success)
+                console.log('get post error = ' + res.err)
                 // if the post was retrieved successfully, set the error to null
-                if (res.success) {
-                    dispatch(getPostSuccess());
-                } else {
+                if (res.err) {
                     // failed to get post
                     dispatch(getPostFailure(res))
+                } else {
+                    dispatch(getPostSuccess());
                 }
             })
     }
@@ -97,7 +105,7 @@ export function getPost(postId, posterId) {
 export function getAllPosts() {
     console.log('attempting to get all posts... ')
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/getAll`, {
+        return fetch(`http://localhost:5000/posts/getPosts`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -106,22 +114,50 @@ export function getAllPosts() {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('get all posts success = ' + res.success)
+                console.log('get posts error = ' + res.err)
                 // if all the posts were retrieved successfully, update allPosts
-                if (res.success) {
-                    console.log('all posts res.data is: ' + res.data);
-                    dispatch(postSuccess(res.data));
-                } else {
+                if (res.err) {
                     // failed to create post
                     dispatch(postFailure(res))
+                } else {
+                    console.log('all posts res.data is: ' + res.data);
+                    dispatch(postSuccess(res.data));
+                    dispatch(getComments())
+                }
+            })
+    }
+}
+
+// attempts to get all blog posts from specified user
+export function getUserPosts(username) {
+    console.log('attempting to get posts from... ' + username)
+    return function (dispatch) {
+        return fetch(`http://localhost:5000/posts/getUserPosts/${username}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('get user posts error = ' + res.err)
+                // if all the posts were retrieved successfully, update profileUserPosts
+                if (res.err) {
+                    // failed to create post
+                    dispatch(getUserPostsFailure(res))
+                } else {
+                    console.log('user posts res.data is: ' + res.data);
+                    dispatch(getUserPostsSuccess(res.data));
+                    dispatch(getComments())
                 }
             })
     }
 }
 
 // attempts to add a comment on the specified post
-export function addComment(commenterId, content, postId, posterId) {
-    console.log('attempting to add a comment from... ' + commenterId + ' on a post by... ' + posterId);
+export function addComment(commenterId, content, postId) {
+    console.log('attempting to add a comment from... ' + commenterId + ' on post with id... ' + postId);
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/addComment`, {
             // should this be changed to a put or patch maybe?
@@ -130,7 +166,6 @@ export function addComment(commenterId, content, postId, posterId) {
                 commenterId,
                 content,
                 postId,
-                posterId,
             }),
             headers: {
                 'Content-Type': 'application/json',
@@ -139,13 +174,16 @@ export function addComment(commenterId, content, postId, posterId) {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('add comment success = ' + res.success)
+                console.log('add comment error = ' + res.err)
                 // if the comment was posted successfully, update allPosts in state
-                if (res.success) {
-                    getAllPosts();
-                } else {
+                if (res.err) {
                     // failed to add comment to post
                     dispatch(postFailure(res))
+                } else {
+                    // updates home page posts with new comment
+                    dispatch(getAllPosts());
+                    // in case comment was added on profile page
+                    dispatch(getUserPosts())
                 }
             })
     }
@@ -170,13 +208,40 @@ export function deleteComment(commenterId, commentId, postId, posterId) {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('delete comment success = ' + res.success)
+                console.log('delete comment error = ' + res.err)
                 // if the comment was deleted successfully, update allPosts in state
-                if (res.success) {
-                    getAllPosts();
-                } else {
+                if (res.err) {
                     // failed to add comment to post
                     dispatch(postFailure(res))
+                } else {
+                    dispatch(getAllPosts())
+                }
+            })
+    }
+}
+
+// attempts to get all post comments from db
+export function getComments() {
+    console.log('attempting to get comments from backend...')
+    return function (dispatch) {
+        return fetch(`http://localhost:5000/posts/getComments`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('get comments error = ' + res.err)
+                console.log(res)
+                // if the comments were retrieved successfully, set the error to null
+                if (res.err) {
+                    // failed to get comments
+                    dispatch(getCommentsFailure(res))
+                } else {
+                    console.log('all comments res.data is: ' + res.data);
+                    dispatch(getCommentsSuccess(res.data));
                 }
             })
     }
@@ -201,13 +266,13 @@ export function likePost(likerId, postId, posterId) {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('like post success = ' + res.success)
+                console.log('like post error = ' + res.err)
                 // if the post was liked successfully, update allPosts in state
-                if (res.success) {
-                    getAllPosts();
-                } else {
+                if (res.err) {
                     // failed to like post
                     dispatch(postFailure(res))
+                } else {
+                    dispatch(getAllPosts())
                 }
             })
     }
@@ -231,13 +296,13 @@ export function unlikePost(unlikerId, postId, posterId) {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('unlike post success = ' + res.success)
+                console.log('unlike post error = ' + res.err)
                 // if the post was unliked successfully, update allPosts in state
-                if (res.success) {
-                    getAllPosts();
-                } else {
+                if (res.err) {
                     // failed to unlike post
                     dispatch(postFailure(res))
+                } else {
+                    dispatch(getAllPosts())
                 }
             })
     }
