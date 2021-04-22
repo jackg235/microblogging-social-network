@@ -4,7 +4,11 @@ import {
 
 export const initialState = {
     postsError: null,
+    userPostsError: null,
     allPosts: [],
+    profileUserPosts: [],
+    allComments: [],
+    commentError: null,
     // do we need to keep state for getPost? like a currPost?
 }
 
@@ -31,6 +35,28 @@ const postsSlice = createSlice({
         }) => {
             state.postsError = payload.err
         },
+        getUserPostsSuccess: (state, {
+            payload
+        }) => {
+            state.profileUserPosts = payload
+            state.postsError = null
+        },
+        getUserPostsFailure: (state, {
+            payload
+        }) => {
+            state.userPostsError = payload.err
+        },
+        getCommentsSuccess: (state, {
+            payload
+        }) => {
+            state.allComments = payload
+            state.commentError = null
+        },
+        getCommentsFailure: (state, {
+            payload
+        }) => {
+            state.commentError = payload.err
+        },
     }
 })
 export const {
@@ -38,6 +64,10 @@ export const {
     postFailure,
     getPostSuccess,
     getPostFailure,
+    getUserPostsSuccess,
+    getUserPostsFailure,
+    getCommentsSuccess,
+    getCommentsFailure,
 } = postsSlice.actions
 
 export default postsSlice.reducer

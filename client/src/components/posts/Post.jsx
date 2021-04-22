@@ -17,6 +17,8 @@ import Button from '@material-ui/core/Button';
 import CommentList from './CommentList';
 import CreateComment from './CreateComment';
 
+import DefaultProPic from '../../default_propic.jpg'
+
 import { connect } from 'react-redux';
 
 const styles = {
@@ -49,27 +51,27 @@ class Post extends Component {
     const {
       classes,
       post: {
-        postId,
-        posterId,
-        first,
-        userImg,
+        _id,
+        username,
+        // first,
+        // userImg,
         title,
         content,
-        timestamp,
-        numLikes,
+        postDate,
+        likes,
         comments,
       },
+      postComments,
       auth: {
         authenticated,
-        email,
       }
     } = this.props;
 
     // code to display delete button only to owner of post
     const deleteButton =
-      authenticated && posterId === email ? (
+      authenticated && username === this.props.auth.username ? (
         <Button 
-        // onclick=deletePost(postId)
+        // onclick=deletePost(_id)
         className={classes.deletePost}
         >
             {'Delete'}
@@ -79,7 +81,7 @@ class Post extends Component {
     return (
     <div className={classes.postContainer}>
         <CardMedia
-          image={userImg}
+          image={DefaultProPic}
           title="Profile image"
           className={classes.image}
           style={styles.image}
@@ -88,29 +90,29 @@ class Post extends Component {
           <Typography
             variant="h5"
             component={Link}
-            // to={`/users/${posterId}`}
+            to={`/profile/${username}`}
             color="primary"
           >
-            {first}
+            {username}
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            {/* {dayjs(timestamp).fromNow()} */}
-            {timestamp}
+            {/* {dayjs(postDate).fromNow()} */}
+            {postDate}
           </Typography>
           <Typography variant="title1">{title}</Typography>
           <Typography variant="body1">{content}</Typography>
-          {/* <LikeButton postId={postId} /> */}
-          <span>{numLikes} Likes </span>
+          {/* <LikeButton _id={_id} /> */}
+          <span>{likes.length} Likes </span>
           <span>{comments.length} comments </span>
-          <CommentList comments={comments} />
+          <CommentList comments={postComments} />
         </CardContent>
           
         <CardContent className={classes.content}>
           <CreateComment 
-            postId={postId}
+            postId={_id}
           />
           <Button 
-            // onclick=hidePost(postId)
+            // onclick=hidePost(_id)
             className={classes.hidePost}
           >
               {'Hide Post'}

@@ -5,6 +5,7 @@ import ProfileHeader from './ProfileHeader'
 import Navbar from '../Navbar'
 import Post from '../posts/Post'
 import {getUser} from '../../slices/actions/UserActions'
+import {getUserPosts} from '../../slices/actions/PostActions'
 
 import {connect} from 'react-redux'
 
@@ -31,14 +32,31 @@ class Profile extends React.Component {
 
     componentDidMount() {
         this.props.getProfile(this.props.profileId);
+        this.props.getPosts(this.props.profileId)
     }
+
+    // componentDidUpdate() {
+    //     this.props.getPosts(this.props.profileId)
+    // }
 
     render() {
 
-        const { authenticated } = this.props
+        const { authenticated, allComments, posts } = this.props
 
-        // const postElements = posts.map((post) => <Post key={post.postId} post={post} />)
+        const postElements = posts.map((post) => {
+            const commentIds = post.comments
+            let comments = []
+            for (let i = 0; i < commentIds.length; i++) {
+                for (let j = 0; j < allComments.length; j++) {
+                    if (allComments[j]._id === commentIds[i]) {
+                        comments.push(allComments[j])
+                        break
+                    }
+                }
+            }
 
+            return <Post key={post.postId} post={post} postComments={comments} />
+        })
 
         if (!authenticated) {
             return <Redirect to='/'/>
@@ -53,20 +71,24 @@ class Profile extends React.Component {
                     <button onClick={this.handleClick}>Click me to do something</button> */}
                 </div>
 
-                {/* {postElements} */}
+                {postElements}
             </div>
         )
     }
 }
 
 const mapStateToProps = (state) => ({
-    authenticated: state.auth.authenticated
+    authenticated: state.auth.authenticated,
+    currUser: state.users.profileUser,
+    posts: state.posts.profileUserPosts,
+    allComments: state.posts.allComments
 });
 
 function mapDispatchToProps(dispatch) {
     console.log('dispatching')
     return ({
-        getProfile: (username) => dispatch(getUser(username))
+        getProfile: (username) => dispatch(getUser(username)),
+        getPosts: (username) => dispatch(getUserPosts(username))
     })
 }
 

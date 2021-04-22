@@ -39,13 +39,13 @@ class ProfileHeader extends React.Component {
             profileId,
             auth: {
               authenticated,
-              email,
+              username,
             },
             currUser
         } = this.props;
 
         const followButton = 
-            currUser.email !== email ? (
+            currUser.username !== username ? (
                 <Button 
                 // onclick=followUser(userId)=
                 >
@@ -54,7 +54,7 @@ class ProfileHeader extends React.Component {
             ) : null;
 
         const blockButton = 
-            currUser.email !== email ? (
+            currUser.username !== username ? (
                 <Button 
                 // onclick=blockUser(userId)=
                 >
@@ -63,7 +63,7 @@ class ProfileHeader extends React.Component {
             ) : null;
 
         const changePasswordButton = 
-            currUser.email === email ? (
+            currUser.username === username ? (
                 <Button 
                 // onclick=changePassword(password)=
                 >
@@ -72,7 +72,7 @@ class ProfileHeader extends React.Component {
             ) : null;
 
         const deactivateButton = 
-            currUser.email === email ? (
+            currUser.username === username ? (
                 <Button 
                 // onclick=changePassword(password)=
                 >
@@ -89,6 +89,9 @@ class ProfileHeader extends React.Component {
                         className={classes.image}
                         style={styles.image}
                     />
+                    <CardContent>
+                        {currUser.username}
+                    </CardContent>
                     <CardContent>
                         {currUser.first} {currUser.last}
                     </CardContent>

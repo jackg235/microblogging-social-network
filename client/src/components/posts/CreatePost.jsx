@@ -13,7 +13,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 // Redux stuff
 import { connect } from 'react-redux';
-// import { createPost, clearErrors } from '../../redux/actions/dataActions';
+import { createPost } from '../../slices/actions/PostActions';
 
 const styles = (theme) => ({
 //   ...theme,
@@ -32,7 +32,7 @@ const styles = (theme) => ({
 //   }
 });
 
-class PostScream extends Component {
+class CreatePost extends Component {
   state = {
     open: false,
     title: '',
@@ -65,6 +65,7 @@ class PostScream extends Component {
     event.preventDefault();
     // this.props.createPost({ content: this.state.content });
 
+    this.props.newPost(this.state.title, this.state.content, this.props.auth.username)
     // likely a better way to do this (componentWillReceiveProps??)
     this.setState({ content: '', open: false, errors: {} });
   };
@@ -72,7 +73,7 @@ class PostScream extends Component {
     const { errors } = this.state;
     const {
       classes,
-    //   UI: { loading }
+      // auth
     } = this.props;
     return (
       <Fragment>
@@ -108,7 +109,7 @@ class PostScream extends Component {
                 fullWidth
               />
               <TextField
-                name="body"
+                name="content"
                 type="text"
                 label="Post Content"
                 multiline
@@ -143,17 +144,23 @@ class PostScream extends Component {
   }
 }
 
-// PostScream.propTypes = {
-//   postScream: PropTypes.func.isRequired,
+// CreatePost.propTypes = {
+//   newPost: PropTypes.func.isRequired,
 //   clearErrors: PropTypes.func.isRequired,
 //   UI: PropTypes.object.isRequired
 // };
 
 const mapStateToProps = (state) => ({
-//   UI: state.UI
+    auth: state.auth
 });
+
+function mapDispatchToProps(dispatch) {
+  return ({
+      newPost: (title, content, username) => dispatch(createPost(title, content, username))
+  })
+}
 
 export default connect(
   mapStateToProps,
-//   { postScream, clearErrors }
-)(withStyles(styles)(PostScream));
+  mapDispatchToProps
+)(withStyles(styles)(CreatePost));
