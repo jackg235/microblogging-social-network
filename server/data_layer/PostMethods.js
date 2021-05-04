@@ -1,6 +1,7 @@
 const PostModel = require('../data_model/Post')
 const UserModel = require('../data_model/User')
 const PostCommentModel = require('../data_model/PostComment')
+const crypto = require("crypto");
 
 function modelResponse(data, error) {
     return {
@@ -83,6 +84,7 @@ async function getUserPosts(username) {
         const response = await PostModel.find({username: username})
         // so most recent posts appear first
         response.reverse()
+        console.log(response)
         return modelResponse(response, null)
     } catch (e) {
         return modelResponse(null, e);
@@ -112,23 +114,22 @@ async function unlikePost(postId) {
 
 async function addComment(commenter, postId, content) {
     console.log("commenting on post " + postId)
-    const comment = {
-        username: commenter,
-        postId: postId,
-        content: content,
-    }
-    const newComment = new PostCommentModel(comment)
     try {
-        // save the new comment to comment db
-        const data = await newComment.save()
-        const commentId = data._id
         // save the new comment to the post's comment list
         const postData = await PostModel.find({_id: postId})
         const comments = postData[0].comments
-        comments.push(commentId)
-        await PostModel.updateOne({_id: postId}, {comments: comments});
+        const id = crypto.randomBytes(20).toString('hex');
+        const comment = {
+            id: id,
+            username: commenter,
+            content: content
+        }
+        comments.push(comment)
+        console.log(comments)
+        const data = await PostModel.updateOne({_id: postId}, {comments: comments});
         return modelResponse(data, null)
     } catch (e) {
+        console.log(e)
         return modelResponse(null, e)
     }
 }
@@ -136,14 +137,35 @@ async function addComment(commenter, postId, content) {
 async function deleteComment(postId, commentId) {
     console.log("deleting a comment on a post " + postId)
     try {
-        // TO DO
+        const response = await PostModel.find({_id: postId})
+        const comments = response[0].comments
+        for (var i in comments) {
+            if (comments[i].id == commentId) {
+                comments.splice(i, 1);
+            }
+        }
+        const updated = await UserModel.updateOne({_id: postId}, {comments: comments});
+        return modelResponse(updated, null)
     } catch (e) {
-        console.error(e);
-        return e;
+        return modelResponse(null, e);
     }
-    return null
 }
 
+async function hidePost(username, postId) {
+    console.log("hiding post for user " + username)
+    try {
+        const response = UserModel.find({username: username})
+        const hidden = response[0].hiddenPosts
+        hidden.push(postId)
+        await UserModel.updateOne({username: username}, {hidden: hidden})
+        return modelResponse(null, null)
+    } catch (e) {
+        console.log(e)
+        return modelResponse(null, e);
+    }
+}
+
+// DELETE
 async function getComments() {
     try {
         const response = await PostCommentModel.find()
@@ -155,4 +177,16 @@ async function getComments() {
     }
 }
 
-module.exports = {newPost, deletePost, getPost, getPosts, getUserPosts, likePost, unlikePost, addComment, deleteComment, getComments}
+module.exports = {
+    newPost,
+    deletePost,
+    getPost,
+    getPosts,
+    getUserPosts,
+    likePost,
+    unlikePost,
+    addComment,
+    deleteComment,
+    getComments,
+    hidePost
+}

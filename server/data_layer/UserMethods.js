@@ -70,17 +70,17 @@ async function deleteUser(username) {
     }
 }
 
-async function followUser(username, userIDToFollow) {
-    console.log("toggling follow for " + username)
+async function followUser(username, userToFollow) {
+    console.log("toggling follow for " + username + " " + userToFollow)
     try {
         const response = await UserModel.find({username: username})
         const following = response[0].following
-        const response2 = await UserModel.find({username: userIDToFollow})
+        const response2 = await UserModel.find({username: userToFollow})
         const followers = response2[0].followers
         // unfollow the user if already being followed
-        if (following.includes(userIDToFollow)) {
+        if (following.includes(userToFollow)) {
             console.log('toggling unfollow')
-            const index = following.indexOf(userIDToFollow);
+            const index = following.indexOf(userToFollow);
             if (index > -1) {
                 following.splice(index, 1);
             }
@@ -93,12 +93,12 @@ async function followUser(username, userIDToFollow) {
         // follow user if not in following
         else {
             console.log('toggling follow')
-            following.push(userIDToFollow)
+            following.push(userToFollow)
             // add user to followers list of userIdToFollow
             followers.push(username)
         }
         const res = await UserModel.updateOne({username: username}, {following: following});
-        const res2 = await UserModel.updateOne({username: userIDToFollow}, {followers: followers});
+        const res2 = await UserModel.updateOne({username: userToFollow}, {followers: followers});
         const data = {
             following: following,
             followers: followers,

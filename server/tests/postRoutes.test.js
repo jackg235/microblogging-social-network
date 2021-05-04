@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const app = require('../app')
 const PostModel = require('../data_model/Post')
 const UserModel = require('../data_model/User')
+const crypto = require('crypto')
 
 const testPost = {
     username: "testpersist",
@@ -54,10 +55,49 @@ describe('Blog/post Endpoints', () => {
         const res2 = await request(app).get(`/posts/get/${postId}`)
         expect(res2.statusCode).toEqual(200)
         const postData = JSON.parse(res.text).data
-        console.log(postData)
+        done()
+    })
+
+    it('should comment on a post and then delete the comment', async (done) => {
+        // create a post to comment on
+        const res = await request(app)
+            .post('/posts/new')
+            .send(testPost2)
+        expect(res.statusCode).toEqual(200)
+        const postId = JSON.parse(res.text).data._id;
+        const testComment = {
+            postId: postId,
+            commenterId: "some username",
+            content: "this is test post comment! users can write stuff here."
+        }
+        // add the comment
+        const addCommentResponse = await request(app)
+            .post('/posts/addComment')
+            .send(testComment)
+        expect(addCommentResponse.statusCode).toEqual(200)
+        const response = JSON.parse(addCommentResponse.text).data;
+        expect(response.nModified).toEqual(1)
+        /*
+        // delete the comment
+        const deleteComment = {
+            commentId: commentId,
+            postId: postId
+        }
+        const deleteResponse = await request(app)
+            .delete('/posts/deleteComment')
+            .send(deleteComment)
+        expect(deleteResponse.statusCode).toEqual(200)
+
+        const postResponse = await request(app).get(`/posts/get/${postId}`)
+        const postData = JSON.parse(postResponse.text).data
+        expect(!postData.comments.includes(commentId))
+
+         */
         done()
     })
     afterAll(async (done) => {
+        await PostModel.deleteMany({title: testPost.title})
+        await PostModel.deleteMany({title: testPost2.title})
         await mongoose.connection.close()
         done()
     })

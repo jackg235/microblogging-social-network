@@ -51,6 +51,8 @@ app.post('/posts/like', postRoutes.like)
 
 app.post('/posts/unlike', postRoutes.unlike)
 
+app.post('/posts/hide', postRoutes.hidePost)
+
 // ---------- chat routes ---------- //
 
 app.get('/chat/token', chatRoutes.getToken)
