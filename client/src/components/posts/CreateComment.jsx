@@ -37,7 +37,8 @@ class CreateComment extends Component {
     this.props.addComment(
       this.props.auth.username,
       this.state.content,
-      this.props.postId, 
+      this.props.postId,
+      this.props.posterId
     )
 
     // likely a better way to do this (componentWillReceiveProps??)
@@ -91,7 +92,7 @@ const mapStateToProps = (state) => ({
 
 function mapDispatchToProps(dispatch) {
   return ({
-      addComment: (commenterId, content, postId) => dispatch(addComment(commenterId, content, postId)),
+      addComment: (commenterId, content, postId, posterId) => dispatch(addComment(commenterId, content, postId, posterId)),
       getComments: () => dispatch(getComments()),
   })
 }

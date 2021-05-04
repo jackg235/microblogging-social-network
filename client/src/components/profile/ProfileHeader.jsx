@@ -8,6 +8,9 @@ import DefaultProPic from '../../default_propic.jpg'
 import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
 
+import {followToggle} from '../../slices/actions/AuthenticationActions'
+import {getUser} from '../../slices/actions/UserActions'
+
 const styles = {
     image: {
         width: 100,
@@ -31,6 +34,12 @@ class ProfileHeader extends React.Component {
             }
             // other necessary fields needed in the component
         }
+        this.toggleFollow = this.toggleFollow.bind(this)
+    }
+
+    toggleFollow() {
+        this.props.followToggle(this.props.auth.username, this.props.currUser.username)
+        // this.props.getProfile(this.props.currUser.username)
     }
 
     render() {
@@ -47,7 +56,7 @@ class ProfileHeader extends React.Component {
         const followButton = 
             currUser.username !== username ? (
                 <Button 
-                // onclick=followUser(userId)=
+                onClick={() => {this.toggleFollow()}}
                 >
                     {'Follow'}
                 </Button>
@@ -99,14 +108,12 @@ class ProfileHeader extends React.Component {
                         <Button
                         // onclick={showFollowers()}
                         > 
-                            {/* {currUser.followers.length}  */}
-                            Followers
+                            {currUser.followers.length} Followers
                         </Button>
                         <Button
                         // onclick={showFollowing()}
                         > 
-                            {/* {currUser.following.length}  */}
-                            Following
+                            {currUser.following.length} Following
                         </Button>
                     </CardContent>
                     <CardContent>
@@ -131,4 +138,12 @@ const mapStateToProps = (state) => ({
     currUser: state.users.profileUser,
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(ProfileHeader));
+function mapDispatchToProps(dispatch) {
+    console.log('dispatching')
+    return ({
+        getProfile: (username) => dispatch(getUser(username)),
+        followToggle: (username, otherUserId) => dispatch(followToggle(username, otherUserId)),
+    })
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ProfileHeader));

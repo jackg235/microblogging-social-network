@@ -37,6 +37,9 @@ const styles = {
   hidePost: {
     backgroundColor: 'yellow',
   },
+  likePost: {
+    backgroundColor: 'pink',
+  },
   deletePost: {
     backgroundColor: 'red',
   },
@@ -110,7 +113,14 @@ class Post extends Component {
         <CardContent className={classes.content}>
           <CreateComment 
             postId={_id}
+            posterId={username}
           />
+          <Button 
+            // onclick=likePost(_id)
+            className={classes.likePost}
+          >
+              {'Like Post'}
+          </Button>
           <Button 
             // onclick=hidePost(_id)
             className={classes.hidePost}

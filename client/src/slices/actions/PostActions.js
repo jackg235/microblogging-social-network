@@ -41,7 +41,7 @@ export function createPost(title, content, username) {
                     dispatch(postFailure(res))
                 } else {
                     // dispatch(postSuccess());
-                    dispatch(getAllPosts())
+                    dispatch(getAllPosts(username))
                 }
             })
     }
@@ -70,7 +70,7 @@ export function deletePost(postId, posterId) {
                     // failed to delete post
                     dispatch(postFailure(res))
                 } else {
-                    dispatch(getAllPosts());
+                    dispatch(getAllPosts(posterId));
                 }
             })
     }
@@ -101,11 +101,11 @@ export function getPost(postId) {
     }
 }
 
-// attempts to get all blog posts from all users
-export function getAllPosts() {
-    console.log('attempting to get all posts... ')
+// attempts to get posts from users the current user follows
+export function getAllPosts(username) {
+    console.log('attempting to get posts that ' + username + ' follows... ')
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/getPosts`, {
+        return fetch(`http://localhost:5000/posts/getPosts/${username}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ export function getAllPosts() {
                     // failed to create post
                     dispatch(postFailure(res))
                 } else {
-                    console.log('all posts res.data is: ' + res.data);
+                    console.log('following posts res.data is: ' + res.data);
                     dispatch(postSuccess(res.data));
                     dispatch(getComments())
                 }
@@ -156,7 +156,7 @@ export function getUserPosts(username) {
 }
 
 // attempts to add a comment on the specified post
-export function addComment(commenterId, content, postId) {
+export function addComment(commenterId, content, postId, posterId) {
     console.log('attempting to add a comment from... ' + commenterId + ' on post with id... ' + postId);
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/addComment`, {
@@ -175,15 +175,16 @@ export function addComment(commenterId, content, postId) {
             .then(res => res.json())
             .then(res => {
                 console.log('add comment error = ' + res.err)
+                console.log(res)
                 // if the comment was posted successfully, update allPosts in state
                 if (res.err) {
                     // failed to add comment to post
                     dispatch(postFailure(res))
                 } else {
                     // updates home page posts with new comment
-                    dispatch(getAllPosts());
+                    dispatch(getAllPosts(commenterId));
                     // in case comment was added on profile page
-                    dispatch(getUserPosts())
+                    dispatch(getUserPosts(posterId))
                 }
             })
     }
@@ -214,7 +215,7 @@ export function deleteComment(commenterId, commentId, postId, posterId) {
                     // failed to add comment to post
                     dispatch(postFailure(res))
                 } else {
-                    dispatch(getAllPosts())
+                    dispatch(getAllPosts(commenterId))
                 }
             })
     }
@@ -272,7 +273,7 @@ export function likePost(likerId, postId, posterId) {
                     // failed to like post
                     dispatch(postFailure(res))
                 } else {
-                    dispatch(getAllPosts())
+                    dispatch(getAllPosts(likerId))
                 }
             })
     }
@@ -302,7 +303,7 @@ export function unlikePost(unlikerId, postId, posterId) {
                     // failed to unlike post
                     dispatch(postFailure(res))
                 } else {
-                    dispatch(getAllPosts())
+                    dispatch(getAllPosts(unlikerId))
                 }
             })
     }

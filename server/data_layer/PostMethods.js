@@ -57,12 +57,22 @@ async function getPost(postId) {
     }
 }
 
-async function getPosts() {
+async function getPosts(username) {
     try {
+        const userRes = await UserModel.find({username: username})
+        const following = userRes[0].following
         const response = await PostModel.find()
+        const followingPosts = []
+        for (let i = 0; i < response.length; i++) {
+            if (following.includes(response[i].username)) {
+                followingPosts.push(response[i])
+            }
+        }
+        const userPosts = await PostModel.find({username: username})
+        const posts = followingPosts.concat(userPosts)
         // so most recent posts appear first
-        response.reverse()
-        return modelResponse(response, null)
+        posts.sort((a, b) => (a.postDate > b.postDate) ? -1 : 1)
+        return modelResponse(posts, null)
     } catch (e) {
         return modelResponse(null, e);
     }

@@ -28,7 +28,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        this.props.getFollowingPosts();
+        this.props.getFollowingPosts(this.props.auth.username);
     }
 
     logoutClick() {
@@ -97,7 +97,7 @@ const mapStateToProps = (state) => ({
 function mapDispatchToProps(dispatch) {
     return ({
         logoutUser: () => dispatch(logout()),
-        getFollowingPosts: () => dispatch(getAllPosts()),
+        getFollowingPosts: (username) => dispatch(getAllPosts(username)),
     })
 }
 
