@@ -1,7 +1,6 @@
 const PostModel = require('../data_model/Post')
 const UserModel = require('../data_model/User')
 const PostCommentModel = require('../data_model/PostComment')
-const crypto = require("crypto");
 
 function modelResponse(data, error) {
     return {
@@ -118,9 +117,7 @@ async function addComment(commenter, postId, content) {
         // save the new comment to the post's comment list
         const postData = await PostModel.find({_id: postId})
         const comments = postData[0].comments
-        const id = crypto.randomBytes(20).toString('hex');
         const comment = {
-            id: id,
             username: commenter,
             content: content
         }
@@ -140,12 +137,12 @@ async function deleteComment(postId, commentId) {
         const response = await PostModel.find({_id: postId})
         const comments = response[0].comments
         for (var i in comments) {
-            if (comments[i].id == commentId) {
+            if (comments[i]._id == commentId) {
                 comments.splice(i, 1);
+                const updated = await PostModel.updateOne({_id: postId}, {comments: comments});
+                return modelResponse(updated, null)
             }
         }
-        const updated = await UserModel.updateOne({_id: postId}, {comments: comments});
-        return modelResponse(updated, null)
     } catch (e) {
         return modelResponse(null, e);
     }
