@@ -31,7 +31,6 @@ function deletePost(req, res) {
                 res.status(200).send(resJSON)
             }
         })
-
 }
 
 function getPost(req, res) {
@@ -75,6 +74,7 @@ function getUserPosts(req, res) {
                 res.status(400).send(resJSON)
             } else {
                 const resJSON = responseOkay(response.data, null)
+                console.log(resJSON.comments)
                 res.status(200).send(resJSON)
             }
         })
@@ -99,7 +99,8 @@ function addComment(req, res) {
 
 function deleteComment(req, res) {
     const postId = req.body.postId
-    PostMethods.deleteComment(postId)
+    const commentId = req.body.commentId
+    PostMethods.deleteComment(postId, commentId)
         .then((response) => {
             if (response.err) {
                 const resJSON = responseError(null, null, response.err)
@@ -158,6 +159,22 @@ function unlikePost(req, res) {
         })
 }
 
+function hidePost(req, res) {
+    const username = req.body.username
+    const postId = req.body.postId
+    PostMethods.hidePost(username, postId)
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                console.log(response)
+                const resJSON = responseOkay(response.data, null)
+                res.status(200).send(resJSON)
+            }
+        })
+}
+
 
 module.exports = {
     new: newPost,
@@ -169,5 +186,6 @@ module.exports = {
     deleteComment: deleteComment,
     getComments: getComments,
     like: likePost,
-    unlike: unlikePost
+    unlike: unlikePost,
+    hidePost
 }

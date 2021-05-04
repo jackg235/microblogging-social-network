@@ -11,6 +11,7 @@ let userSchema = new mongoose.Schema({
     following: [{type: String, ref: 'User'}],
     followers: [{type: String, ref: 'User'}],
     posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
+    hiddenPosts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
     img:
         {
             data: Buffer,

@@ -44,41 +44,45 @@ describe('User Endpoints', () => {
         done()
     })
     it('should follow and unfollow user', async (done) => {
-        // get ID of user to follow
-        const res = await request(app)
-            .get(`/users/${testUserJSON2.username}`)
-        expect(res.statusCode).toEqual(200)
-        const followId = JSON.parse(res.text).data._id;
         const followReq = {
             username: testUserJSON.username,
-            userIDToFollow: followId
+            otherUserId: testUserJSON2.username
         }
         // follow the user
         const res2 = await request(app)
             .post(`/users/follow`)
             .send(followReq)
         expect(res2.statusCode).toEqual(200)
-        const data = JSON.parse(res2.text).data;
-        expect(data.nModified).toEqual(1)
 
         // check that the user is in the following
-        const res3 = await request(app).get(`/users/${testUserJSON2.username}`)
+        const res3 = await request(app).get(`/users/${testUserJSON.username}`)
         expect(res3.statusCode).toEqual(200)
         const following = JSON.parse(res3.text).data.following
-        expect(following.includes(followId))
+        expect(following.includes(testUserJSON2.username))
+
+        // check that the user is in the followers
+        const r = await request(app).get(`/users/${testUserJSON2.username}`)
+        expect(r.statusCode).toEqual(200)
+        const followers = JSON.parse(r.text).data.followers
+        expect(followers.includes(testUserJSON.username))
 
         // unfollow the user
         const res4 = await request(app)
             .post(`/users/follow`)
             .send(followReq)
         expect(res4.statusCode).toEqual(200)
-        const data1 = JSON.parse(res4.text).data;
-        expect(data1.nModified).toEqual(1)
 
-        const res5 = await request(app).get(`/users/${testUserJSON2.username}`)
+        // check that the user is no longer in following
+        const res5 = await request(app).get(`/users/${testUserJSON.username}`)
         expect(res5.statusCode).toEqual(200)
         const following1 = JSON.parse(res5.text).data.following
-        expect(!following1.includes(followId))
+        expect(!following1.includes(testUserJSON2.username))
+
+        // check that the user is no longer in followers
+        const res6 = await request(app).get(`/users/${testUserJSON2.username}`)
+        expect(res6.statusCode).toEqual(200)
+        const followers1 = JSON.parse(res6.text).data.followers
+        expect(!followers1.includes(testUserJSON.username))
         done()
     })
     afterAll(async (done) => {
