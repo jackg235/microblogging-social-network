@@ -77,7 +77,10 @@ describe('Blog/post Endpoints', () => {
         expect(addCommentResponse.statusCode).toEqual(200)
         const response = JSON.parse(addCommentResponse.text).data;
         expect(response.nModified).toEqual(1)
-        /*
+        const postResponse = await PostModel.find({_id: postId})
+        const comments = postResponse[0].comments
+        
+        const commentId = comments[0]._id
         // delete the comment
         const deleteComment = {
             commentId: commentId,
@@ -88,11 +91,9 @@ describe('Blog/post Endpoints', () => {
             .send(deleteComment)
         expect(deleteResponse.statusCode).toEqual(200)
 
-        const postResponse = await request(app).get(`/posts/get/${postId}`)
-        const postData = JSON.parse(postResponse.text).data
-        expect(!postData.comments.includes(commentId))
-
-         */
+        const postResponse2 = await PostModel.find({_id: postId})
+        const comments2 = postResponse2[0].comments
+        expect(comments2.length).toEqual(0)
         done()
     })
     afterAll(async (done) => {

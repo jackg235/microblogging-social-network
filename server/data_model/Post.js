@@ -8,7 +8,6 @@ const postSchema = new mongoose.Schema({
     media: String, // not sure about this yet
     postDate: {type: Date, default: Date.now()},
     comments: [{
-        id: String,
         username: String,
         content: String,
         date: {type: Date, default: Date.now()}
