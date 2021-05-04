@@ -18,7 +18,8 @@ function getAccount(req, res) {
 
 function followToggle(req, res) {
     const username = req.body.username
-    const otherId = req.body.userIDToFollow
+    const otherId = req.body.otherUserId
+    console.log(username + ' is trying to follow ' + otherId)
     followUser(username, otherId)
         .then(response => {
             console.log(response)

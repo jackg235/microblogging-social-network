@@ -67,6 +67,16 @@ const authSlice = createSlice({
         },
         authenticateFailure: (state) => {
             state.authenticated = false
+        },
+        followSuccess: (state, {
+            payload
+        }) => {
+            state.following = payload
+        },
+        followFailure: (state, {
+            payload
+        }) => {
+            state.error = payload.err
         }
     }
 })
@@ -77,7 +87,9 @@ export const {
     registrationFailure,
     logoutUser,
     authenticateSuccess,
-    authenticateFailure
+    authenticateFailure,
+    followSuccess,
+    followFailure,
 } = authSlice.actions
 
 export default authSlice.reducer

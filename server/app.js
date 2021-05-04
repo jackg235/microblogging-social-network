@@ -37,7 +37,7 @@ app.delete('/posts/delete', postRoutes.delete)
 
 app.get('/posts/get/:postId', postRoutes.get)
 
-app.get('/posts/getPosts', postRoutes.getPosts)
+app.get('/posts/getPosts/:username', postRoutes.getPosts)
 
 app.get('/posts/getUserPosts/:username', postRoutes.getUserPosts)
 

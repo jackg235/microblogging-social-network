@@ -50,9 +50,9 @@ function getPost(req, res) {
 }
 
 function getPosts(req, res) {
-    // const username = req.params.username
+    const username = req.params.username
     console.log('attempting to get posts for home feed')
-    PostMethods.getPosts()
+    PostMethods.getPosts(username)
         .then(response => {
             if (response.err) {
                 const resJSON = responseError(null, null, response.err)
@@ -86,12 +86,12 @@ function addComment(req, res) {
     const content = req.body.content
     const commenter = req.body.commenterId
     PostMethods.addComment(commenter, postId, content)
-        .then((err) => {
-            if (err) {
-                const resJSON = responseError(null, null, err)
+        .then((response) => {
+            if (response.err) {
+                const resJSON = responseError(null, null, response.err)
                 res.status(400).send(resJSON)
             } else {
-                const resJSON = responseOkay(null, null)
+                const resJSON = responseOkay(response.data, null)
                 res.status(200).send(resJSON)
             }
         })
@@ -100,12 +100,12 @@ function addComment(req, res) {
 function deleteComment(req, res) {
     const postId = req.body.postId
     PostMethods.deleteComment(postId)
-        .then((err) => {
-            if (err) {
-                const resJSON = responseError(null, null, err)
+        .then((response) => {
+            if (response.err) {
+                const resJSON = responseError(null, null, response.err)
                 res.status(400).send(resJSON)
             } else {
-                const resJSON = responseOkay(null, null)
+                const resJSON = responseOkay(response.data, null)
                 res.status(200).send(resJSON)
             }
         })
@@ -113,7 +113,6 @@ function deleteComment(req, res) {
 }
 
 function getComments(req, res) {
-    // PostMethods.getComments(mongoose.Types.ObjectId(commentId))
     PostMethods.getComments()
         .then(response => {
             if (response.err) {

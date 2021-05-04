@@ -12,6 +12,7 @@ export const initialState = {
         username: "",
         registrationDate: null,
         following: [],
+        followers: [],
         posts: [],
         img: {
             data: null,
@@ -47,6 +48,11 @@ const userSlice = createSlice({
             state.allUsers = []
             state.error = payload.err
         },
+        updateFollowers: (state, {
+            payload
+        }) => {
+            state.profileUser.followers = payload
+        },
     }
 })
 export const {
@@ -54,6 +60,7 @@ export const {
     getUserFailure,
     getAllUsersSuccess,
     getAllUsersFailure,
+    updateFollowers,
 } = userSlice.actions
 
 export default userSlice.reducer

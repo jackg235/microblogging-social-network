@@ -6,8 +6,16 @@ import {
     registrationFailure,
     logoutUser,
     authenticateSuccess,
-    authenticateFailure
+    authenticateFailure,
+    followSuccess,
+    followFailure,
 } from '../reducers/AuthenticationReducer'
+
+import {
+    updateFollowers,
+    getUserFailure,
+} from '../reducers/UserReducer'
+import { getUser } from './UserActions'
 
 // attempts to login a user
 export function login(email, password) {
@@ -95,5 +103,39 @@ export function authenticate() {
         } else {
             dispatch(authenticateFailure())
         }
+    }
+}
+
+// attempts to follow/unfollow the specified user
+export function followToggle(username, otherUserId) {
+    console.log(username + ' is attempting to follow... ' + otherUserId)
+    return function (dispatch) {
+        return fetch(`http://localhost:5000/users/follow`, {
+            method: 'POST',
+            body: JSON.stringify({
+                username,
+                otherUserId,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('follow user error = ' + res.err)
+                // if following the user was successful, add the user data to state
+                if (!res.err) {
+                    console.log('follow user res.data... ')
+                    console.log(res.data)
+                    dispatch(followSuccess(res.data.following));
+                    dispatch(updateFollowers(res.data.followers))
+                } else {
+                    // failed to follow user
+                    dispatch(followFailure(res))
+                    // send error to user reducer as well
+                    dispatch(getUserFailure(res))
+                }
+            })
     }
 }

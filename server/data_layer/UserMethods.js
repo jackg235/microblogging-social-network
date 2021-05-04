@@ -75,6 +75,8 @@ async function followUser(username, userIDToFollow) {
     try {
         const response = await UserModel.find({username: username})
         const following = response[0].following
+        const response2 = await UserModel.find({username: userIDToFollow})
+        const followers = response2[0].followers
         // unfollow the user if already being followed
         if (following.includes(userIDToFollow)) {
             console.log('toggling unfollow')
@@ -82,14 +84,26 @@ async function followUser(username, userIDToFollow) {
             if (index > -1) {
                 following.splice(index, 1);
             }
+            // remove user from followers list of userIDToFollow
+            const index2 = followers.indexOf(username);
+            if (index2 > -1) {
+                followers.splice(index2, 1);
+            }
         }
         // follow user if not in following
         else {
             console.log('toggling follow')
             following.push(userIDToFollow)
+            // add user to followers list of userIdToFollow
+            followers.push(username)
         }
         const res = await UserModel.updateOne({username: username}, {following: following});
-        return modelResponse(res, null)
+        const res2 = await UserModel.updateOne({username: userIDToFollow}, {followers: followers});
+        const data = {
+            following: following,
+            followers: followers,
+        }
+        return modelResponse(data, null)
     } catch (e) {
         console.error(e);
         return modelResponse(null, e)
