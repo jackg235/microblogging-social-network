@@ -139,3 +139,37 @@ export function followToggle(username, otherUserId) {
             })
     }
 }
+
+// attempts to block/unblock the specified user
+export function blockToggle(username, otherUserId) {
+    console.log(username + ' is attempting to block... ' + otherUserId)
+    return function (dispatch) {
+        return fetch(`http://localhost:5000/users/block`, {
+            method: 'POST',
+            body: JSON.stringify({
+                username,
+                otherUserId,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('block user error = ' + res.err)
+                // if blocking the user was successful, 
+                if (!res.err) {
+                    console.log('block user res.data... ')
+                    console.log(res.data)
+                    // dispatch(followSuccess(res.data.following));
+                    // dispatch(updateFollowers(res.data.followers))
+                } else {
+                    // // failed to follow user
+                    // dispatch(followFailure(res))
+                    // // send error to user reducer as well
+                    // dispatch(getUserFailure(res))
+                }
+            })
+    }
+}

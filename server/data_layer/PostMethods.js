@@ -61,15 +61,22 @@ async function getPosts(username) {
     try {
         const userRes = await UserModel.find({username: username})
         const following = userRes[0].following
+        const hiddenPosts = userRes[0].hiddenPosts
         const response = await PostModel.find()
         const followingPosts = []
         for (let i = 0; i < response.length; i++) {
-            if (following.includes(response[i].username)) {
+            if (following.includes(response[i].username) && !hiddenPosts.includes(response[i]._id)) {
                 followingPosts.push(response[i])
             }
         }
         const userPosts = await PostModel.find({username: username})
-        const posts = followingPosts.concat(userPosts)
+        const notHiddenUserPosts = []
+        for (let i = 0; i < userPosts.length; i++) {
+            if (!hiddenPosts.includes(userPosts[i]._id)) {
+                notHiddenUserPosts.push(userPosts[i])
+            }
+        }
+        const posts = followingPosts.concat(notHiddenUserPosts)
         // so most recent posts appear first
         posts.sort((a, b) => (a.postDate > b.postDate) ? -1 : 1)
         return modelResponse(posts, null)
@@ -78,13 +85,23 @@ async function getPosts(username) {
     }
 }
 
-async function getUserPosts(username) {
+async function getUserPosts(username, profileUsername) {
     try {
-        const response = await PostModel.find({username: username})
+        const postsRes = await PostModel.find({username: profileUsername})
+        // remove hidden posts
+        const userRes = await UserModel.find({username: username})
+        const hiddenPosts = userRes[0].hiddenPosts
+        const finalPosts = []
+        for (let i = 0; i < postsRes.length; i++) {
+            let postId = postsRes[i]._id
+            if (!hiddenPosts.includes(postId)) {
+                finalPosts.push(postsRes[i])
+            }
+        }
         // so most recent posts appear first
-        response.reverse()
-        console.log(response)
-        return modelResponse(response, null)
+        finalPosts.reverse()
+        console.log(finalPosts)
+        return modelResponse(finalPosts, null)
     } catch (e) {
         return modelResponse(null, e);
     }
@@ -151,11 +168,11 @@ async function deleteComment(postId, commentId) {
 async function hidePost(username, postId) {
     console.log("hiding post for user " + username)
     try {
-        const response = UserModel.find({username: username})
+        const response = await UserModel.find({username: username})
         const hidden = response[0].hiddenPosts
         hidden.push(postId)
-        await UserModel.updateOne({username: username}, {hidden: hidden})
-        return modelResponse(null, null)
+        await UserModel.updateOne({username: username}, {hiddenPosts: hidden})
+        return modelResponse(hidden, null)
     } catch (e) {
         console.log(e)
         return modelResponse(null, e);

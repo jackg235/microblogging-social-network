@@ -32,7 +32,7 @@ class Profile extends React.Component {
 
     componentDidMount() {
         this.props.getProfile(this.props.profileId);
-        this.props.getPosts(this.props.profileId)
+        this.props.getPosts(this.props.auth.username, this.props.profileId)
     }
 
     // componentDidUpdate() {
@@ -41,24 +41,26 @@ class Profile extends React.Component {
 
     render() {
 
-        const { authenticated, allComments, posts } = this.props
+        const { auth, allComments, posts } = this.props
 
         const postElements = posts.map((post) => {
-            const commentIds = post.comments
-            let comments = []
-            for (let i = 0; i < commentIds.length; i++) {
-                for (let j = 0; j < allComments.length; j++) {
-                    if (allComments[j]._id === commentIds[i]) {
-                        comments.push(allComments[j])
-                        break
-                    }
-                }
-            }
+            // const commentIds = post.comments
+            // let comments = []
+            // for (let i = 0; i < commentIds.length; i++) {
+            //     for (let j = 0; j < allComments.length; j++) {
+            //         if (allComments[j]._id === commentIds[i]) {
+            //             comments.push(allComments[j])
+            //             break
+            //         }
+            //     }
+            // }
 
-            return <Post key={post.postId} post={post} postComments={comments} />
+            return <Post key={post.postId} post={post}
+            //  postComments={comments} 
+             />
         })
 
-        if (!authenticated) {
+        if (!auth.authenticated) {
             return <Redirect to='/'/>
         }
         return (
@@ -78,7 +80,7 @@ class Profile extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    authenticated: state.auth.authenticated,
+    auth: state.auth,
     currUser: state.users.profileUser,
     posts: state.posts.profileUserPosts,
     allComments: state.posts.allComments
@@ -88,7 +90,7 @@ function mapDispatchToProps(dispatch) {
     console.log('dispatching')
     return ({
         getProfile: (username) => dispatch(getUser(username)),
-        getPosts: (username) => dispatch(getUserPosts(username))
+        getPosts: (username, profileUsername) => dispatch(getUserPosts(username, profileUsername))
     })
 }
 

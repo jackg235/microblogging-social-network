@@ -57,6 +57,8 @@ function getPosts(req, res) {
                 const resJSON = responseError(null, null, response.err)
                 res.status(400).send(resJSON)
             } else {
+                console.log('get posts response:')
+                console.log(response)
                 const resJSON = responseOkay(response.data, null)
                 res.status(200).send(resJSON)
             }
@@ -66,8 +68,9 @@ function getPosts(req, res) {
 
 function getUserPosts(req, res) {
     const username = req.params.username
+    const profileUsername = req.params.profileUser
     console.log('attempting to get posts for profile page')
-    PostMethods.getUserPosts(username)
+    PostMethods.getUserPosts(username, profileUsername)
         .then(response => {
             if (response.err) {
                 const resJSON = responseError(null, null, response.err)
@@ -168,6 +171,7 @@ function hidePost(req, res) {
                 const resJSON = responseError(null, null, response.err)
                 res.status(400).send(resJSON)
             } else {
+                console.log('hide post response:')
                 console.log(response)
                 const resJSON = responseOkay(response.data, null)
                 res.status(200).send(resJSON)
