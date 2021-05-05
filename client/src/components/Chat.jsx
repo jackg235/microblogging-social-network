@@ -14,7 +14,7 @@ import '../static/stylesheets/Stream.css';
 import Card from 'react-bootstrap/Card';
 import ChatSidebar from './chat/ChatSidebar';
 import ChatWindow from './chat/ChatWindow';
-
+import ChatWindowInf from './chat/ChatWindowInf';
 
 const usersMock = [
     {
@@ -187,7 +187,7 @@ class Chat extends React.Component {
                             <ChatSidebar users={this.state.contacts} currMessaging={this.updateChatWindow}/>
                         </Col>
                         <Col classname="stream-sidebar">
-                            <ChatWindow current={this.state.current} email={this.getIdentity()}/>
+                            <ChatWindowInf current={this.state.current} email={this.getIdentity()}/>
                         </Col>
                     </Row>
                 </Container>

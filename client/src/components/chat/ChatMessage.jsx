@@ -8,11 +8,11 @@ class ChatMessage extends React.Component {
         const author = this.props.message.state.author;
 
 
-        console.log(this.props.message);
+        // console.log(this.props.message);
         return (
             <div>
                 <Button block className="mb-4 mx-1" variant="info">
-                    <p>ID: {this.props.message.sid}</p>
+                    <p>Index: {this.props.message.index}</p>
                     <p>Body: {this.props.message.state.body}</p>
                     <p>Author: {this.props.message.state.author}</p>
                     <p>Time: {JSON.stringify(this.props.message.state.timestamp)}</p>
