@@ -89,56 +89,6 @@ class Chat extends React.Component {
         this.updateChatWindow = this.updateChatWindow.bind(this);
     }
 
-    // renewTokensAsNeeded = (client) => {
-    //     client.on('tokenAboutToExpire', () => {
-    //         this.getToken().then(token => {
-    //             client.updateToken(token);
-    //         });
-    //     });
-
-    //     client.on('tokenExpired', () => {
-    //         this.getToken().then(token => {
-    //             client.updateToken(token);
-    //         });
-    //     });
-    // };
-
-    // getTwilioChatClient(token) {
-    //     return TwilioChat.Client.create(token).then(client => {
-    //         // console.log(client);
-
-    //         this.renewTokensAsNeeded(client);
-    //         // this.setState(prevState => {
-    //         //     return { client: client }
-    //         // });
-    //         return client;
-    //     }).catch(err => {
-    //         console.log(err);
-    //     });
-    // }
-
-    // getToken() {
-    //     // const identity = this.props.auth.email;
-    //     const identity = 'b@gmail.com';
-    //     const token = axios.get('http://localhost:5000/universal/token', {params: { identity: identity }})
-    //         .then(res => res.data.token)
-    //         .catch(error => {
-    //         if (error.response) {
-    //             // Request made and server responded
-    //             console.log(error.response.data);
-    //             console.log(error.response.status);
-    //             console.log(error.response.headers);
-    //         } else if (error.request) {
-    //             // The request was made but no response was received
-    //             console.log(error.request);
-    //         } else {
-    //             // Something happened in setting up the request that triggered an Error
-    //             console.log('Error', error.message);
-    //         }
-    //     });
-    //     return token;
-    // }
-
     getIdentity = () => {
         return 'b@gmail.com';
         // return this.props.auth.email;
