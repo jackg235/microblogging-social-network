@@ -8,6 +8,7 @@ import ChatMessage from './ChatMessage';
 import Form from 'react-bootstrap/Form';
 import { getChatClient, getChannel, getFirstMessages, getMoreMessages, sortByIndex } from "./TwilioUtils";
 import InfiniteScroll from "react-infinite-scroll-component";
+const fs = require('fs');
 
 const styles = {
     button: {
@@ -36,6 +37,13 @@ class ChatWindowInf extends React.Component {
     }
 
     handleMessageAdded(message) {
+        console.log(message);
+        if (message.type === 'media') {
+            message.media.getContentTemporaryUrl().then(url => {
+                // log media temporary URL
+                console.log('Media temporary URL is ' + url);
+            });
+        }
         const { messages } = this.state;
         const newmsgs = [...messages, message]
         this.setState(prevState => {
@@ -50,7 +58,6 @@ class ChatWindowInf extends React.Component {
             this.setState({ client: client });
         }).catch(err => console.log(err));
     }
-
 
     componentDidUpdate(prevProps) {
         let ch;
@@ -80,6 +87,7 @@ class ChatWindowInf extends React.Component {
                         current: this.props.current,
                         channel: ch,
                         messages: firstPage || [],
+                        hasMore: true
                     }
                 });
             }).catch(e => {
@@ -100,12 +108,34 @@ class ChatWindowInf extends React.Component {
 
     // send button onClick
     sendMessage() {
-        const input = document.getElementById('send-inpt').value
-        document.getElementById('send-inpt').value = null;
-        document.getElementById('send-inpt').focus();
         const channel = this.state.channel;
-        channel.sendMessage(input.trim());
-        setTimeout(this.fetchMoreMessages(), 2000);
+
+        const fileTag = document.getElementById('file');
+        console.log(fileTag.files[0]);
+        const file = fileTag.files.length > 0 ? fileTag.files[0] : null;
+        if (file !== null) {
+            const reader = new FileReader();
+
+            reader.addEventListener('load', () => {
+                console.log('sending this thing!!!')
+                console.log(file.type);
+                channel.sendMessage({
+                    contentType: file.type,
+                    media: reader.result
+                })
+            });
+
+            reader.readAsArrayBuffer(file);
+        }
+        
+        const input = document.getElementById('send-inpt').value.trim();
+
+        if (input !== '') {
+            document.getElementById('send-inpt').value = '';
+            document.getElementById('send-inpt').focus();
+            channel.sendMessage(input.trim());
+            setTimeout(this.fetchMoreMessages(), 2000);
+        }
     }
 
     // scroll down on component update
@@ -177,6 +207,9 @@ class ChatWindowInf extends React.Component {
             </Row> : '';
 
         const infScroll = <InfiniteScroll
+            style = {{ 
+                "overflow-x": "hidden"
+            }}
             dataLength={this.state.messages.length}
             next={this.fetchMoreMessages}
             hasMore={this.state.hasMore}
@@ -185,19 +218,23 @@ class ChatWindowInf extends React.Component {
             endMessage={ <p style={{ textAlign: "center" }}> <b>No more messages</b> </p> } >
 
             {messageComps}
-            {sendMessageComponent}
+            
         </InfiniteScroll>;
 
         return (
             <Button style={styles.button} disabled block className="" variant="outline-info">
-                <Container className="mt-4" fluid>
+                {/* <Container className="mt-4" fluid>
                     
                     <Row>
                         <Button onClick={this.onClick} block className="mb-2 mx-2" variant="outline-info">Click to print this.state to console</Button>
                     </Row>
                     
-                    {infScroll}
-                </Container>
+                    
+                </Container> */}
+                
+                {infScroll}
+                {sendMessageComponent}
+                <input id="file" type="file" onChange={ev => console.log(ev.target.files)} />
                 {/* used to scroll to the bottom on new message received */}
                 <div style={{ float:"left", clear: "both" }} id="dummy" />
             </Button>
