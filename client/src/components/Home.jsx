@@ -42,18 +42,21 @@ class Home extends React.Component {
         const { allPosts } = this.props.posts
 
         const postElements = allPosts.map((post) => {
-            const commentIds = post.comments
-            let comments = []
-            for (let i = 0; i < commentIds.length; i++) {
-                for (let j = 0; j < allComments.length; j++) {
-                    if (allComments[j]._id === commentIds[i]) {
-                        comments.push(allComments[j])
-                        break
-                    }
-                }
-            }
-            // console.log(comments)
-            return <Post key={post.postId} post={post} postComments={comments}/>
+            // const commentIds = post.comments
+            // let comments = []
+            // for (let i = 0; i < commentIds.length; i++) {
+            //     for (let j = 0; j < allComments.length; j++) {
+            //         if (allComments[j]._id === commentIds[i]) {
+            //             comments.push(allComments[j])
+            //             break
+            //         }
+            //     }
+            // }
+            // // console.log(comments)
+
+            return <Post key={post.postId} post={post}
+            //  postComments={comments}
+             />
         })
 
         const personalProfileLink = "/profile/" + username;

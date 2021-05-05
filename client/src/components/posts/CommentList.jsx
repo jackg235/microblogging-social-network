@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
 import { connect } from 'react-redux';
-// import {getComment} from '../../slices/actions/PostActions'
+import {deleteComment} from '../../slices/actions/PostActions'
 
 import DefaultProPic from '../../default_propic.jpg'
 
@@ -33,9 +33,21 @@ const styles = (theme) => ({
 });
 
 class CommentList extends Component {
+
+  constructor(props) {
+    super(props);
+    this.deleteComment = this.deleteComment.bind(this)
+  }
+
+  deleteComment(commenterId, commentId, postId, posterId) {
+    this.props.deleteComment(commenterId, commentId, postId, posterId)
+  }
+
   render() {
     const { 
-        comments, 
+        post: {
+          comments,
+        },
         classes,
         auth: {
             authenticated,
@@ -46,11 +58,12 @@ class CommentList extends Component {
     return (
       <Grid container>
         {comments.map((comment, index) => {
+          console.log(comment)
 
           const deleteButton =
           authenticated && comment.username === username ? (
             <Button 
-            // onclick=deleteComment(comment._id)
+            onClick={() => {this.deleteComment(comment.username, comment._id, this.props.post._id, this.props.post.username)}}
             className={classes.deleteComment}
             >
                 {'Delete Comment'}
@@ -58,7 +71,7 @@ class CommentList extends Component {
           ) : null;
 
           return (
-            <Fragment key={comment.commentDate}>
+            <Fragment key={comment.date}>
               <Grid item sm={12}>
                 <Grid container className={classes.commentContainer}>
                   <Grid item sm={2}>
@@ -80,7 +93,7 @@ class CommentList extends Component {
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
                         {/* {dayjs(comment.commentDate).format('h:mm a, MMMM DD YYYY')} */}
-                        {comment.commentDate}
+                        {comment.date}
                       </Typography>
                       <hr className={classes.invisibleSeparator} />
                       <Typography variabnt="body1">{comment.content}</Typography>
@@ -107,7 +120,7 @@ const mapStateToProps = (state) => ({
 
 function mapDispatchToProps(dispatch) {
   return ({
-      // getComment: (commentId) => dispatch(getComment(commentId)),
+    deleteComment: (commenterId, commentId, postId, posterId) => dispatch(deleteComment(commenterId, commentId, postId, posterId)),
   })
 }
 

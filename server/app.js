@@ -39,7 +39,7 @@ app.get('/posts/get/:postId', postRoutes.get)
 
 app.get('/posts/getPosts/:username', postRoutes.getPosts)
 
-app.get('/posts/getUserPosts/:username', postRoutes.getUserPosts)
+app.get('/posts/getUserPosts/:username&:profileUser', postRoutes.getUserPosts)
 
 app.post('/posts/addComment', postRoutes.addComment)
 

@@ -48,14 +48,14 @@ export function createPost(title, content, username) {
 }
 
 // attempts to delete the blog post with the specified title
-export function deletePost(postId, posterId) {
-    console.log('attempting to delete a post with id... ' + postId + ' by... ' + posterId)
+export function deletePost(username, postId) {
+    console.log('attempting to delete a post with id... ' + postId + ' by... ' + username)
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/delete`, {
             method: 'DELETE',
             body: JSON.stringify({
+                username,
                 postId,
-                posterId,
             }),
             headers: {
                 'Content-Type': 'application/json',
@@ -70,7 +70,10 @@ export function deletePost(postId, posterId) {
                     // failed to delete post
                     dispatch(postFailure(res))
                 } else {
-                    dispatch(getAllPosts(posterId));
+                    // update home feed to not have deleted post
+                    dispatch(getAllPosts(username));
+                    // in case post was deleted from profile page
+                    dispatch(getUserPosts(username, username))
                 }
             })
     }
@@ -122,17 +125,17 @@ export function getAllPosts(username) {
                 } else {
                     console.log('following posts res.data is: ' + res.data);
                     dispatch(postSuccess(res.data));
-                    dispatch(getComments())
+                    // dispatch(getComments())
                 }
             })
     }
 }
 
 // attempts to get all blog posts from specified user
-export function getUserPosts(username) {
-    console.log('attempting to get posts from... ' + username)
+export function getUserPosts(username, profileUser) {
+    console.log('attempting to get posts from... ' + profileUser)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/getUserPosts/${username}`, {
+        return fetch(`http://localhost:5000/posts/getUserPosts/${username}&${profileUser}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -149,7 +152,7 @@ export function getUserPosts(username) {
                 } else {
                     console.log('user posts res.data is: ' + res.data);
                     dispatch(getUserPostsSuccess(res.data));
-                    dispatch(getComments())
+                    // dispatch(getComments())
                 }
             })
     }
@@ -184,7 +187,7 @@ export function addComment(commenterId, content, postId, posterId) {
                     // updates home page posts with new comment
                     dispatch(getAllPosts(commenterId));
                     // in case comment was added on profile page
-                    dispatch(getUserPosts(posterId))
+                    dispatch(getUserPosts(commenterId, posterId))
                 }
             })
     }
@@ -197,10 +200,8 @@ export function deleteComment(commenterId, commentId, postId, posterId) {
         return fetch(`http://localhost:5000/posts/deleteComment`, {
             method: 'DELETE',
             body: JSON.stringify({
-                commenterId,
-                commentId,
                 postId,
-                posterId,
+                commentId,
             }),
             headers: {
                 'Content-Type': 'application/json',
@@ -212,15 +213,19 @@ export function deleteComment(commenterId, commentId, postId, posterId) {
                 console.log('delete comment error = ' + res.err)
                 // if the comment was deleted successfully, update allPosts in state
                 if (res.err) {
-                    // failed to add comment to post
+                    // failed to delete comment from post
                     dispatch(postFailure(res))
                 } else {
+                    // updates home page posts without deleted comment
                     dispatch(getAllPosts(commenterId))
+                    // in case comment was deleted from profile page
+                    dispatch(getUserPosts(commenterId, posterId))
                 }
             })
     }
 }
 
+// DELETE THIS
 // attempts to get all post comments from db
 export function getComments() {
     console.log('attempting to get comments from backend...')
@@ -248,15 +253,47 @@ export function getComments() {
     }
 }
 
+// attempts to hide the specified post for the given user
+export function hidePost(username, postId, posterId) {
+    console.log(username + ' is attempting to hide a post from... ' + posterId);
+    return function (dispatch) {
+        return fetch(`http://localhost:5000/posts/hide`, {
+            // should this be changed to a put or patch maybe?
+            method: 'POST',
+            body: JSON.stringify({
+                username,
+                postId,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('hide post error = ' + res.err)
+                // if the post was hidden successfully, update allPosts in state
+                if (res.err) {
+                    // failed to hide post
+                    dispatch(postFailure(res))
+                } else {
+                    dispatch(getAllPosts(username))
+                    // if user hid post from profile page
+                    dispatch(getUserPosts(username, posterId))
+                }
+            })
+    }
+}
+
 // attempts to like the specified post for the given user
-export function likePost(likerId, postId, posterId) {
-    console.log(likerId + ' is attempting to like a post from... ' + posterId);
+export function likePost(username, postId, posterId) {
+    console.log(username + ' is attempting to like a post from... ' + posterId);
     return function (dispatch) {
         return fetch(`http://localhost:5000/posts/like`, {
             // should this be changed to a put or patch maybe?
             method: 'POST',
             body: JSON.stringify({
-                likerId,
+                username,
                 postId,
                 posterId,
             }),
@@ -273,7 +310,9 @@ export function likePost(likerId, postId, posterId) {
                     // failed to like post
                     dispatch(postFailure(res))
                 } else {
-                    dispatch(getAllPosts(likerId))
+                    dispatch(getAllPosts(username))
+                    // if user liked post from profile page
+                    dispatch(getUserPosts(username, posterId))
                 }
             })
     }

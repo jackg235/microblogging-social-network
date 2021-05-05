@@ -18,6 +18,7 @@ import CommentList from './CommentList';
 import CreateComment from './CreateComment';
 
 import DefaultProPic from '../../default_propic.jpg'
+import {hidePost, deletePost, deleteComment} from '../../slices/actions/PostActions'
 
 import { connect } from 'react-redux';
 
@@ -49,6 +50,21 @@ const styles = {
 };
 
 class Post extends Component {
+
+  constructor(props) {
+    super(props);
+    this.hidePost = this.hidePost.bind(this)
+    this.deletePost = this.deletePost.bind(this)
+  }
+
+  hidePost() {
+    this.props.hidePost(this.props.auth.username, this.props.post._id, this.props.post.username)
+  }
+
+  deletePost() {
+    this.props.deletePost(this.props.auth.username, this.props.post._id)
+  }
+
   render() {
     // dayjs.extend(relativeTime);
     const {
@@ -64,7 +80,6 @@ class Post extends Component {
         likes,
         comments,
       },
-      postComments,
       auth: {
         authenticated,
       }
@@ -74,7 +89,7 @@ class Post extends Component {
     const deleteButton =
       authenticated && username === this.props.auth.username ? (
         <Button 
-        // onclick=deletePost(_id)
+        onClick={() => {this.deletePost()}}
         className={classes.deletePost}
         >
             {'Delete'}
@@ -107,7 +122,7 @@ class Post extends Component {
           {/* <LikeButton _id={_id} /> */}
           <span>{likes.length} Likes </span>
           <span>{comments.length} comments </span>
-          <CommentList comments={postComments} />
+          <CommentList post={this.props.post} />
         </CardContent>
           
         <CardContent className={classes.content}>
@@ -122,7 +137,7 @@ class Post extends Component {
               {'Like Post'}
           </Button>
           <Button 
-            // onclick=hidePost(_id)
+            onClick={() => {this.hidePost()}}
             className={classes.hidePost}
           >
               {'Hide Post'}
@@ -145,4 +160,12 @@ const mapStateToProps = (state) => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(Post));
+function mapDispatchToProps(dispatch) {
+  console.log('dispatching')
+  return ({
+      hidePost: (username, postId, posterId) => dispatch(hidePost(username, postId, posterId)),
+      deletePost: (username, postId) => dispatch(deletePost(username, postId)),
+  })
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Post));
