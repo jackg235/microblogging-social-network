@@ -12,6 +12,9 @@ import Recorder from './Recorder';
 
 const styles = {
     button: {
+        "padding-top": "4%",
+        "padding-left": "2%",
+        "padding-right": "2%"
         // "text-align": "left",
         // "overflow-y": "scroll",
         // "overflow-x": "hidden",

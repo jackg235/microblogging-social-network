@@ -53,10 +53,11 @@ class ChatMessage extends React.Component {
             (this.state.type === 'image' ? <img style={styles.img} src={this.state.mediaurl} alt="no pic"/> : (
             this.state.type === 'audio' ? <audio src={this.state.mediaurl} style={{ "display": "block", "width": "100%"}} controls="controls" /> :
             <video style={{"width": "80%"} } src={this.state.mediaurl} type={this.props.message.media.contentType} controls></video>)) : null;
-
+        
+        const variant = this.state.mediaurl !== undefined ? 'info' : 'outline-info';
         return (
             <div>
-                <Button block className="mb-4 mx-1" variant="info">
+                <Button block className="mb-4 mx-1" variant={variant}>
                     <Row>
                         <Col xs={8}>
                             <p style={{"text-align": "left"}}>{this.convertTime(this.props.message.state.timestamp)}</p>
