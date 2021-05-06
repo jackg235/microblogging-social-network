@@ -57,7 +57,7 @@ class CommentList extends Component {
 
     return (
       <Grid container>
-        {comments.map((comment, index) => {
+        {comments.slice(0).reverse().map((comment, index) => {
           console.log(comment)
 
           const deleteButton =
