@@ -8,7 +8,7 @@ import ChatMessage from './ChatMessage';
 import Form from 'react-bootstrap/Form';
 import { getChatClient, getChannel, getFirstMessages, getMoreMessages, sortByIndex } from "./TwilioUtils";
 import InfiniteScroll from "react-infinite-scroll-component";
-const fs = require('fs');
+import Recorder from './Recorder';
 
 const styles = {
     button: {
@@ -28,22 +28,16 @@ class ChatWindowInf extends React.Component {
 
         this.state = {
             messages: [],
-            hasMore: true
+            hasMore: true,
+            audio: ''
         };
-        
+
         this.onClick = this.onClick.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
         this.handleMessageAdded = this.handleMessageAdded.bind(this);
     }
 
     handleMessageAdded(message) {
-        console.log(message);
-        if (message.type === 'media') {
-            message.media.getContentTemporaryUrl().then(url => {
-                // log media temporary URL
-                console.log('Media temporary URL is ' + url);
-            });
-        }
         const { messages } = this.state;
         const newmsgs = [...messages, message]
         this.setState(prevState => {
@@ -65,23 +59,19 @@ class ChatWindowInf extends React.Component {
             const email = this.props.current.email;
 
             getChannel(this.state.client, this.props.email, this.props.current.email).then(channel => {
-                console.log();
                 ch = channel;
                 if (channel._events.messageAdded.length !== 2) {
                     channel.on('messageAdded', this.handleMessageAdded);
                 }
-                
+
                 if (channel.channelState.status !== 'joined') {
-                    console.log('joining now');
                     channel.join().catch(e => {
                         console.log('error joining channel');
                     });
                 } else {
-                    console.log('joined old channel');
                 }
                 return getMoreMessages(channel, -1, 10);
             }).then(firstPage => {
-                console.log('firstpage length', firstPage.length);
                 this.setState(prevState => {
                     return {
                         current: this.props.current,
@@ -110,30 +100,38 @@ class ChatWindowInf extends React.Component {
     sendMessage() {
         const channel = this.state.channel;
 
+        // send image
         const fileTag = document.getElementById('file');
-        console.log(fileTag.files[0]);
         const file = fileTag.files.length > 0 ? fileTag.files[0] : null;
         if (file !== null) {
             const reader = new FileReader();
-
             reader.addEventListener('load', () => {
-                console.log('sending this thing!!!')
-                console.log(file.type);
                 channel.sendMessage({
                     contentType: file.type,
                     media: reader.result
                 })
             });
-
             reader.readAsArrayBuffer(file);
         }
-        
+        // send audio file
+        if (this.state.audio !== '') {
+            const file = this.state.audio;
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+                channel.sendMessage({
+                    contentType: file.type,
+                    media: reader.result
+                });
+            });
+            reader.readAsArrayBuffer(file);
+            this.setState({ audio: '' });
+        }
+        // send text
         const input = document.getElementById('send-inpt').value.trim();
-
         if (input !== '') {
             document.getElementById('send-inpt').value = '';
             document.getElementById('send-inpt').focus();
-            channel.sendMessage(input.trim());
+            channel.sendMessage(input);
             setTimeout(this.fetchMoreMessages(), 2000);
         }
     }
@@ -151,28 +149,34 @@ class ChatWindowInf extends React.Component {
     }
 
     fetchMoreMessages = () => {
-        console.log('fetching more');
         const curr = this.state.messages;
-        const latestIdx = curr[curr.length - 1].index;
 
-        getMoreMessages(this.state.channel, latestIdx, 10).then(newmsgs => {
-            if (newmsgs === null) {
-                this.setState({ hasMore: false });
-            } else {
-                this.setState({ messages: this.state.messages.concat(newmsgs) });
-            }
-        }).catch(e => {
-            console.log(e);
-        });
+        if (curr.length === 0) {
+            return;
+        }
+
+        const latestIdx = curr[curr.length - 1].index;
+        getMoreMessages(this.state.channel, latestIdx, 10)
+            .then(newmsgs => {
+                if (newmsgs === null) {
+                    this.setState({ hasMore: false });
+                } else {
+                    this.setState({ messages: this.state.messages.concat(newmsgs) });
+                }
+            })
+            .catch(e => console.log(e));
     };
+
+    // sets state from child's audio
+    getAudio = (blob) => {
+        this.setState({ audio: blob });
+    }
 
     render() {
         const userTo = this.props.current !== undefined ? this.props.current.username : '';
-
         const sendingStyle = {
             span: 5
         }
-
         const receiveStyle = {
             span: 5,
             offset: 7
@@ -191,7 +195,7 @@ class ChatWindowInf extends React.Component {
             )
         }): '';
 
-        const sendMessageComponent = this.state.channel !== undefined ? 
+        const sendMessageComponent = this.state.channel !== undefined ?
             <Row className="mt-2">
                 {/* <input type="hidden" value="something"/> */}
                 <Col xs={11}>
@@ -207,32 +211,29 @@ class ChatWindowInf extends React.Component {
             </Row> : '';
 
         const infScroll = <InfiniteScroll
-            style = {{ 
-                "overflow-x": "hidden"
+            style = {{
+                "overflowX": "hidden"
             }}
             dataLength={this.state.messages.length}
             next={this.fetchMoreMessages}
             hasMore={this.state.hasMore}
             loader={<h4>Loading...</h4>}
-            // height={400}
             endMessage={ <p style={{ textAlign: "center" }}> <b>No more messages</b> </p> } >
 
             {messageComps}
-            
+
         </InfiniteScroll>;
 
         return (
             <Button style={styles.button} disabled block className="" variant="outline-info">
                 {/* <Container className="mt-4" fluid>
-                    
                     <Row>
                         <Button onClick={this.onClick} block className="mb-2 mx-2" variant="outline-info">Click to print this.state to console</Button>
                     </Row>
-                    
-                    
                 </Container> */}
-                
+
                 {infScroll}
+                <Recorder newAudio={this.getAudio}/>
                 {sendMessageComponent}
                 <input id="file" type="file" onChange={ev => console.log(ev.target.files)} />
                 {/* used to scroll to the bottom on new message received */}

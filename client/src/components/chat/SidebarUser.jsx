@@ -30,7 +30,7 @@ class SidebarUser extends React.Component {
         return (
             <Row className="flex-nowrap overflow-hidden">
                 <Col xs={2}>
-                    <Image className="" style={styles.img} src={this.props.user.userImg} rounded /> 
+                    <Image className="" style={styles.img} src={this.props.user.userImg} rounded />
                 </Col>
                 <Col xs={8}>
                     <Button onClick={this.onClick} block className="mb-2 overflow-hidden" variant="outline-info">{this.props.user.username}</Button>
