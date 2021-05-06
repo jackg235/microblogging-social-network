@@ -1,6 +1,5 @@
 const PostModel = require('../data_model/Post')
 const UserModel = require('../data_model/User')
-const PostCommentModel = require('../data_model/PostComment')
 
 function modelResponse(data, error) {
     return {
@@ -61,10 +60,11 @@ async function getPosts(username) {
     try {
         const userRes = await UserModel.find({username: username})
         const following = userRes[0].following
+        const hidden = userRes[0].hiddenPosts
         const response = await PostModel.find()
         const followingPosts = []
         for (let i = 0; i < response.length; i++) {
-            if (following.includes(response[i].username)) {
+            if (following.includes(response[i].username) && !hidden.includes(response[i]._id)) {
                 followingPosts.push(response[i])
             }
         }
@@ -100,16 +100,6 @@ async function likePost(postId, username) {
     return null
 }
 
-async function unlikePost(postId) {
-    console.log("unliking post " + postId)
-    try {
-        // TO DO
-    } catch (e) {
-        console.error(e);
-        return e;
-    }
-    return null
-}
 
 async function addComment(commenter, postId, content) {
     console.log("commenting on post " + postId)
@@ -151,25 +141,13 @@ async function deleteComment(postId, commentId) {
 async function hidePost(username, postId) {
     console.log("hiding post for user " + username)
     try {
-        const response = UserModel.find({username: username})
+        const response = await UserModel.find({username: username})
         const hidden = response[0].hiddenPosts
         hidden.push(postId)
-        await UserModel.updateOne({username: username}, {hidden: hidden})
+        await UserModel.updateOne({username: username}, {hiddenPosts: hidden})
         return modelResponse(null, null)
     } catch (e) {
         console.log(e)
-        return modelResponse(null, e);
-    }
-}
-
-// DELETE
-async function getComments() {
-    try {
-        const response = await PostCommentModel.find()
-        // so most recent comments appear first
-        response.reverse()
-        return modelResponse(response, null)
-    } catch (e) {
         return modelResponse(null, e);
     }
 }
@@ -181,9 +159,7 @@ module.exports = {
     getPosts,
     getUserPosts,
     likePost,
-    unlikePost,
     addComment,
     deleteComment,
-    getComments,
     hidePost
 }

@@ -45,11 +45,7 @@ app.post('/posts/addComment', postRoutes.addComment)
 
 app.delete('/posts/deleteComment', postRoutes.deleteComment)
 
-app.get('/posts/getComments', postRoutes.getComments)
-
 app.post('/posts/like', postRoutes.like)
-
-app.post('/posts/unlike', postRoutes.unlike)
 
 app.post('/posts/hide', postRoutes.hidePost)
 
