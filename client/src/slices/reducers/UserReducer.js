@@ -53,6 +53,11 @@ const userSlice = createSlice({
         }) => {
             state.profileUser.followers = payload
         },
+        updateFollowing: (state, {
+            payload
+        }) => {
+            state.profileUser.following = payload
+        },
     }
 })
 export const {
@@ -61,6 +66,7 @@ export const {
     getAllUsersSuccess,
     getAllUsersFailure,
     updateFollowers,
+    updateFollowing,
 } = userSlice.actions
 
 export default userSlice.reducer

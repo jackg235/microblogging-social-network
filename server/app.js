@@ -29,6 +29,10 @@ app.get('/users/:username', userRoutes.getAccount)
 
 app.post('/users/follow', userRoutes.follow)
 
+app.post('/users/block', userRoutes.block)
+
+app.get('/users/blockers/:username', userRoutes.getBlockers)
+
 // ---------- post routes ---------- //
 
 app.post('/posts/new', postRoutes.new)

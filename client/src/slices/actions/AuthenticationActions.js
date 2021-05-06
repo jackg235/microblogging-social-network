@@ -9,10 +9,12 @@ import {
     authenticateFailure,
     followSuccess,
     followFailure,
+    getBlockedBySuccess,
 } from '../reducers/AuthenticationReducer'
 
 import {
     updateFollowers,
+    updateFollowing,
     getUserFailure,
 } from '../reducers/UserReducer'
 import { getUser } from './UserActions'
@@ -141,14 +143,14 @@ export function followToggle(username, otherUserId) {
 }
 
 // attempts to block/unblock the specified user
-export function blockToggle(username, otherUserId) {
-    console.log(username + ' is attempting to block... ' + otherUserId)
+export function blockToggle(username, userToBlock) {
+    console.log(username + ' is attempting to block/unblock... ' + userToBlock)
     return function (dispatch) {
         return fetch(`http://localhost:5000/users/block`, {
             method: 'POST',
             body: JSON.stringify({
                 username,
-                otherUserId,
+                userToBlock,
             }),
             headers: {
                 'Content-Type': 'application/json',
@@ -158,17 +160,41 @@ export function blockToggle(username, otherUserId) {
             .then(res => res.json())
             .then(res => {
                 console.log('block user error = ' + res.err)
-                // if blocking the user was successful, 
+                // if blocking the user was successful, update home and profile pages
                 if (!res.err) {
                     console.log('block user res.data... ')
                     console.log(res.data)
-                    // dispatch(followSuccess(res.data.following));
-                    // dispatch(updateFollowers(res.data.followers))
+                    dispatch(updateFollowing(res.data))
                 } else {
-                    // // failed to follow user
-                    // dispatch(followFailure(res))
-                    // // send error to user reducer as well
-                    // dispatch(getUserFailure(res))
+                    // failed to block user
+                    dispatch(followFailure(res))
+                }
+            })
+    }
+}
+
+// attempts to get the users that block the logged in user
+export function getBlockers(username) {
+    console.log('searching for users that block ' + username)
+    return function (dispatch) {
+        return fetch(`http://localhost:5000/users/blockers/${username}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('get blockers error = ' + res.err)
+                // if blockers were retrieved successfully, update them in state
+                if (!res.err) {
+                    console.log('get blockers res.data... ')
+                    console.log(res.data)
+                    dispatch(getBlockedBySuccess(res.data))
+                } else {
+                    // failed to block user
+                    dispatch(followFailure(res))
                 }
             })
     }

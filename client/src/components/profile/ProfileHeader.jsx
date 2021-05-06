@@ -8,7 +8,7 @@ import DefaultProPic from '../../default_propic.jpg'
 import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
 
-import {followToggle} from '../../slices/actions/AuthenticationActions'
+import {followToggle, blockToggle, getBlockers} from '../../slices/actions/AuthenticationActions'
 import {getUser} from '../../slices/actions/UserActions'
 
 const styles = {
@@ -35,11 +35,19 @@ class ProfileHeader extends React.Component {
             // other necessary fields needed in the component
         }
         this.toggleFollow = this.toggleFollow.bind(this)
+        this.toggleBlock = this.toggleBlock.bind(this)
+    }
+
+    componentDidMount() {
+        this.props.getBlockers(this.props.auth.username)
     }
 
     toggleFollow() {
         this.props.followToggle(this.props.auth.username, this.props.currUser.username)
-        // this.props.getProfile(this.props.currUser.username)
+    }
+
+    toggleBlock() {
+        this.props.blockToggle(this.props.auth.username, this.props.currUser.username)
     }
 
     render() {
@@ -49,12 +57,13 @@ class ProfileHeader extends React.Component {
             auth: {
               authenticated,
               username,
+              blockedBy,
             },
             currUser
         } = this.props;
 
         const followButton = 
-            currUser.username !== username ? (
+            currUser.username !== username && !blockedBy.includes(currUser.username) ? (
                 <Button 
                 onClick={() => {this.toggleFollow()}}
                 >
@@ -65,7 +74,7 @@ class ProfileHeader extends React.Component {
         const blockButton = 
             currUser.username !== username ? (
                 <Button 
-                // onclick=blockUser(userId)=
+                onClick={() => {this.toggleBlock()}}
                 >
                     {'Block'}
                 </Button>
@@ -143,6 +152,8 @@ function mapDispatchToProps(dispatch) {
     return ({
         getProfile: (username) => dispatch(getUser(username)),
         followToggle: (username, otherUserId) => dispatch(followToggle(username, otherUserId)),
+        blockToggle: (username, userToBlock) => dispatch(blockToggle(username, userToBlock)),
+        getBlockers: (username) => dispatch(getBlockers(username)),
     })
 }
 
