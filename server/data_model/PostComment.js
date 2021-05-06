@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const commentSchema = new mongoose.Schema({
     username: {type: String, required: true},
     content: String,
-    commentDate: {type: Date, default: Date.now()},
+    commentDate: {type: Date, default: Date.now},
     postId: {type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true},
 });
 

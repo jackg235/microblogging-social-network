@@ -18,7 +18,7 @@ import CommentList from './CommentList';
 import CreateComment from './CreateComment';
 
 import DefaultProPic from '../../default_propic.jpg'
-import {hidePost, deletePost, deleteComment} from '../../slices/actions/PostActions'
+import {hidePost, deletePost} from '../../slices/actions/PostActions'
 
 import { connect } from 'react-redux';
 
@@ -120,7 +120,7 @@ class Post extends Component {
           <Typography variant="title1">{title}</Typography>
           <Typography variant="body1">{content}</Typography>
           {/* <LikeButton _id={_id} /> */}
-          <span>{likes.length} Likes </span>
+          {/* <span>{likes.length} Likes </span> */}
           <span>{comments.length} comments </span>
           <CommentList post={this.props.post} />
         </CardContent>
@@ -130,12 +130,12 @@ class Post extends Component {
             postId={_id}
             posterId={username}
           />
-          <Button 
+          {/* <Button 
             // onclick=likePost(_id)
             className={classes.likePost}
           >
               {'Like Post'}
-          </Button>
+          </Button> */}
           <Button 
             onClick={() => {this.hidePost()}}
             className={classes.hidePost}

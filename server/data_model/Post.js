@@ -6,11 +6,11 @@ const postSchema = new mongoose.Schema({
     title: String,
     content: {type: String, maxlength: 200, minlength: 1},
     media: String, // not sure about this yet
-    postDate: {type: Date, default: Date.now()},
+    postDate: {type: Date, default: Date.now},
     comments: [{
         username: String,
         content: String,
-        date: {type: Date, default: Date.now()}
+        date: {type: Date, default: Date.now}
     }],
     likes: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
 });
