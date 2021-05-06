@@ -10,6 +10,7 @@ let userSchema = new mongoose.Schema({
     registrationDate: {type: Date, default: Date.now()},
     following: [{type: String, ref: 'User'}],
     followers: [{type: String, ref: 'User'}],
+    blockedBy: [{type: String, ref: 'User'}],
     posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
     hiddenPosts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
     img:

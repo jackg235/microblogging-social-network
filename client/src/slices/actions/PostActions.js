@@ -225,34 +225,6 @@ export function deleteComment(commenterId, commentId, postId, posterId) {
     }
 }
 
-// DELETE THIS
-// attempts to get all post comments from db
-export function getComments() {
-    console.log('attempting to get comments from backend...')
-    return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/getComments`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        })
-            .then(res => res.json())
-            .then(res => {
-                console.log('get comments error = ' + res.err)
-                console.log(res)
-                // if the comments were retrieved successfully, set the error to null
-                if (res.err) {
-                    // failed to get comments
-                    dispatch(getCommentsFailure(res))
-                } else {
-                    console.log('all comments res.data is: ' + res.data);
-                    dispatch(getCommentsSuccess(res.data));
-                }
-            })
-    }
-}
-
 // attempts to hide the specified post for the given user
 export function hidePost(username, postId, posterId) {
     console.log(username + ' is attempting to hide a post from... ' + posterId);
@@ -343,6 +315,34 @@ export function unlikePost(unlikerId, postId, posterId) {
                     dispatch(postFailure(res))
                 } else {
                     dispatch(getAllPosts(unlikerId))
+                }
+            })
+    }
+}
+
+// DELETE THIS
+// attempts to get all post comments from db
+export function getComments() {
+    console.log('attempting to get comments from backend...')
+    return function (dispatch) {
+        return fetch(`http://localhost:5000/posts/getComments`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('get comments error = ' + res.err)
+                console.log(res)
+                // if the comments were retrieved successfully, set the error to null
+                if (res.err) {
+                    // failed to get comments
+                    dispatch(getCommentsFailure(res))
+                } else {
+                    console.log('all comments res.data is: ' + res.data);
+                    dispatch(getCommentsSuccess(res.data));
                 }
             })
     }

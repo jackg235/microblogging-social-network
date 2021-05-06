@@ -91,11 +91,14 @@ async function getUserPosts(username, profileUsername) {
         // remove hidden posts
         const userRes = await UserModel.find({username: username})
         const hiddenPosts = userRes[0].hiddenPosts
+        const blockedBy = userRes[0].blockedBy
         const finalPosts = []
-        for (let i = 0; i < postsRes.length; i++) {
-            let postId = postsRes[i]._id
-            if (!hiddenPosts.includes(postId)) {
-                finalPosts.push(postsRes[i])
+        if (!blockedBy.includes(profileUsername)) {
+            for (let i = 0; i < postsRes.length; i++) {
+                let postId = postsRes[i]._id
+                if (!hiddenPosts.includes(postId)) {
+                    finalPosts.push(postsRes[i])
+                }
             }
         }
         // so most recent posts appear first

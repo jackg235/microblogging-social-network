@@ -11,6 +11,7 @@ export const initialState = {
     username: '',
     following: [],
     followers: [],
+    blockedBy: [],
     posts: []
 }
 
@@ -28,6 +29,8 @@ const authSlice = createSlice({
             state.username = payload.username
             state.posts = payload.posts
             state.followers = payload.followers
+            state.following = payload.following
+            state.blockedBy = payload.blockedBy
             state.posts = payload.posts
         },
         loginFailure: (state, {
@@ -46,6 +49,8 @@ const authSlice = createSlice({
             state.username = payload.username
             state.posts = payload.posts
             state.followers = payload.followers
+            state.following = payload.following
+            state.blockedBy = payload.blockedBy
             state.posts = payload.posts
         },
         registrationFailure: (state, {
@@ -77,7 +82,12 @@ const authSlice = createSlice({
             payload
         }) => {
             state.error = payload.err
-        }
+        },
+        getBlockedBySuccess: (state, {
+            payload
+        }) => {
+            state.blockedBy = payload
+        },
     }
 })
 export const {
@@ -90,6 +100,7 @@ export const {
     authenticateFailure,
     followSuccess,
     followFailure,
+    getBlockedBySuccess,
 } = authSlice.actions
 
 export default authSlice.reducer
