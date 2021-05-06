@@ -178,11 +178,29 @@ async function getBlockedBy(username) {
 async function getContacts(username) {
     try {
         const userRes = await UserModel.find({username: username})
+        const allUsers = await UserModel.find()
+
         followers = userRes[0].followers
+        followerObjs = []
+        for (let i = 0; i < followers.length; i++) {
+            const follower = allUsers.find(user => {
+                return user.username === followers[i]
+            })
+            followerObjs.push(follower)
+        }
+
         following = userRes[0].following
+        followingObjs = []
+        for (let i = 0; i < following.length; i++) {
+            const followingUser = allUsers.find(user => {
+                return user.username === following[i]
+            })
+            followingObjs.push(followingUser)
+        }
+
         const data = {
-            following: following,
-            followers: followers,
+            following: followingObjs,
+            followers: followerObjs,
         }
         return modelResponse(data, null)
     } catch (e) {
