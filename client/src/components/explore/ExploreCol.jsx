@@ -71,11 +71,11 @@ class ExploreCol extends React.Component {
         const userList = 
             this.props.type === 'followers' ? (
                 <Grid>
-                    {auth.followers.map((username) => <User username={username}/>)}
+                    {auth.followers.map((user) => <User username={user.username}/>)}
                 </Grid>
             ) : this.props.type === 'following' ? (
                 <Grid>
-                    {auth.following.map((username) => <User username={username}/>)}
+                    {auth.following.map((user) => <User username={user.username}/>)}
                 </Grid>
             ) : <Grid>
                     {[]}
