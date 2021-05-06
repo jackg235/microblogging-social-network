@@ -10,6 +10,7 @@ import {
     followSuccess,
     followFailure,
     getBlockedBySuccess,
+    getContactsSuccess,
 } from '../reducers/AuthenticationReducer'
 
 import {
@@ -193,7 +194,33 @@ export function getBlockers(username) {
                     console.log(res.data)
                     dispatch(getBlockedBySuccess(res.data))
                 } else {
-                    // failed to block user
+                    // failed to get blockers
+                    dispatch(followFailure(res))
+                }
+            })
+    }
+}
+
+// attempts to get the specified user's following and followers
+export function getContacts(username) {
+    console.log('attempting to get the contacts of user... ' + username)
+    return function (dispatch) {
+        return fetch(`http://localhost:5000/users/contacts/` + username, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('get user contacts error = ' + res.err)
+                // if getting the user's contacts was successful, add the contact data to state
+                if (!res.err) {
+                    console.log(res.data)
+                    dispatch(getContactsSuccess(res.data));
+                } else {
+                    // failed to get user's contacts
                     dispatch(followFailure(res))
                 }
             })

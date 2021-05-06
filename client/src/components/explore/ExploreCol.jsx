@@ -7,6 +7,8 @@ import User from '../user/User';
 import TextField from '@material-ui/core/TextField';
 import { Divider, Grid } from '@material-ui/core';
 
+import {connect} from 'react-redux';
+
 class ExploreCol extends React.Component {
     constructor(props) {
         super(props);
@@ -45,7 +47,40 @@ class ExploreCol extends React.Component {
         }
     }
 
+    componentDidMount() {
+        // if (this.props.colType === 'followers') {
+        //     this.setState({
+        //         users: this.props.auth.followers
+        //     })
+        //     console.log('set followers')
+        // } else if (this.props.colType === 'following') {
+        //     this.setState({
+        //         users: this.props.auth.following
+        //     })
+        // } else if (this.props.colType === 'suggested') {
+        //     this.setState({
+        //         users: []
+        //     })
+        // }
+    }
+
     render() {
+
+        const { auth } = this.props
+
+        const userList = 
+            this.props.type === 'followers' ? (
+                <Grid>
+                    {auth.followers.map((username) => <User username={username}/>)}
+                </Grid>
+            ) : this.props.type === 'following' ? (
+                <Grid>
+                    {auth.following.map((username) => <User username={username}/>)}
+                </Grid>
+            ) : <Grid>
+                    {[]}
+                </Grid>;
+
         return (
             <div>
                 <Grid container spacing={1} direction="column" justify="space-evenly" alignItems="stretch">
@@ -60,7 +95,10 @@ class ExploreCol extends React.Component {
                             variant="outlined"
                             onChange={(e) => this.submit(e)} />
                     </Grid>
-                    {this.state.users.map((u) => <User img={u.userImg} username={u.username}/>)}
+                    {/* <Grid>
+                        {auth.followers.map((username) => <User username={username}/>)}
+                    </Grid> */}
+                    {userList}
                 </Grid>
             </div>  
         )
@@ -68,4 +106,8 @@ class ExploreCol extends React.Component {
     }
 }
 
-export default ExploreCol;
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps)(ExploreCol);

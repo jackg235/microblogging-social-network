@@ -4,9 +4,11 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
-import DefaultProPic from '../../default_propic.jpg'
-import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
+import DefaultProPic from '../../default_propic.jpg'
+
+import { connect } from 'react-redux';
+import ShowContacts from './ShowContacts';
 
 import {followToggle, blockToggle, getBlockers} from '../../slices/actions/AuthenticationActions'
 import {getUser} from '../../slices/actions/UserActions'
@@ -114,16 +116,7 @@ class ProfileHeader extends React.Component {
                         {currUser.first} {currUser.last}
                     </CardContent>
                     <CardContent>
-                        <Button
-                        // onclick={showFollowers()}
-                        > 
-                            {currUser.followers.length} Followers
-                        </Button>
-                        <Button
-                        // onclick={showFollowing()}
-                        > 
-                            {currUser.following.length} Following
-                        </Button>
+                        <ShowContacts followers={currUser.followers} following={currUser.following}/>
                     </CardContent>
                     <CardContent>
                         User Since {currUser.registrationDate}
