@@ -57,6 +57,7 @@ function getUniversalToken(req, res) {
     sendTokenResponse(token, res);
 }
 
+
 module.exports = {
     getToken: getToken,
     postToken: postToken,

@@ -1,42 +1,74 @@
-import React from 'react'
-import Track from './Track';
+import React, {useState, useEffect, useRef} from "react";
 
-class Participant extends React.Component {
-    constructor(props) {
-        super(props);
+const Participant = ({participant}) => {
+    const [videoTracks, setVideoTracks] = useState([]);
+    const [audioTracks, setAudioTracks] = useState([]);
 
-        const existingPublications = Array.from(this.props.participant.tracks.values());
-        const existingTracks = existingPublications.map(publication => publication.track);
-        const nonNullTracks = existingTracks.filter(track => track !== null)
+    const videoRef = useRef();
+    const audioRef = useRef();
 
-        this.state = {
-            tracks: nonNullTracks
+    const trackpubsToTracks = (trackMap) =>
+        Array.from(trackMap.values())
+            .map((publication) => publication.track)
+            .filter((track) => track !== null);
+
+    useEffect(() => {
+        setVideoTracks(trackpubsToTracks(participant.videoTracks));
+        setAudioTracks(trackpubsToTracks(participant.audioTracks));
+
+        const trackSubscribed = (track) => {
+            if (track.kind === "video") {
+                setVideoTracks((videoTracks) => [...videoTracks, track]);
+            } else if (track.kind === "audio") {
+                setAudioTracks((audioTracks) => [...audioTracks, track]);
+            }
+        };
+
+        const trackUnsubscribed = (track) => {
+            if (track.kind === "video") {
+                setVideoTracks((videoTracks) => videoTracks.filter((v) => v !== track));
+            } else if (track.kind === "audio") {
+                setAudioTracks((audioTracks) => audioTracks.filter((a) => a !== track));
+            }
+        };
+
+        participant.on("trackSubscribed", trackSubscribed);
+        participant.on("trackUnsubscribed", trackUnsubscribed);
+
+        return () => {
+            setVideoTracks([]);
+            setAudioTracks([]);
+            participant.removeAllListeners();
+        };
+    }, [participant]);
+
+    useEffect(() => {
+        const videoTrack = videoTracks[0];
+        if (videoTrack) {
+            videoTrack.attach(videoRef.current);
+            return () => {
+                videoTrack.detach();
+            };
         }
-    }
+    }, [videoTracks]);
 
-    componentDidMount() {
-        if (!this.props.localParticipant) {
-            this.props.participant.on('trackSubscribed', track => this.addTrack(track));
+    useEffect(() => {
+        const audioTrack = audioTracks[0];
+        if (audioTrack) {
+            audioTrack.attach(audioRef.current);
+            return () => {
+                audioTrack.detach();
+            };
         }
-    }
+    }, [audioTracks]);
 
-    addTrack(track) {
-        this.setState({
-            tracks: [...this.state.tracks, track]
-        });
-    }
-
-    render() {
-        return (
-            <div className="participant" id={this.props.participant.identity}>
-                <div className="identity">{this.props.participant.identity}</div>
-                {
-                    this.state.tracks.map(track =>
-                        <Track key={track} filter={this.state.filter} track={track}/>)
-                }
-            </div>
-        );
-    }
-}
+    return (
+        <div className="participant">
+            <h3>{participant.identity}</h3>
+            <video ref={videoRef} autoPlay={true}/>
+            <audio ref={audioRef} autoPlay={true} muted={true}/>
+        </div>
+    );
+};
 
 export default Participant;

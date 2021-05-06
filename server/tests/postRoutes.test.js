@@ -75,7 +75,6 @@ describe('Blog/post Endpoints', () => {
                 postId: postId
             })
         expect(res2.statusCode).toEqual(200)
-        console.log(res2)
         done()
     })
 
