@@ -16,6 +16,10 @@ const testPost2 = {
     content: "this is test post content again! users can write stuff here."
 }
 
+const testUser = {
+    username: "testuser"
+}
+
 describe('Blog/post Endpoints', () => {
     it('should create a new post', async (done) => {
         const res = await request(app)
@@ -57,6 +61,23 @@ describe('Blog/post Endpoints', () => {
         const postData = JSON.parse(res.text).data
         done()
     })
+    it('should hide a post', async (done) => {
+        const res = await request(app)
+            .post('/posts/new')
+            .send(testPost2)
+        expect(res.statusCode).toEqual(200)
+        const postId = JSON.parse(res.text).data._id;
+        // hide the post
+        const res2 = await request(app)
+            .post('/posts/hide')
+            .send({
+                username: testUser.username,
+                postId: postId
+            })
+        expect(res2.statusCode).toEqual(200)
+        console.log(res2)
+        done()
+    })
 
     it('should comment on a post and then delete the comment', async (done) => {
         // create a post to comment on
@@ -79,7 +100,7 @@ describe('Blog/post Endpoints', () => {
         expect(response.nModified).toEqual(1)
         const postResponse = await PostModel.find({_id: postId})
         const comments = postResponse[0].comments
-        
+
         const commentId = comments[0]._id
         // delete the comment
         const deleteComment = {

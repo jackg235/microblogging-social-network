@@ -1,6 +1,5 @@
 const PostModel = require('../data_model/Post')
 const UserModel = require('../data_model/User')
-const PostCommentModel = require('../data_model/PostComment')
 
 function modelResponse(data, error) {
     return {
@@ -61,22 +60,19 @@ async function getPosts(username) {
     try {
         const userRes = await UserModel.find({username: username})
         const following = userRes[0].following
-        const hiddenPosts = userRes[0].hiddenPosts
-        const response = await PostModel.find()
+        const hidden = userRes[0].hiddenPosts
+        const allPosts = await PostModel.find()
         const followingPosts = []
-        for (let i = 0; i < response.length; i++) {
-            if (following.includes(response[i].username) && !hiddenPosts.includes(response[i]._id)) {
-                followingPosts.push(response[i])
+        // get all the following posts that aren't hidden
+        for (let i = 0; i < allPosts.length; i++) {
+            const post = allPosts[i];
+            if (following.includes(post.username) && !hidden.includes(post._id)) {
+                followingPosts.push(post)
             }
         }
+        // also add the current users posts
         const userPosts = await PostModel.find({username: username})
-        const notHiddenUserPosts = []
-        for (let i = 0; i < userPosts.length; i++) {
-            if (!hiddenPosts.includes(userPosts[i]._id)) {
-                notHiddenUserPosts.push(userPosts[i])
-            }
-        }
-        const posts = followingPosts.concat(notHiddenUserPosts)
+        const posts = followingPosts.concat(userPosts)
         // so most recent posts appear first
         posts.sort((a, b) => (a.postDate > b.postDate) ? -1 : 1)
         return modelResponse(posts, null)
@@ -120,16 +116,6 @@ async function likePost(postId, username) {
     return null
 }
 
-async function unlikePost(postId) {
-    console.log("unliking post " + postId)
-    try {
-        // TO DO
-    } catch (e) {
-        console.error(e);
-        return e;
-    }
-    return null
-}
 
 async function addComment(commenter, postId, content) {
     console.log("commenting on post " + postId)
@@ -182,18 +168,6 @@ async function hidePost(username, postId) {
     }
 }
 
-// DELETE
-async function getComments() {
-    try {
-        const response = await PostCommentModel.find()
-        // so most recent comments appear first
-        response.reverse()
-        return modelResponse(response, null)
-    } catch (e) {
-        return modelResponse(null, e);
-    }
-}
-
 module.exports = {
     newPost,
     deletePost,
@@ -201,9 +175,7 @@ module.exports = {
     getPosts,
     getUserPosts,
     likePost,
-    unlikePost,
     addComment,
     deleteComment,
-    getComments,
     hidePost
 }
