@@ -175,6 +175,21 @@ async function getBlockedBy(username) {
     }
 }
 
+async function getContacts(username) {
+    try {
+        const userRes = await UserModel.find({username: username})
+        followers = userRes[0].followers
+        following = userRes[0].following
+        const data = {
+            following: following,
+            followers: followers,
+        }
+        return modelResponse(data, null)
+    } catch (e) {
+        return modelResponse(null, e);
+    }
+}
+
 // DELETE (already in post methods)
 async function getUserPosts(username) {
     console.log("getting posts for user " + username)
@@ -187,6 +202,7 @@ async function getUserPosts(username) {
     return null
 }
 
+// DELETE (already in post methods)
 async function getFollowingPosts(username) {
     console.log("getting posts for user " + username)
     try {
@@ -198,4 +214,4 @@ async function getFollowingPosts(username) {
     return null
 }
 
-module.exports = {createUser, loginUser, getUserPosts, getFollowingPosts, getUser, deleteUser, followUser, blockUser, getBlockedBy}
+module.exports = {createUser, loginUser, getUserPosts, getFollowingPosts, getUser, deleteUser, followUser, blockUser, getBlockedBy, getContacts}

@@ -88,6 +88,12 @@ const authSlice = createSlice({
         }) => {
             state.blockedBy = payload
         },
+        getContactsSuccess: (state, {
+            payload
+        }) => {
+            state.following = payload.following
+            state.followers = payload.followers
+        },
     }
 })
 export const {
@@ -101,6 +107,7 @@ export const {
     followSuccess,
     followFailure,
     getBlockedBySuccess,
+    getContactsSuccess,
 } = authSlice.actions
 
 export default authSlice.reducer
