@@ -116,22 +116,6 @@ function deleteComment(req, res) {
 
 }
 
-function getComments(req, res) {
-    PostMethods.getComments()
-        .then(response => {
-            if (response.err) {
-                console.log(response.err)
-                const resJSON = responseError(null, null, response.err)
-                res.status(400).send(resJSON)
-            } else {
-                console.log(response)
-                const resJSON = responseOkay(response.data, null)
-                res.status(200).send(resJSON)
-            }
-        })
-
-}
-
 function likePost(req, res) {
     const postId = req.body.postId
     const username = req.body.username
@@ -146,20 +130,6 @@ function likePost(req, res) {
             }
         })
 
-}
-
-function unlikePost(req, res) {
-    const postId = req.body.postId
-    PostMethods.unlikePost(postId)
-        .then((err) => {
-            if (err) {
-                const resJSON = responseError(null, null, err)
-                res.status(400).send(resJSON)
-            } else {
-                const resJSON = responseOkay(null, null)
-                res.status(200).send(resJSON)
-            }
-        })
 }
 
 function hidePost(req, res) {
@@ -188,8 +158,6 @@ module.exports = {
     getUserPosts: getUserPosts,
     addComment: addComment,
     deleteComment: deleteComment,
-    getComments: getComments,
     like: likePost,
-    unlike: unlikePost,
     hidePost
 }
