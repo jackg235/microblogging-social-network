@@ -22,12 +22,8 @@ class ChatSidebar extends React.Component {
                         {this.props.users.map((u, index) => <SidebarUser key={index} user={u} deleteConvo={this.props.deleteConvo} currMessaging={this.props.currMessaging}/>)}
                     </Container>
                 </Button>
-                
             )
         }
-
-
-        
     }
 }
 

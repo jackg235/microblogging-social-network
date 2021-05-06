@@ -95,7 +95,7 @@ class Chat extends React.Component {
     };
 
     deleteConvo = (email) => {
-        
+
     }
 
     getContactsWithMessages(auth) {
@@ -104,7 +104,6 @@ class Chat extends React.Component {
     }
 
     componentDidMount() {
-        console.log('main mounted');
         this.setState({ contacts: this.getContactsWithMessages(this.props.auth)});
     }
 
@@ -122,7 +121,6 @@ class Chat extends React.Component {
         // if (!this.props.auth.authenticated) {
         //     return <Redirect to='/'/>
         // }
-        console.log('rerender');
         return (
             <div>
                 <Navbar/>
@@ -141,7 +139,7 @@ class Chat extends React.Component {
                         </Col>
                     </Row>
                 </Container>
-            </div>      
+            </div>
         )
     }
 }

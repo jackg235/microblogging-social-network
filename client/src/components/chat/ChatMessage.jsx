@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 
 const styles = {
     img: {
-        "width": "80%"
+        "width": "85%"
     }
 }
 
@@ -19,30 +19,40 @@ class ChatMessage extends React.Component {
 
     componentDidMount() {
         if (this.props.message.type === 'media') {
-            this.props.message.media.getContentTemporaryUrl().then(url => {
-                this.setState({ mediaurl: url });
-            });
+            const contentType = this.props.message.media.contentType.toLowerCase();
+            if (contentType.includes('audio') || contentType.includes('image')) {
+                this.props.message.media.getContentTemporaryUrl().then(url => {
+                    this.setState({ mediaurl: url, type: contentType.split('/')[0] });
+                });
+            } else if (contentType.includes('video')) {
+                this.props.message.media.getContentTemporaryUrl()
+                .then(url => fetch(url))
+                .then(res => res.blob())
+                .then(blob => URL.createObjectURL(blob))
+                .then(url => this.setState({ mediaurl: url, type: 'video' }))
+                .catch(err => console.error(err));
+            }
         }
     }
 
     convertTime = (timestamp) => {
         const [date, time] = JSON.stringify(timestamp).replace(new RegExp('\"', 'g'), '').split('T');
         const [y, m, d] = date.trim().split('-');
-
         const year = parseInt(y) % 2000;
         const month = parseInt(m);
         const day = parseInt(d);
-
         const [hr, min, ...rest] = time.split(':');
-
         const hour = parseInt(hr) % 12;
         const amPm = parseInt(hr) > 11 ? 'PM' : 'AM';
         return `${month}/${day}/${year} ${hour}:${min} ${amPm}`;
     };
 
     render() {
-        // might be a media message
-        const media = this.state.mediaurl !== undefined ? <img style={styles.img} src={this.state.mediaurl} alt="no pic"/> : null;
+        // if a media message
+        const media = this.state.mediaurl !== undefined ?
+            (this.state.type === 'image' ? <img style={styles.img} src={this.state.mediaurl} alt="no pic"/> : (
+            this.state.type === 'audio' ? <audio src={this.state.mediaurl} style={{ "display": "block", "width": "100%"}} controls="controls" /> :
+            <video style={{"width": "80%"} } src={this.state.mediaurl} type={this.props.message.media.contentType} controls></video>)) : null;
 
         return (
             <div>
@@ -59,15 +69,8 @@ class ChatMessage extends React.Component {
                     <p>Body: {this.props.message.state.body}</p>
                     {media}
                 </Button>
-                {/* <Card className="mb-4 mx-1" raised>
-                    <p>ID: {this.props.message.sid}</p>
-                    <p>Body: {this.props.message.state.body}</p>
-                    <p>Author: {this.props.message.state.author}</p>
-                    <p>Time: {JSON.stringify(this.props.message.state.timestamp)}</p>
-                    <p>ChannelName: {this.props.message.channel.channelState.uniqueName}</p>
-                </Card> */}
             </div>
-            
+
         );
     }
 }
