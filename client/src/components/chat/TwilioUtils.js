@@ -7,24 +7,13 @@ const getToken = (auth) => {
     const identity = 'b@gmail.com';
     return axios.get('http://localhost:5000/universal/token', {params: { identity: identity }})
         .then(res => res.data.token)
-        .catch(error => {
-        if (error.response) {
-            // Request made and server responded
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-        } else if (error.request) {
-            // The request was made but no response was received
-            console.log(error.request);
-        } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.message);
-        }
-    });
+        .catch(error => console.log(error));
 };
 
 const getChatClient = (auth) => {
-    return getToken(auth).then(token => TwilioChat.Client.create(token)).then(client => {
+    return getToken(auth)
+    .then(token => TwilioChat.Client.create(token))
+    .then(client => {
         // client auto renews tokens
         client.on('tokenAboutToExpire', () => {
             getToken().then(token => {
@@ -38,33 +27,25 @@ const getChatClient = (auth) => {
         });
 
         return client;
-    }).catch(err => {
-        console.log(err);
-    });
+    })
+    .catch(err => console.log(err));
 };
 
 const getChannel = (cli, fromEmail, toEmail) => {
-    return cli.getChannelByUniqueName(`${fromEmail}:${toEmail}`).then(room => {
-        return room;
-    }).catch(e => {
-        return cli.getChannelByUniqueName(`${toEmail}:${fromEmail}`).then(room => {
-            return room;
-        }).catch(e => {
+    return cli.getChannelByUniqueName(`${fromEmail}:${toEmail}`)
+    .catch(e => {
+        return cli.getChannelByUniqueName(`${toEmail}:${fromEmail}`)
+        .catch(e => {
             // Make new channel
-            return cli.createChannel(
-                {
-                    uniqueName: `${fromEmail}:${toEmail}`,
-                    friendlyName: `${fromEmail}:${toEmail}`,
-                }
-            ).then(room => {
-                return room;
-            }).catch(e => {
+            return cli.createChannel({ uniqueName: `${fromEmail}:${toEmail}`, friendlyName: `${fromEmail}:${toEmail}` })
+                .catch(e => {
                 console.log('error making finding channels...');
             });
         });
     });
 };
 
+// get first 10 messages
 const getFirstMessages = async (page) => {
     let curr = page;
     while (curr.hasPrevPage) {
@@ -73,6 +54,7 @@ const getFirstMessages = async (page) => {
     return sortByIndex(curr.items).slice(0, 10);
 };
 
+// get up to lim next messages
 const getMoreMessages = async (channel, afterIdx, lim) => {
     var page = await channel.getMessages();
     while (page.hasNextPage) {
@@ -101,8 +83,6 @@ const getMoreMessages = async (channel, afterIdx, lim) => {
     const out = sortByIndex(msgArr);
     return out;
 };
-
-const getAllMessages = async () => {};
 
 const sortByIndex = (array) => {
     return array.sort((a, b) => {
