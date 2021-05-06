@@ -4,6 +4,7 @@ const authRoutes = require("./routes/auth.js");
 const postRoutes = require("./routes/posts.js");
 const userRoutes = require("./routes/users.js");
 const chatRoutes = require("./routes/chat.js")
+const streamRoutes = require("./routes/stream")
 const cors = require('cors');
 const db = require('./data_layer/MongoAccessor')
 const app = express();
@@ -68,5 +69,14 @@ app.get('/voice/token', chatRoutes.getVoiceToken)
 app.post('/voice/token', chatRoutes.postVoiceToken)
 
 app.get('/universal/token', chatRoutes.getUniversalToken)
+
+// ---------- stream routes ---------- //
+
+app.put('/streams/start', streamRoutes.startStream)
+
+app.delete('/streams/end', streamRoutes.endStream)
+
+app.get('/streams/getAll', streamRoutes.getStreams)
+
 
 module.exports = app;

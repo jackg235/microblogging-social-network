@@ -1,83 +1,69 @@
-import React from 'react'
-import RouteProtector from "../../hoc/RouteProtector";
-import {connect} from "react-redux";
-import {getVideoChatToken} from '../../slices/actions/VideoActions'
+import React, {useState, useEffect} from 'react';
 import Video from 'twilio-video';
 import Participant from './Participant';
 
-class Room extends React.Component {
+const Room = ({roomName, token, handleLogout}) => {
+    const [room, setRoom] = useState(null);
+    const [participants, setParticipants] = useState([]);
 
-    constructor(props) {
-        super(props);
+    useEffect(() => {
+        const participantConnected = participant => {
+            setParticipants(prevParticipants => [...prevParticipants, participant]);
+        };
 
-        this.state = {
-            remoteParticipants: Array.from(this.props.room.participants.values())
-        }
+        const participantDisconnected = participant => {
+            setParticipants(prevParticipants =>
+                prevParticipants.filter(p => p !== participant)
+            );
+        };
 
-        this.leaveRoom = this.leaveRoom.bind(this);
-    }
-
-    componentDidMount() {
-        // Add event listeners for future remote participants coming or going
-        this.props.room.on('participantConnected', participant => this.addParticipant(participant));
-        this.props.room.on('participantDisconnected', participant => this.removeParticipant(participant));
-
-        window.addEventListener("beforeunload", this.leaveRoom);
-    }
-
-    componentWillUnmount() {
-        this.leaveRoom();
-    }
-
-    addParticipant(participant) {
-        console.log(`${participant.identity} has joined the room.`);
-
-        this.setState({
-            remoteParticipants: [...this.state.remoteParticipants, participant]
+        Video.connect(token, {
+            name: roomName
+        }).then(room => {
+            setRoom(room);
+            room.on('participantConnected', participantConnected);
+            room.on('participantDisconnected', participantDisconnected);
+            room.participants.forEach(participantConnected);
         });
-    }
 
-    removeParticipant(participant) {
-        console.log(`${participant.identity} has left the room`);
+        return () => {
+            setRoom(currentRoom => {
+                if (currentRoom && currentRoom.localParticipant.state === 'connected') {
+                    currentRoom.localParticipant.tracks.forEach(function (trackPublication) {
+                        trackPublication.track.stop();
+                    });
+                    currentRoom.disconnect();
+                    return null;
+                } else {
+                    return currentRoom;
+                }
+            });
+        };
+    }, [roomName, token]);
 
-        this.setState({
-            remoteParticipants: this.state.remoteParticipants.filter(p => p.identity !== participant.identity)
-        });
-    }
+    const remoteParticipants = participants.map(participant => (
+        <Participant key={participant.sid} participant={participant}/>
+    ));
 
-    leaveRoom() {
-        this.props.room.disconnect();
-        this.props.returnToLobby();
-    }
-
-
-    render() {
-        return (
-            <div className="room">
-                <div className="participants">
-                    <Participant key={this.props.room.localParticipant.identity} localParticipant="true"
-                                 participant={this.props.room.localParticipant}/>
-                    {
-                        this.state.remoteParticipants.map(participant =>
-                            <Participant key={participant.identity} participant={participant}/>
-                        )
-                    }
-                </div>
-                <button id="leaveRoom" onClick={this.leaveRoom}>Leave Room</button>
+    return (
+        <div className="room">
+            <h2>Room: {roomName}</h2>
+            <button onClick={handleLogout}>Log out</button>
+            <p>Number of users watching: {remoteParticipants.length}</p>
+            <div className="local-participant">
+                {room ? (
+                    <Participant
+                        key={room.localParticipant.sid}
+                        participant={room.localParticipant}
+                    />
+                ) : (
+                    ''
+                )}
             </div>
-        )
-    }
-}
+            <h3>Remote Participants</h3>
+            <div className="remote-participants">{remoteParticipants}</div>
+        </div>
+    );
+};
 
-function mapStateToProps(state) {
-    return state
-}
-
-function mapDispatchToProps(dispatch) {
-    return ({
-        getVideoToken: (email, room) => dispatch(getVideoChatToken(email, room))
-    })
-}
-
-const RoomConnected = connect(mapStateToProps, mapDispatchToProps)(Room)
-export default RouteProtector(RoomConnected);
+export default Room;
