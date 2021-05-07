@@ -18,13 +18,13 @@ import {
     updateFollowing,
     getUserFailure,
 } from '../reducers/UserReducer'
-import { getUser } from './UserActions'
+import {getUser} from './UserActions'
 
 // attempts to login a user
 export function login(email, password) {
     console.log('attempting to login user... ' + email)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/verifyLogin`, {
+        return fetch(`/verifyLogin`, {
             method: 'POST',
             body: JSON.stringify({
                 email,
@@ -55,7 +55,7 @@ export function login(email, password) {
 export function register(email, password, first, last, username) {
     console.log('attempting to register user... ' + email)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/verifyRegister`, {
+        return fetch(`/verifyRegister`, {
             method: 'POST',
             body: JSON.stringify({
                 email,
@@ -113,7 +113,7 @@ export function authenticate() {
 export function followToggle(username, otherUserId) {
     console.log(username + ' is attempting to follow... ' + otherUserId)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/users/follow`, {
+        return fetch(`/users/follow`, {
             method: 'POST',
             body: JSON.stringify({
                 username,
@@ -147,7 +147,7 @@ export function followToggle(username, otherUserId) {
 export function blockToggle(username, userToBlock) {
     console.log(username + ' is attempting to block/unblock... ' + userToBlock)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/users/block`, {
+        return fetch(`/users/block`, {
             method: 'POST',
             body: JSON.stringify({
                 username,
@@ -178,7 +178,7 @@ export function blockToggle(username, userToBlock) {
 export function getBlockers(username) {
     console.log('searching for users that block ' + username)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/users/blockers/${username}`, {
+        return fetch(`/users/blockers/${username}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
