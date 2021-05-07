@@ -5,6 +5,7 @@ import {connect} from "react-redux";
 import RouteProtector from "../../hoc/RouteProtector";
 import {useSelector} from 'react-redux'
 import {startStream, endStream} from "../../slices/actions/StreamActions";
+import VideoChatScreen from "./VideoChatScreen";
 
 const VideoChat = () => {
     const username = useSelector(state => state.auth.username)
@@ -18,7 +19,7 @@ const VideoChat = () => {
 
     const handleSubmit = useCallback(async event => {
         event.preventDefault();
-        const data = await fetch('/video/token', {
+        const data = await fetch('/universal/token', {
             method: 'POST',
             body: JSON.stringify({
                 identity: username,
@@ -58,9 +59,8 @@ const VideoChat = () => {
     const handleClickRoom = useCallback(async event => {
         event.preventDefault();
         const roomName = event.target.id;
-        console.log(roomName)
-        console.log(username)
-        const data = await fetch('/video/token', {
+        setRoomName(roomName)
+        const data = await fetch('/universal/token', {
             method: 'POST',
             body: JSON.stringify({
                 identity: username,
@@ -88,7 +88,11 @@ const VideoChat = () => {
     let render;
     if (token) {
         render = (
-            <Room roomName={roomName} token={token} handleLogout={handleLogout}/>
+            <div>
+                <Room roomName={roomName} token={token} handleLogout={handleLogout}/>
+                <VideoChatScreen roomName={roomName} token={token} handleLogout={handleLogout}/>
+            </div>
+
         );
     } else {
         render = (

@@ -57,6 +57,13 @@ function getUniversalToken(req, res) {
     sendTokenResponse(token, res);
 }
 
+function postUniversalToken(req, res) {
+    const identity = req.body.identity;
+    const room = req.body.room;
+    const token = universalToken(identity, room, config)
+    sendTokenResponse(token, res);
+}
+
 
 module.exports = {
     getToken: getToken,
@@ -65,5 +72,6 @@ module.exports = {
     postVideoToken: postVideoToken,
     getVoiceToken: getVoiceToken,
     postVoiceToken: postVoiceToken,
-    getUniversalToken: getUniversalToken
+    getUniversalToken: getUniversalToken,
+    postUniversalToken
 }

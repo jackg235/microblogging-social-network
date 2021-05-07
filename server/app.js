@@ -70,6 +70,8 @@ app.post('/voice/token', chatRoutes.postVoiceToken)
 
 app.get('/universal/token', chatRoutes.getUniversalToken)
 
+app.post('/universal/token', chatRoutes.postUniversalToken)
+
 // ---------- stream routes ---------- //
 
 app.put('/streams/start', streamRoutes.startStream)
