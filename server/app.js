@@ -8,12 +8,17 @@ const streamRoutes = require("./routes/stream")
 const cors = require('cors');
 const db = require('./data_layer/MongoAccessor')
 const app = express();
+const path = require('path');
 
 db._connect('whiteboarders') // set to 'whiteboarders' for deployment mode, 'test' for testing
 
 app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+
+// Root endpoint
+app.use(express.static(path.join(__dirname, '../client/build')));
+
 
 // ---------- auth routes ---------- //
 app.get('/testAPI', authRoutes.testAPI)
@@ -80,5 +85,8 @@ app.delete('/streams/end', streamRoutes.endStream)
 
 app.get('/streams/getAll', streamRoutes.getStreams)
 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
 
 module.exports = app;
