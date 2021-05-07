@@ -25,7 +25,6 @@ const Room = ({roomName, token, handleLogout}) => {
             room.on('participantDisconnected', participantDisconnected);
             room.participants.forEach(participantConnected);
         });
-
         return () => {
             setRoom(currentRoom => {
                 if (currentRoom && currentRoom.localParticipant.state === 'connected') {
