@@ -4,7 +4,7 @@ import {tokenRetrieveSuccess, tokenRetrieveFailure} from "../reducers/VideoReduc
 export function getVideoChatToken(username, room) {
     console.log('attempting to add user ' + username + ' to room ' + room)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/video/token`, {
+        return fetch(`/video/token`, {
             method: 'POST',
             body: JSON.stringify({
                 identity: username,
