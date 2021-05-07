@@ -1,12 +1,12 @@
 // attempts to create a new blog post
 import {
-    getPostFailure, 
-    getPostSuccess, 
-    postFailure, 
-    postSuccess, 
-    getUserPostsSuccess, 
-    getUserPostsFailure, 
-    getCommentsSuccess, 
+    getPostFailure,
+    getPostSuccess,
+    postFailure,
+    postSuccess,
+    getUserPostsSuccess,
+    getUserPostsFailure,
+    getCommentsSuccess,
     getCommentsFailure
 } from "../reducers/PostReducer";
 
@@ -16,7 +16,7 @@ export function createPost(title, content, username) {
     return function (dispatch) {
         const likes = [];
         const comments = [];
-        return fetch(`http://localhost:5000/posts/new`, {
+        return fetch(`/posts/new`, {
             method: 'POST',
             body: JSON.stringify({
                 title,
@@ -51,7 +51,7 @@ export function createPost(title, content, username) {
 export function deletePost(username, postId) {
     console.log('attempting to delete a post with id... ' + postId + ' by... ' + username)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/delete`, {
+        return fetch(`/posts/delete`, {
             method: 'DELETE',
             body: JSON.stringify({
                 username,
@@ -83,7 +83,7 @@ export function deletePost(username, postId) {
 export function getPost(postId) {
     console.log('attempting to get a post with id... ' + postId)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/get/${postId}`, {
+        return fetch(`/posts/get/${postId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ export function getPost(postId) {
 export function getAllPosts(username) {
     console.log('attempting to get posts that ' + username + ' follows... ')
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/getPosts/${username}`, {
+        return fetch(`/posts/getPosts/${username}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export function getAllPosts(username) {
 export function getUserPosts(username, profileUser) {
     console.log('attempting to get posts from... ' + profileUser)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/getUserPosts/${username}&${profileUser}`, {
+        return fetch(`/posts/getUserPosts/${username}&${profileUser}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -162,7 +162,7 @@ export function getUserPosts(username, profileUser) {
 export function addComment(commenterId, content, postId, posterId) {
     console.log('attempting to add a comment from... ' + commenterId + ' on post with id... ' + postId);
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/addComment`, {
+        return fetch(`/posts/addComment`, {
             // should this be changed to a put or patch maybe?
             method: 'POST',
             body: JSON.stringify({
@@ -197,7 +197,7 @@ export function addComment(commenterId, content, postId, posterId) {
 export function deleteComment(commenterId, commentId, postId, posterId) {
     console.log('attempting to delete a comment from... ' + commenterId + ' on a post by... ' + posterId);
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/deleteComment`, {
+        return fetch(`/posts/deleteComment`, {
             method: 'DELETE',
             body: JSON.stringify({
                 postId,
@@ -229,7 +229,7 @@ export function deleteComment(commenterId, commentId, postId, posterId) {
 export function hidePost(username, postId, posterId) {
     console.log(username + ' is attempting to hide a post from... ' + posterId);
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/hide`, {
+        return fetch(`/posts/hide`, {
             // should this be changed to a put or patch maybe?
             method: 'POST',
             body: JSON.stringify({
@@ -261,7 +261,7 @@ export function hidePost(username, postId, posterId) {
 export function likePost(username, postId, posterId) {
     console.log(username + ' is attempting to like a post from... ' + posterId);
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/like`, {
+        return fetch(`/posts/like`, {
             // should this be changed to a put or patch maybe?
             method: 'POST',
             body: JSON.stringify({
@@ -294,7 +294,7 @@ export function likePost(username, postId, posterId) {
 export function unlikePost(unlikerId, postId, posterId) {
     console.log(unlikerId + ' is attempting to unlike a post from... ' + posterId);
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/unlike`, {
+        return fetch(`/posts/unlike`, {
             method: 'DELETE',
             body: JSON.stringify({
                 unlikerId,
@@ -325,7 +325,7 @@ export function unlikePost(unlikerId, postId, posterId) {
 export function getComments() {
     console.log('attempting to get comments from backend...')
     return function (dispatch) {
-        return fetch(`http://localhost:5000/posts/getComments`, {
+        return fetch(`/posts/getComments`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

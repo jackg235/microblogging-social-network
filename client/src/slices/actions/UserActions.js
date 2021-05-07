@@ -9,7 +9,7 @@ import {
 export function getUser(username) {
     console.log('attempting to get user... ' + username)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/users/` + username, {
+        return fetch(`/users/` + username, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

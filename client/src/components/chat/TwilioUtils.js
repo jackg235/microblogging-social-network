@@ -1,48 +1,52 @@
 import axios from "axios";
+
 const TwilioChat = require("twilio-chat");
 
 
 const getToken = (auth) => {
     // const identity = auth.email;
     const identity = 'b@gmail.com';
-    return axios.get('http://localhost:5000/universal/token', {params: { identity: identity }})
+    return axios.get('/universal/token', {params: {identity: identity}})
         .then(res => res.data.token)
         .catch(error => console.log(error));
 };
 
 const getChatClient = (auth) => {
     return getToken(auth)
-    .then(token => TwilioChat.Client.create(token))
-    .then(client => {
-        // client auto renews tokens
-        client.on('tokenAboutToExpire', () => {
-            getToken().then(token => {
-                client.updateToken(token);
+        .then(token => TwilioChat.Client.create(token))
+        .then(client => {
+            // client auto renews tokens
+            client.on('tokenAboutToExpire', () => {
+                getToken().then(token => {
+                    client.updateToken(token);
+                });
             });
-        });
-        client.on('tokenExpired', () => {
-            getToken().then(token => {
-                client.updateToken(token);
+            client.on('tokenExpired', () => {
+                getToken().then(token => {
+                    client.updateToken(token);
+                });
             });
-        });
 
-        return client;
-    })
-    .catch(err => console.log(err));
+            return client;
+        })
+        .catch(err => console.log(err));
 };
 
 const getChannel = (cli, fromEmail, toEmail) => {
     return cli.getChannelByUniqueName(`${fromEmail}:${toEmail}`)
-    .catch(e => {
-        return cli.getChannelByUniqueName(`${toEmail}:${fromEmail}`)
         .catch(e => {
-            // Make new channel
-            return cli.createChannel({ uniqueName: `${fromEmail}:${toEmail}`, friendlyName: `${fromEmail}:${toEmail}` })
+            return cli.getChannelByUniqueName(`${toEmail}:${fromEmail}`)
                 .catch(e => {
-                console.log('error making finding channels...');
-            });
+                    // Make new channel
+                    return cli.createChannel({
+                        uniqueName: `${fromEmail}:${toEmail}`,
+                        friendlyName: `${fromEmail}:${toEmail}`
+                    })
+                        .catch(e => {
+                            console.log('error making finding channels...');
+                        });
+                });
         });
-    });
 };
 
 // get first 10 messages
