@@ -17,7 +17,7 @@ class Navbar extends React.Component {
             username,
           }
         } = this.props;
-        const userProfileLink = "http://localhost:3000/profile/" + username;
+        const userProfileLink = "/profile/" + username;
 
         return (
             <nav className="mb-1 navbar navbar-expand-lg navbar-dark orange lighten-1">
@@ -30,7 +30,7 @@ class Navbar extends React.Component {
                 <div className="collapse navbar-collapse" id="navbarSupportedContent-555">
                     <ul className="navbar-nav mr-auto">
                         <li className="nav-item active">
-                            <a className="nav-link" href="http://localhost:3000/home">Home
+                            <a className="nav-link" href="/home">Home
                                 <span className="sr-only">(current)</span>
                             </a>
                         </li>
@@ -38,7 +38,7 @@ class Navbar extends React.Component {
                             <a className="nav-link" href={userProfileLink}>Profile</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="http://localhost:3000/explore">Explore</a>
+                            <a className="nav-link" href="/explore">Explore</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="/chat">Chat</a>
