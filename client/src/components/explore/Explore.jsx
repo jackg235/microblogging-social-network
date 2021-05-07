@@ -1,14 +1,15 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import RouteProtector from '../hoc/RouteProtector';
-import {logout} from '../slices/actions/AuthenticationActions';
+import RouteProtector from '../../hoc/RouteProtector';
 import {Redirect} from 'react-router-dom';
-import Navbar from './Navbar';
-import DefaultProPic from '../default_propic.jpg';
-import User from './user/User';
-import ExploreCol from './explore/ExploreCol';
+import Navbar from '../Navbar';
+import DefaultProPic from '../../default_propic.jpg';
+import User from '../user/User';
+import ExploreCol from './ExploreCol';
 import TextField from '@material-ui/core/TextField';
 import { Divider, Grid } from '@material-ui/core';
+
+import {connect} from 'react-redux';
+import {getContacts} from '../../slices/actions/AuthenticationActions'
 
 const followersMock = [
     {
@@ -138,32 +139,32 @@ const followersMock2 = [
 class Explore extends React.Component {
     constructor(props) {
         super(props);
-        this.logoutClick = this.logoutClick.bind(this);
     }
 
     getFollowers() {
-        // do something to get Arr of User
-        return followersMock;
+        return this.props.auth.followers;
     }
 
     getFollowing() {
-        // do something to get Arr of User
-        return followersMock;
+        return this.props.auth.following;
     }
 
     getSuggested() {
-        // do something to get a suggested Arr of User
-        return followersMock2;
+        // do something to return array of suggested users
+        return [];
     }
 
-    logoutClick() {
-        this.props.logoutUser();
+    componentDidMount() {
+        this.props.getContacts(this.props.auth.username)
     }
 
     render() {
-        // if (!this.props.authenticated) {
-        //     return <Redirect to='/'/>
-        // }
+
+        const { auth } = this.props
+
+        if (!auth.authenticated) {
+            return <Redirect to='/'/>
+        }
 
         return (
             <div>
@@ -185,18 +186,15 @@ class Explore extends React.Component {
     }
 }
 
-// function mapStateToProps(state) {
-//     const {first, last, email, username, authenticated} = state.auth;
-//     return {first, last, email, username, authenticated};
-// }
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
 
-// function mapDispatchToProps(dispatch) {
-//     return ({
-//         logoutUser: () => dispatch(logout())
-//     })
-// }
+function mapDispatchToProps(dispatch) {
+    return ({
+        getContacts: (username) => dispatch(getContacts(username))
+    })
+}
 
-// const ExploreConnected = connect(mapStateToProps, mapDispatchToProps)(Explore)
-// export default RouteProtector(ExploreConnected);
-
-export default Explore;
+const ExploreConnected = connect(mapStateToProps, mapDispatchToProps)(Explore)
+export default RouteProtector(ExploreConnected);

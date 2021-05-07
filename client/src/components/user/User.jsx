@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import { Grid } from '@material-ui/core';
+import DefaultProPic from '../../default_propic.jpg';
 
 class User extends React.Component {
     render() {
@@ -16,11 +17,11 @@ class User extends React.Component {
                     <Card variant='outlined'>
                         <CardHeader
                             style={{backgroundColor: '#e3e3e3'}}
-                            avatar={<Avatar variant="rounded" src={this.props.img} alt={this.props.username}/>}
-                            title={
-                                <Typography
+                            avatar={<Avatar variant="rounded" src={DefaultProPic} alt={this.props.username}/>}
+                            title=
+                                {<Typography
                                     component={Link}
-                                    to={`/users/${this.props.username}`}>
+                                    to={`/profiile/${this.props.username}`}>
                                     {this.props.username}
                                 </Typography>} />
                     </Card>

@@ -44,20 +44,7 @@ class Profile extends React.Component {
         const { auth, allComments, posts } = this.props
 
         const postElements = posts.map((post) => {
-            // const commentIds = post.comments
-            // let comments = []
-            // for (let i = 0; i < commentIds.length; i++) {
-            //     for (let j = 0; j < allComments.length; j++) {
-            //         if (allComments[j]._id === commentIds[i]) {
-            //             comments.push(allComments[j])
-            //             break
-            //         }
-            //     }
-            // }
-
-            return <Post key={post.postId} post={post}
-            //  postComments={comments} 
-             />
+            return <Post key={post.postId} post={post}/>
         })
 
         if (!auth.authenticated) {
