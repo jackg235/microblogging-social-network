@@ -1,5 +1,9 @@
 import React from 'react';
+import Container from 'react-bootstrap/Container';
 import MicRecorder from 'mic-recorder-to-mp3';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
@@ -55,9 +59,20 @@ class Recorder extends React.Component {
   render(){
     return (
       <div>
-        <button onClick={this.start} disabled={this.state.isRecording}>Record</button>
-        <button onClick={this.stop} disabled={!this.state.isRecording}>Stop</button>
-        <audio src={this.state.blobURL}  controls="controls" />
+        <Container >
+          <Row>
+            <Col>
+              <Button onClick={this.start} disabled={this.state.isRecording} variant="outline-danger">Record</Button>
+            </Col>
+            <Col>
+              <Button onClick={this.stop} disabled={!this.state.isRecording} variant="outline-dark">Stop</Button>
+            </Col>
+            <Col>
+              <audio style={{"width": "75%"}} src={this.state.blobURL}  controls="controls" />
+            </Col>
+          </Row>
+          
+        </Container>
         {/* style={ { "display": "hidden" } } */}
       </div>
     );
