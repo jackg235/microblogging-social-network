@@ -31,14 +31,15 @@ class VideoChatScreen extends React.Component {
             loading: false,
             room: props.roomName,
             token: props.token,
-            channel: ""
+            channel: "",
+            client: props.client
         };
         this.scrollDiv = React.createRef();
     }
 
     componentDidMount = async () => {
         const token = this.state.token
-        const client = await Chat.Client.create(token);
+        const client = this.state.client
 
         client.on("channelJoined", async (channel) => {
             // getting list of all messages since this is an existing channel
@@ -51,7 +52,6 @@ class VideoChatScreen extends React.Component {
             await this.joinChannel(channel);
             this.setState({channel, loading: false});
         } catch {
-            console.log("createing channel")
             try {
                 const channel = await client.createChannel({
                     uniqueName: room,
@@ -59,7 +59,6 @@ class VideoChatScreen extends React.Component {
                 });
                 await this.joinChannel(channel);
                 this.setState({channel, loading: false});
-                console.log("created!")
             } catch {
                 throw new Error("unable to create channel, please reload this page");
             }

@@ -7,12 +7,14 @@ import {useSelector} from 'react-redux'
 import {startStream, endStream} from "../../slices/actions/StreamActions";
 import VideoChatScreen from "./VideoChatScreen";
 
+const Chat = require("twilio-chat");
+
 const VideoChat = () => {
     const username = useSelector(state => state.auth.username)
     const rooms = useSelector(state => state.stream.rooms)
     const [roomName, setRoomName] = useState('');
     const [token, setToken] = useState(null);
-
+    const [client, setClient] = useState(null);
     const handleRoomNameChange = useCallback(event => {
         setRoomName(event.target.value);
     }, []);
@@ -30,6 +32,8 @@ const VideoChat = () => {
             }
         }).then(res => res.json());
         setToken(data.token);
+        const client = await Chat.Client.create(data.token);
+        setClient(client)
         // add new stream to DB
         await fetch('/streams/start', {
             method: 'PUT',
@@ -44,7 +48,7 @@ const VideoChat = () => {
     }, [username, roomName]);
 
     const handleLogout = useCallback(async event => {
-        setToken(null);
+        // delete stream from db
         await fetch('/streams/end', {
             method: 'DELETE',
             body: JSON.stringify({
@@ -54,6 +58,7 @@ const VideoChat = () => {
                 'Content-Type': 'application/json'
             }
         })
+        setToken(null);
     }, []);
 
     const handleClickRoom = useCallback(async event => {
@@ -71,6 +76,8 @@ const VideoChat = () => {
             }
         }).then(res => res.json());
         setToken(data.token);
+        const client = await Chat.Client.create(data.token);
+        setClient(client)
     }, []);
 
     const roomGenerator = () => {
@@ -86,11 +93,11 @@ const VideoChat = () => {
     };
 
     let render;
-    if (token) {
+    if (token && client) {
         render = (
             <div>
                 <Room roomName={roomName} token={token} handleLogout={handleLogout}/>
-                <VideoChatScreen roomName={roomName} token={token} handleLogout={handleLogout}/>
+                <VideoChatScreen roomName={roomName} token={token} client={client}/>
             </div>
 
         );
