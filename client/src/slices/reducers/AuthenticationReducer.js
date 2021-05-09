@@ -12,7 +12,9 @@ export const initialState = {
     following: [],
     followers: [],
     blockedBy: [],
-    posts: []
+    posts: [],
+    failedLogins: 0,
+    lockedOut: false,
 }
 
 const authSlice = createSlice({
@@ -32,12 +34,30 @@ const authSlice = createSlice({
             state.following = payload.following
             state.blockedBy = payload.blockedBy
             state.posts = payload.posts
+            state.failedLogins = 0
+            state.lockedOut = false
         },
         loginFailure: (state, {
             payload
         }) => {
             state.authenticated = false
             state.error = payload.err
+            state.failedLogins = state.failedLogins + 1
+        },
+        accountLockout: (state, {
+            payload
+        }) => {
+            state.authenticated = false
+            state.error = payload.err
+            state.failedLogins = 0
+            state.lockedOut = true
+        },
+        accountUnlocked: (state, {
+            payload
+        }) => {
+            state.error = null
+            state.failedLogins = 0
+            state.lockedOut = false
         },
         registrationSuccess: (state, {
             payload
@@ -99,6 +119,8 @@ const authSlice = createSlice({
 export const {
     loginSuccess,
     loginFailure,
+    accountLockout,
+    accountUnlocked,
     registrationSuccess,
     registrationFailure,
     logoutUser,
