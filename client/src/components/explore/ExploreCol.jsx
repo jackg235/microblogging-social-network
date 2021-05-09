@@ -25,7 +25,7 @@ class ExploreCol extends React.Component {
             {
                 if (word !== '' && !Number.isInteger(parseInt(word))) {
                     this.props.original.forEach(user => {
-                        if (user.firstName.toLowerCase().includes(word) || user.lastName.toLowerCase().includes(word) || user.username.toLowerCase().includes(word)) {
+                        if (user.first.toLowerCase().includes(word) || user.last.toLowerCase().includes(word) || user.username.toLowerCase().includes(word)) {
                             if (!matches.includes(user)) {
                                 matches.push(user);
                             }
@@ -64,6 +64,10 @@ class ExploreCol extends React.Component {
         // }
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({ users: nextProps.users });
+    }
+
     render() {
 
         const { auth } = this.props
@@ -71,14 +75,42 @@ class ExploreCol extends React.Component {
         const userList = 
             this.props.type === 'followers' ? (
                 <Grid>
-                    {auth.followers.map((user) => <User username={user.username}/>)}
+                    {auth.followers.map((user) => {
+                        for (let i = 0; i < this.state.users.length; i++) {
+                            if (this.state.users[i].username === user.username) {
+                                return <User key={user.username} user={user}/>
+                            }
+                        }
+                        console.log('followers - state is empty... ' + this.state.users.length)
+                        return null
+                    })}
                 </Grid>
             ) : this.props.type === 'following' ? (
                 <Grid>
-                    {auth.following.map((user) => <User username={user.username}/>)}
+                    {auth.following.map((user) => {
+                        for (let i = 0; i < this.state.users.length; i++) {
+                            if (this.state.users[i].username === user.username) {
+                                return <User key={user.username} user={user}/>
+                            }
+                        }
+                        console.log('following - state is empty... ' + this.state.users.length)
+                        return null
+                    })}
                 </Grid>
             ) : <Grid>
-                    {[]}
+                    {auth.suggestedUsers.map((user) => {
+                        let cap = 10
+                        if (this.state.users.length < 10) {
+                            cap = this.state.users.length
+                        }
+                        for (let i = 0; i < cap; i++) {
+                            if (this.state.users[i].username === user.username) {
+                                return <User key={user.username} user={user}/>
+                            }
+                        }
+                        console.log('suggested - state is empty... ' + this.state.users.length)
+                        return null
+                    })}
                 </Grid>;
 
         return (
@@ -95,9 +127,6 @@ class ExploreCol extends React.Component {
                             variant="outlined"
                             onChange={(e) => this.submit(e)} />
                     </Grid>
-                    {/* <Grid>
-                        {auth.followers.map((username) => <User username={username}/>)}
-                    </Grid> */}
                     {userList}
                 </Grid>
             </div>  

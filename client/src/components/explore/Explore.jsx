@@ -9,132 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import { Divider, Grid } from '@material-ui/core';
 
 import {connect} from 'react-redux';
-import {getContacts} from '../../slices/actions/AuthenticationActions'
-
-const followersMock = [
-    {
-        userImg: DefaultProPic,
-        username: 'user1',
-        firstName: 'F1',
-        lastName: 'L1',
-        regDate: '04/07/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-    {
-        userImg: DefaultProPic,
-        username: 'user2',
-        firstName: 'F2',
-        lastName: 'L2',
-        regDate: '04/08/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },{
-        userImg: DefaultProPic,
-        username: 'user3',
-        firstName: 'F3',
-        lastName: 'L3',
-        regDate: '04/09/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-    {
-        userImg: DefaultProPic,
-        username: 'user322r23r4',
-        firstName: 'F4',
-        lastName: 'L4',
-        regDate: '04/10/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-    {
-        userImg: DefaultProPic,
-        username: 'user5',
-        firstName: 'F5',
-        lastName: 'L5',
-        regDate: '04/11/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-];
-
-const followersMock2 = [
-    {
-        userImg: DefaultProPic,
-        username: 'user1',
-        firstName: 'F1',
-        lastName: 'L1',
-        regDate: '04/07/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-    {
-        userImg: DefaultProPic,
-        username: 'user2',
-        firstName: 'F2',
-        lastName: 'L2',
-        regDate: '04/08/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },{
-        userImg: DefaultProPic,
-        username: 'user3',
-        firstName: 'F3',
-        lastName: 'L3',
-        regDate: '04/09/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-    {
-        userImg: DefaultProPic,
-        username: 'user322r23r4',
-        firstName: 'F4',
-        lastName: 'L4',
-        regDate: '04/10/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-    {
-        userImg: DefaultProPic,
-        username: 'user5',
-        firstName: 'F5',
-        lastName: 'L5',
-        regDate: '04/11/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-    {
-        userImg: DefaultProPic,
-        username: 'user6',
-        firstName: 'bryan',
-        lastName: 'Nguyen3',
-        regDate: '04/11/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-];
+import {getContacts, getSuggested} from '../../slices/actions/AuthenticationActions'
 
 class Explore extends React.Component {
     constructor(props) {
@@ -150,12 +25,12 @@ class Explore extends React.Component {
     }
 
     getSuggested() {
-        // do something to return array of suggested users
-        return [];
+        return this.props.auth.suggestedUsers;
     }
 
     componentDidMount() {
         this.props.getContacts(this.props.auth.username)
+        this.props.getSuggested(this.props.auth.username)
     }
 
     render() {
@@ -192,7 +67,8 @@ const mapStateToProps = (state) => ({
 
 function mapDispatchToProps(dispatch) {
     return ({
-        getContacts: (username) => dispatch(getContacts(username))
+        getContacts: (username) => dispatch(getContacts(username)),
+        getSuggested: (username) => dispatch(getSuggested(username))
     })
 }
 
