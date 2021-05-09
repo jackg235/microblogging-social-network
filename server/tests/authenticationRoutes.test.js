@@ -88,6 +88,24 @@ describe('Authentication Endpoints', () => {
         expect(res.statusCode).toEqual(400)
         done()
     })
+    it('should change a users password', async (done) => {
+        const res = await request(app)
+            .post('/changePassword')
+            .send({
+                username: testUserJSON.username,
+                newPassword: "new password"
+            })
+        expect(res.statusCode).toEqual(200)
+        // check that the user can log in with new password
+        const res2 = await request(app)
+            .post('/verifyLogin')
+            .send({
+                email: testUserJSON.email,
+                password: "new password"
+            })
+        expect(res2.statusCode).toEqual(200)
+        done()
+    })
     afterAll(async (done) => {
         await UserModel.deleteOne({username: "test"})
         await UserModel.deleteOne({username: "test2"})

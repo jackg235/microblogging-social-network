@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const {createUser, loginUser, deleteUser} = require("../data_layer/UserMethods")
+const {createUser, loginUser, deleteUser, changePasswordMethod} = require("../data_layer/UserMethods")
 const {responseError, responseOkay} = require('../data_model/StandardResponse')
 
 function testAPI(req, res) {
@@ -56,6 +56,22 @@ function deleteAccount(req, res) {
         })
 }
 
+function changePassword(req, res) {
+    const username = req.body.username
+    const newPassword = req.body.newPassword
+    changePasswordMethod(username, newPassword)
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                const resJSON = responseOkay(response.data, null)
+                res.status(200).send(resJSON)
+            }
+        })
+
+}
+
 function signJWT(email, first, last, username, scopes) {
     return jwt.sign({
         sub: email,
@@ -77,5 +93,6 @@ module.exports = {
     testAPI: testAPI,
     verifyLogin: verifyLogin,
     verifyRegister: verifyRegister,
-    deleteAccount: deleteAccount
+    deleteAccount: deleteAccount,
+    changePassword
 }

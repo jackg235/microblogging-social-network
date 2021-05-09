@@ -141,8 +141,6 @@ function hidePost(req, res) {
                 const resJSON = responseError(null, null, response.err)
                 res.status(400).send(resJSON)
             } else {
-                console.log('hide post response:')
-                console.log(response)
                 const resJSON = responseOkay(response.data, null)
                 res.status(200).send(resJSON)
             }

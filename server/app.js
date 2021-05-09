@@ -29,6 +29,8 @@ app.post('/verifyRegister', authRoutes.verifyRegister)
 
 app.delete('/users/:username', authRoutes.deleteAccount)
 
+app.post('/changePassword', authRoutes.changePassword)
+
 // ---------- user routes ---------- //
 
 app.get('/users/:username', userRoutes.getAccount)
