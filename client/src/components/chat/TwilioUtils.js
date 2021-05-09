@@ -1,21 +1,18 @@
 import axios from "axios";
-
 const TwilioChat = require("twilio-chat");
 
 
-const getToken = (auth) => {
-    // const identity = auth.email;
-    const identity = 'b@gmail.com';
-    return axios.get('/universal/token', {params: {identity: identity}})
+const getToken = (identity) => {
+    return axios.get('/universal/token', { params: { identity: identity } })
         .then(res => res.data.token)
         .catch(error => console.log(error));
 };
 
-const getChatClient = (auth) => {
-    return getToken(auth)
+const getChatClient = (email) => {
+    return getToken(email)
         .then(token => TwilioChat.Client.create(token))
         .then(client => {
-            // client auto renews tokens
+            // client auto renews tokens upon expiry
             client.on('tokenAboutToExpire', () => {
                 getToken().then(token => {
                     client.updateToken(token);
@@ -47,15 +44,6 @@ const getChannel = (cli, fromEmail, toEmail) => {
                         });
                 });
         });
-};
-
-// get first 10 messages
-const getFirstMessages = async (page) => {
-    let curr = page;
-    while (curr.hasPrevPage) {
-        curr = await curr.prevPage()
-    }
-    return sortByIndex(curr.items).slice(0, 10);
 };
 
 // get up to lim next messages
@@ -96,18 +84,9 @@ const sortByIndex = (array) => {
     });
 };
 
-const deleteChannel = (channel) => {
-
-};
-
-const deleteAllChannels = (channel) => {
-
-};
-
 export {
     getChatClient,
     getChannel,
-    getFirstMessages,
     getMoreMessages,
     sortByIndex
 }

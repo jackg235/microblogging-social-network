@@ -61,19 +61,18 @@ class Recorder extends React.Component {
       <div>
         <Container >
           <Row>
-            <Col>
+            <Col xs={3}>
               <Button onClick={this.start} disabled={this.state.isRecording} variant="outline-danger">Record</Button>
             </Col>
-            <Col>
+            <Col xs={3}>
               <Button onClick={this.stop} disabled={!this.state.isRecording} variant="outline-dark">Stop</Button>
             </Col>
-            <Col>
-              <audio style={{"width": "75%"}} src={this.state.blobURL}  controls="controls" />
+            <Col xs={6}>
+              <audio style={{"width": "100%"}} src={this.state.blobURL}  controls="controls" />
             </Col>
           </Row>
           
         </Container>
-        {/* style={ { "display": "hidden" } } */}
       </div>
     );
   }
