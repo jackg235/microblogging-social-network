@@ -43,6 +43,8 @@ app.get('/users/blockers/:username', userRoutes.getBlockers)
 
 app.get('/users/contacts/:username', userRoutes.getUserContacts)
 
+app.get('/users/suggested/:username', userRoutes.getSuggestedUsers)
+
 // ---------- post routes ---------- //
 
 app.post('/posts/new', postRoutes.new)

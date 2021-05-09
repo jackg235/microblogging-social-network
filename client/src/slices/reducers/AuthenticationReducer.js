@@ -12,6 +12,7 @@ export const initialState = {
     following: [],
     followers: [],
     blockedBy: [],
+    suggestedUsers: [],
     posts: [],
     failedLogins: 0,
     lockedOut: false,
@@ -114,6 +115,11 @@ const authSlice = createSlice({
             state.following = payload.following
             state.followers = payload.followers
         },
+        getSuggestedUsersSuccess: (state, {
+            payload
+        }) => {
+            state.suggestedUsers = payload
+        },
     }
 })
 export const {
@@ -130,6 +136,7 @@ export const {
     followFailure,
     getBlockedBySuccess,
     getContactsSuccess,
+    getSuggestedUsersSuccess,
 } = authSlice.actions
 
 export default authSlice.reducer

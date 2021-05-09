@@ -11,6 +11,7 @@ import {
     followFailure,
     getBlockedBySuccess,
     getContactsSuccess,
+    getSuggestedUsersSuccess,
     accountLockout,
     accountUnlocked,
 } from '../reducers/AuthenticationReducer'
@@ -227,6 +228,32 @@ export function getContacts(username) {
                     dispatch(getContactsSuccess(res.data));
                 } else {
                     // failed to get user's contacts
+                    dispatch(followFailure(res))
+                }
+            })
+    }
+}
+
+// attempts to get suggested users for the specified user
+export function getSuggested(username) {
+    console.log('attempting to get suggested users for user... ' + username)
+    return function (dispatch) {
+        return fetch(`http://localhost:5000/users/suggested/` + username, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('get suggested users error = ' + res.err)
+                // if getting the suggested users for this user was successful, add the suggested data to state
+                if (!res.err) {
+                    console.log(res.data)
+                    dispatch(getSuggestedUsersSuccess(res.data));
+                } else {
+                    // failed to get user's suggested users
                     dispatch(followFailure(res))
                 }
             })

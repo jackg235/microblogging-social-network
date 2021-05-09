@@ -218,6 +218,37 @@ async function getContacts(username) {
     }
 }
 
+async function getSuggested(username) {
+    try {
+        const userRes = await UserModel.find({username: username})
+        const following = userRes[0].following
+        const blockedBy = userRes[0].blockedBy
+        const allUsers = await UserModel.find()
+        const finalUsers = []
+        for (let i = 0; i < allUsers.length; i++) {
+            if (!following.includes(allUsers[i]) && !blockedBy.includes(allUsers[i])) {
+                finalUsers.push({
+                    username: allUsers[i].username,
+                    first: allUsers[i].first,
+                    last: allUsers[i].last,
+                })
+            }
+        }
+
+        // shuffle array
+        for (let i = finalUsers.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            let temp = finalUsers[i];
+            finalUsers[i] = finalUsers[j];
+            finalUsers[j] = temp;
+        }
+
+        return modelResponse(finalUsers, null)
+    } catch (e) {
+        return modelResponse(null, e);
+    }
+}
+
 // DELETE (already in post methods)
 async function getUserPosts(username) {
     console.log("getting posts for user " + username)
@@ -253,5 +284,6 @@ module.exports = {
     blockUser,
     getBlockedBy,
     getContacts,
+    getSuggested,
     changePasswordMethod: changePassword
 }
