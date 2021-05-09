@@ -70,6 +70,16 @@ async function deleteUser(username) {
     }
 }
 
+async function changePassword(username, newPassword) {
+    const pw = encrypt(newPassword)
+    try {
+        const updated = await UserModel.updateOne({username: username}, {password: pw});
+        return modelResponse(updated, null)
+    } catch (e) {
+        return modelResponse(null, e)
+    }
+}
+
 async function followUser(username, userToFollow) {
     console.log("toggling follow for " + username + " " + userToFollow)
     try {
@@ -103,7 +113,7 @@ async function followUser(username, userToFollow) {
             } else {
                 return modelResponse(null, "Error: can't follow user that is blocking you")
             }
-            
+
 
         }
         const res = await UserModel.updateOne({username: username}, {following: following});
@@ -198,4 +208,15 @@ async function getFollowingPosts(username) {
     return null
 }
 
-module.exports = {createUser, loginUser, getUserPosts, getFollowingPosts, getUser, deleteUser, followUser, blockUser, getBlockedBy}
+module.exports = {
+    createUser,
+    loginUser,
+    getUserPosts,
+    getFollowingPosts,
+    getUser,
+    deleteUser,
+    followUser,
+    blockUser,
+    getBlockedBy,
+    changePasswordMethod: changePassword
+}
