@@ -13,68 +13,7 @@ import Badge from 'react-bootstrap/Badge';
 import '../static/stylesheets/Stream.css';
 import ChatSidebar from './chat/ChatSidebar';
 import ChatWindow from './chat/ChatWindow';
-
-const usersMock = [
-    {
-        userImg: DefaultProPic,
-        email: '1@gmail.com',
-        username: 'user1',
-        firstName: 'F1',
-        lastName: 'L1',
-        regDate: '04/07/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-    {
-        userImg: DefaultProPic,
-        email: '2@gmail.com',
-        username: 'user2',
-        firstName: 'F2',
-        lastName: 'L2',
-        regDate: '04/08/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },{
-        userImg: DefaultProPic,
-        email: '3@gmail.com',
-        username: 'user3',
-        firstName: 'F3',
-        lastName: 'L3',
-        regDate: '04/09/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-    {
-        userImg: DefaultProPic,
-        email: '4@gmail.com',
-        username: 'user322r23r4',
-        firstName: 'F4',
-        lastName: 'L4',
-        regDate: '04/10/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-    {
-        userImg: DefaultProPic,
-        email: '5@gmail.com',
-        username: 'user5',
-        firstName: 'F5',
-        lastName: 'L5',
-        regDate: '04/11/21',
-        followers: [],
-        following: [],
-        blocking: [],
-        hidden: [],
-    },
-];
+import {getContacts} from '../slices/actions/AuthenticationActions'
 
 class Chat extends React.Component {
     constructor(props) {
@@ -83,32 +22,12 @@ class Chat extends React.Component {
         this.state = {
             contacts: []
         }
-        this.logoutClick = this.logoutClick.bind(this);
         this.updateChatWindow = this.updateChatWindow.bind(this);
     }
 
-    getIdentity = () => {
-        return 'b@gmail.com';
-        // return this.props.auth.email;
-    };
-
-    deleteConvo = (email) => {
-
-    }
-
-    getContactsWithMessages(auth) {
-        // return list of users that have messages with auth
-        return usersMock;
-    }
-
     componentDidMount() {
-        this.setState({ contacts: this.getContactsWithMessages(this.props.auth)});
-    }
-
-
-    // something w redux?
-    logoutClick() {
-        this.props.logoutUser();
+        console.log('auth: ', this.props.auth);
+        this.props.retrieveContacts(this.props.auth.username);
     }
 
     updateChatWindow(user) {
@@ -116,11 +35,11 @@ class Chat extends React.Component {
     }
 
     render() {
-        // const { email, first, last, authenticated } = this.props.auth;
+        const { email, first, last, authenticated } = this.props.auth;
 
-        // if (!authenticated) {
-        //     return <Redirect to='/'/>
-        // }
+        if (!authenticated) {
+            return <Redirect to='/'/>
+        }
         return (
             <div>
                 <Navbar/>
@@ -131,11 +50,11 @@ class Chat extends React.Component {
                         </h1>
                     </Row>
                     <Row>
-                        <Col classname="stream-sidebar" xs={2}>
-                            <ChatSidebar users={this.state.contacts} currMessaging={this.updateChatWindow}/>
+                        <Col classname="stream-sidebar" xs={3}>
+                            <ChatSidebar users={this.props.auth.following} currMessaging={this.updateChatWindow}/>
                         </Col>
                         <Col classname="stream-sidebar">
-                            <ChatWindow current={this.state.current} email={this.getIdentity()}/>
+                            <ChatWindow current={this.state.current} email={email}/>
                         </Col>
                     </Row>
                 </Container>
@@ -144,20 +63,16 @@ class Chat extends React.Component {
     }
 }
 
-// const mapStateToProps = (state) => ({
-//     auth: state.auth,
-//     users: state.users
-//     // posts: state.posts
-// })
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+})
 
-// function mapDispatchToProps(dispatch) {
-//     return ({
-//         logoutUser: () => dispatch(logout()),
-//         getFollowingPosts: (username) => dispatch(getAllPosts(username)),
-//     })
-// }
+function mapDispatchToProps(dispatch) {
+    return ({
+        logoutUser: () => dispatch(logout()),
+        retrieveContacts: (username) => dispatch(getContacts(username)),
+    })
+}
 
-// const ChatConnected = connect(mapStateToProps, mapDispatchToProps)(Chat)
-// export default RouteProtector(ChatConnected)
-
-export default Chat;
+const ChatConnected = connect(mapStateToProps, mapDispatchToProps)(Chat);
+export default RouteProtector(ChatConnected);

@@ -1,12 +1,10 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import ChatMessage from './ChatMessage';
 import Form from 'react-bootstrap/Form';
-import { getChatClient, getChannel, getFirstMessages, getMoreMessages, sortByIndex } from "./TwilioUtils";
+import { getChatClient, getChannel, getMoreMessages, sortByIndex } from "./TwilioUtils";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Recorder from './Recorder';
 
@@ -16,10 +14,6 @@ const styles = {
         "padding-left": "2%",
         "padding-right": "2%",
         "margin-bottom": "6%"
-        // "text-align": "left",
-        // "overflow-y": "scroll",
-        // "overflow-x": "hidden",
-        // "max-height": "75vh"
     },
     form: {
         "width": "100%",
@@ -36,7 +30,6 @@ class ChatWindow extends React.Component {
             audio: ''
         };
 
-        this.onClick = this.onClick.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
         this.handleMessageAdded = this.handleMessageAdded.bind(this);
     }
@@ -50,8 +43,8 @@ class ChatWindow extends React.Component {
         this.scrollToBottom();
     }
 
-    // get the client once
     componentDidMount() {
+        console.log(this.props.email);
         getChatClient(this.props.email).then(client => {
             this.setState({ client: client });
         }).catch(err => console.log(err));
@@ -88,19 +81,10 @@ class ChatWindow extends React.Component {
                 window.location.reload();
             });
         }
-        // don't need for inf
+        // don't need for infinite scrolling
         // this.scrollToBottom();
     }
 
-    // debugging purposes
-    onClick() {
-        console.log('client', this.state.client);
-        console.log('current',this.state.current);
-        console.log('messages',this.state.messages);
-        console.log('channel',this.state.channel);
-    }
-
-    // send button onClick
     sendMessage() {
         const channel = this.state.channel;
 
@@ -110,10 +94,16 @@ class ChatWindow extends React.Component {
         if (file !== null) {
             const reader = new FileReader();
             reader.addEventListener('load', () => {
-                channel.sendMessage({
-                    contentType: file.type,
-                    media: reader.result
-                })
+                try {
+                    channel.sendMessage({
+                        contentType: file.type,
+                        media: reader.result
+                    });
+                } catch (e) {
+                    console.log(e);
+                }
+                // clears the input file
+                fileTag.value = '';
             });
             reader.readAsArrayBuffer(file);
         }
@@ -122,10 +112,14 @@ class ChatWindow extends React.Component {
             const file = this.state.audio;
             const reader = new FileReader();
             reader.addEventListener('load', () => {
-                channel.sendMessage({
-                    contentType: file.type,
-                    media: reader.result
-                });
+                try {
+                    channel.sendMessage({
+                        contentType: file.type,
+                        media: reader.result
+                    });
+                } catch (e) {
+                    console.log(e);
+                }
             });
             reader.readAsArrayBuffer(file);
             this.setState({ audio: '' });
@@ -135,7 +129,11 @@ class ChatWindow extends React.Component {
         if (input !== '') {
             document.getElementById('send-inpt').value = '';
             document.getElementById('send-inpt').focus();
-            channel.sendMessage(input);
+            try {
+                channel.sendMessage(input);
+            } catch (e) {
+                console.log(e);
+            }
             setTimeout(this.fetchMoreMessages(), 2000);
         }
     }
@@ -188,7 +186,7 @@ class ChatWindow extends React.Component {
 
         const messageComps = this.state.messages.length !== 0 ? this.state.messages.map((message) => {
             const author = message.state.author;
-            const styling = author.trim().toLowerCase() === this.props.email.trim().toLowerCase() ? sendingStyle : receiveStyle;
+            const styling = author.trim().toLowerCase() === this.props.email.trim().toLowerCase() ? receiveStyle : sendingStyle;
             // const styling = author.trim().toLowerCase() === this.props.email.trim().toLowerCase() ? receiveStyle : sendingStyle;
             return (
                 <Row key={message.sid}>
@@ -213,37 +211,47 @@ class ChatWindow extends React.Component {
                     <Button onClick={this.sendMessage} variant="primary">Send</Button>
                 </Col>
                 <Col xs={4}>
-                    <Recorder newAudio={this.getAudio}/>
+                    <Row>
+                        <Col xs={12}>
+                            <Recorder newAudio={this.getAudio}/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                        <div className="input-group">
+                            <div className="custom-file">
+                                <input
+                                type="file"
+                                className="custom-file-input"
+                                id="file"
+                                />
+                                <label className="custom-file-label">
+                                Image/Video Upload
+                                </label>
+                            </div>
+                        </div>
+                        </Col>
+                    </Row>
                 </Col>
             </Row> : '';
 
         const infScroll = <InfiniteScroll
             style = {{
-                "overflowX": "hidden"
+                "overflowX": "hidden",
+                "padding-right": "1%"
             }}
             dataLength={this.state.messages.length}
             next={this.fetchMoreMessages}
             hasMore={this.state.hasMore}
-            // loader={<h4>Loading...</h4>}
-            // endMessage={ <p style={{ textAlign: "center" }}> <b>No more messages</b> </p> } 
             >
-
             {messageComps}
         </InfiniteScroll>;
 
         return (
             <Button style={styles.button} disabled block className="" variant="outline-info">
-                {/* <Container className="mt-4" fluid>
-                    <Row>
-                        <Button onClick={this.onClick} block className="mb-2 mx-2" variant="outline-info">Click to print this.state to console</Button>
-                    </Row>
-                </Container> */}
-
                 {infScroll}
-                
                 {sendMessageComponent}
-                <input id="file" type="file" onChange={ev => console.log(ev.target.files)} />
-                {/* used to scroll to the bottom on new message received */}
+                {/* {fileUpload} */}
                 <div style={{ float:"left", clear: "both" }} id="dummy" />
             </Button>
         );
