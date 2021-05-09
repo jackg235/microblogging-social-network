@@ -226,7 +226,7 @@ async function getSuggested(username) {
         const allUsers = await UserModel.find()
         const finalUsers = []
         for (let i = 0; i < allUsers.length; i++) {
-            if (!following.includes(allUsers[i]) && !blockedBy.includes(allUsers[i])) {
+            if (!following.includes(allUsers[i].username) && !blockedBy.includes(allUsers[i].username)) {
                 finalUsers.push({
                     username: allUsers[i].username,
                     first: allUsers[i].first,
