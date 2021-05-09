@@ -11,6 +11,8 @@ import {
     followFailure,
     getBlockedBySuccess,
     getContactsSuccess,
+    accountLockout,
+    accountUnlocked,
 } from '../reducers/AuthenticationReducer'
 
 import {
@@ -21,7 +23,7 @@ import {
 import {getUser} from './UserActions'
 
 // attempts to login a user
-export function login(email, password) {
+export function login(email, password, failedLogins) {
     console.log('attempting to login user... ' + email)
     return function (dispatch) {
         return fetch(`/verifyLogin`, {
@@ -45,7 +47,11 @@ export function login(email, password) {
                     dispatch(loginSuccess(res.data));
                 } else {
                     // failed login
-                    dispatch(loginFailure(res))
+                    if (failedLogins > 1) {
+                        dispatch(accountLockout(res))
+                    } else {
+                        dispatch(loginFailure(res))
+                    }
                 }
             })
     }
@@ -224,5 +230,12 @@ export function getContacts(username) {
                     dispatch(followFailure(res))
                 }
             })
+    }
+}
+
+// logs out a user by removing the token from localStorage
+export function unlockLoginForm() {
+    return function (dispatch) {
+        dispatch(accountUnlocked())
     }
 }

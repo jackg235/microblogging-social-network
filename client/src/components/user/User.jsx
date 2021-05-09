@@ -21,7 +21,7 @@ class User extends React.Component {
                             title=
                                 {<Typography
                                     component={Link}
-                                    to={`/profiile/${this.props.username}`}>
+                                    to={`/profile/${this.props.username}`}>
                                     {this.props.username}
                                 </Typography>} />
                     </Card>
