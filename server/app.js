@@ -41,6 +41,8 @@ app.post('/users/block', userRoutes.block)
 
 app.get('/users/blockers/:username', userRoutes.getBlockers)
 
+app.get('/users/contacts/:username', userRoutes.getUserContacts)
+
 // ---------- post routes ---------- //
 
 app.post('/posts/new', postRoutes.new)

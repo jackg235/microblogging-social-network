@@ -11,10 +11,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
 import '../static/stylesheets/Stream.css';
-import Card from 'react-bootstrap/Card';
 import ChatSidebar from './chat/ChatSidebar';
 import ChatWindow from './chat/ChatWindow';
-import ChatWindowInf from './chat/ChatWindowInf';
 
 const usersMock = [
     {
@@ -118,7 +116,9 @@ class Chat extends React.Component {
     }
 
     render() {
-        // if (!this.props.auth.authenticated) {
+        // const { email, first, last, authenticated } = this.props.auth;
+
+        // if (!authenticated) {
         //     return <Redirect to='/'/>
         // }
         return (
@@ -135,7 +135,7 @@ class Chat extends React.Component {
                             <ChatSidebar users={this.state.contacts} currMessaging={this.updateChatWindow}/>
                         </Col>
                         <Col classname="stream-sidebar">
-                            <ChatWindowInf current={this.state.current} email={this.getIdentity()}/>
+                            <ChatWindow current={this.state.current} email={this.getIdentity()}/>
                         </Col>
                     </Row>
                 </Container>
@@ -144,18 +144,20 @@ class Chat extends React.Component {
     }
 }
 
-// function mapStateToProps(state) {
-//     console.log(state.auth)
-//     return state.auth
-// }
+// const mapStateToProps = (state) => ({
+//     auth: state.auth,
+//     users: state.users
+//     // posts: state.posts
+// })
 
 // function mapDispatchToProps(dispatch) {
 //     return ({
-//         logoutUser: () => dispatch(logout())
+//         logoutUser: () => dispatch(logout()),
+//         getFollowingPosts: (username) => dispatch(getAllPosts(username)),
 //     })
 // }
 
-// const ChatConnected = connect(mapStateToProps, mapDispatchToProps)(Chat);
-// export default RouteProtector(ChatConnected);
+// const ChatConnected = connect(mapStateToProps, mapDispatchToProps)(Chat)
+// export default RouteProtector(ChatConnected)
 
 export default Chat;

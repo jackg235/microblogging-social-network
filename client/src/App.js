@@ -5,7 +5,7 @@ import Welcome from './components/welcome/Welcome';
 import VideoChat from './components/video/VideoWrapper';
 import Profile from './components/profile/Profile';
 import './static/stylesheets/App.css';
-import Explore from './components/Explore';
+import Explore from './components/explore/Explore';
 import Chat from './components/Chat';
 
 function App() {
