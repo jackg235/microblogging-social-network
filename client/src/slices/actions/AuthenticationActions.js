@@ -212,7 +212,7 @@ export function getBlockers(username) {
 export function getContacts(username) {
     console.log('attempting to get the contacts of user... ' + username)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/users/contacts/` + username, {
+        return fetch(`users/contacts/` + username, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -238,7 +238,7 @@ export function getContacts(username) {
 export function getSuggested(username) {
     console.log('attempting to get suggested users for user... ' + username)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/users/suggested/` + username, {
+        return fetch(`users/suggested/` + username, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
