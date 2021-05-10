@@ -45,46 +45,46 @@ class Recorder extends React.Component {
       }).catch((e) => console.log(e));
   };
 
-  componentDidMount() {
-    navigator.getUserMedia = (
-      navigator.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia
-    );
+  // componentDidMount() {
+  //   navigator.getUserMedia = (
+  //     navigator.getUserMedia ||
+  //     navigator.webkitGetUserMedia ||
+  //     navigator.mozGetUserMedia ||
+  //     navigator.msGetUserMedia
+  //   );
     
-    try {
-      if (navigator.mediaDevices === undefined) {
-        navigator.getUserMedia({ audio: true }, 
-        () => {
-          this.setState({ isBlocked: false });
-        },
-        () => {
-          this.setState({ isBlocked: true })
-        });
-      } else {
-          navigator.mediaDevices.getUserMedia({
-              audio: true
-          })
-          .then(() => {
-            this.setState({ isBlocked: false });
-          })
-          .catch(() => {
-            this.setState({ isBlocked: true })
-          });
-      }
-    } catch (e) {
+  //   try {
+  //     if (navigator.mediaDevices === undefined) {
+  //       navigator.getUserMedia({ audio: true }, 
+  //       () => {
+  //         this.setState({ isBlocked: false });
+  //       },
+  //       () => {
+  //         this.setState({ isBlocked: true })
+  //       });
+  //     } else {
+  //         navigator.mediaDevices.getUserMedia({
+  //             audio: true
+  //         })
+  //         .then(() => {
+  //           this.setState({ isBlocked: false });
+  //         })
+  //         .catch(() => {
+  //           this.setState({ isBlocked: true })
+  //         });
+  //     }
+  //   } catch (e) {
 
-    }
-    // navigator.mediaDevices.getUserMedia({ audio: true },
-    //   () => {
-    //     this.setState({ isBlocked: false });
-    //   },
-    //   () => {
-    //     this.setState({ isBlocked: true })
-    //   },
-    // );
-  }
+  //   }
+  //   // navigator.mediaDevices.getUserMedia({ audio: true },
+  //   //   () => {
+  //   //     this.setState({ isBlocked: false });
+  //   //   },
+  //   //   () => {
+  //   //     this.setState({ isBlocked: true })
+  //   //   },
+  //   // );
+  // }
 
   render(){
     return (
