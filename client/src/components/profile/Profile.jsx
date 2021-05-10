@@ -30,6 +30,9 @@ class Profile extends React.Component {
         const postElements = posts.map((post) => {
             return <Post key={post.postId} post={post}/>
         })
+        if (!auth.authenticated) {
+            return <Redirect to='/'/>
+        }
         return (
             <div>
                 <Navbar/>

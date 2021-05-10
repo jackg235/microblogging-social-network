@@ -47,6 +47,9 @@ class Home extends React.Component {
         })
 
         const personalProfileLink = "/profile/" + username;
+        if (!authenticated) {
+            return <Redirect to='/'/>
+        }
 
         return (
             <div>
