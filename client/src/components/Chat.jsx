@@ -46,7 +46,8 @@ class Chat extends React.Component {
             this.setState({ channel: channel });
         })
         .catch(e => {
-            window.location.reload();
+            console.log(e);
+            // window.location.reload();
         });
     }
 

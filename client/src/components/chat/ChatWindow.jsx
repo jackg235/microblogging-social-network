@@ -58,7 +58,8 @@ class ChatWindow extends React.Component {
                         hasMore: true
                 });
             }).catch(e => {
-                window.location.reload();
+                console.log(e);
+                // window.location.reload();
             });
         }
     }
