@@ -1,15 +1,6 @@
 import React, { Component } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Link } from 'react-router-dom';
-// import dayjs from 'dayjs';
-// import relativeTime from 'dayjs/plugin/relativeTime';
-// import PropTypes from 'prop-types';
-
-
-// import DeletePost from './DeletePost';
-// import LikeButton from './LikeButton';
-// MUI Stuff
-// import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
@@ -24,8 +15,8 @@ import { connect } from 'react-redux';
 
 const styles = {
   image: {
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 200,
     display: 'inline-block',
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -65,6 +56,13 @@ class Post extends Component {
     this.props.deletePost(this.props.auth.username, this.props.post._id)
   }
 
+  arrayBufferToBase64(buffer) {
+    var binary = '';
+    var bytes = [].slice.call(new Uint8Array(buffer));
+    bytes.forEach((b) => binary += String.fromCharCode(b));
+    return window.btoa(binary);
+  };
+
   render() {
     // dayjs.extend(relativeTime);
     const {
@@ -72,19 +70,32 @@ class Post extends Component {
       post: {
         _id,
         username,
-        // first,
-        // userImg,
         title,
         content,
         postDate,
         likes,
         comments,
+          media
       },
       auth: {
         authenticated,
       }
     } = this.props;
-
+    let img;
+    if (media != null) {
+      const data = media.data.data
+      const base64Flag = 'data:image/jpeg;base64,';
+      const imageStr = this.arrayBufferToBase64(data);
+      img = base64Flag + imageStr
+    }
+    const mediaImage =
+        media != null ? (
+            <CardMedia
+                image={img}
+                className={classes.image}
+                style={styles.image}
+            />
+        ) : null
     // code to display delete button only to owner of post
     const deleteButton =
       authenticated && username === this.props.auth.username ? (
@@ -95,15 +106,9 @@ class Post extends Component {
             {'Delete'}
         </Button>
       ) : null;
-
     return (
     <div className={classes.postContainer}>
-        <CardMedia
-          image={DefaultProPic}
-          title="Profile image"
-          className={classes.image}
-          style={styles.image}
-        />
+      {mediaImage}
         <CardContent className={classes.content}>
           <Typography
             variant="h5"
@@ -114,13 +119,10 @@ class Post extends Component {
             {username}
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            {/* {dayjs(postDate).fromNow()} */}
             {postDate}
           </Typography>
           <Typography variant="title1">{title}</Typography>
           <Typography variant="body1">{content}</Typography>
-          {/* <LikeButton _id={_id} /> */}
-          {/* <span>{likes.length} Likes </span> */}
           <span>{comments.length} comments </span>
           <CommentList post={this.props.post} />
         </CardContent>
@@ -130,12 +132,6 @@ class Post extends Component {
             postId={_id}
             posterId={username}
           />
-          {/* <Button 
-            // onclick=likePost(_id)
-            className={classes.likePost}
-          >
-              {'Like Post'}
-          </Button> */}
           <Button 
             onClick={() => {this.hidePost()}}
             className={classes.hidePost}
@@ -149,19 +145,11 @@ class Post extends Component {
   }
 }
 
-// Scream.propTypes = {
-//   user: PropTypes.object.isRequired,
-//   scream: PropTypes.object.isRequired,
-//   classes: PropTypes.object.isRequired,
-//   openDialog: PropTypes.bool
-// };
-
 const mapStateToProps = (state) => ({
   auth: state.auth
 });
 
 function mapDispatchToProps(dispatch) {
-  console.log('dispatching')
   return ({
       hidePost: (username, postId, posterId) => dispatch(hidePost(username, postId, posterId)),
       deletePost: (username, postId) => dispatch(deletePost(username, postId)),

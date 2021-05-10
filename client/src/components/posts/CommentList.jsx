@@ -58,7 +58,6 @@ class CommentList extends Component {
     return (
       <Grid container>
         {comments.slice(0).reverse().map((comment, index) => {
-          console.log(comment)
 
           const deleteButton =
           authenticated && comment.username === username ? (

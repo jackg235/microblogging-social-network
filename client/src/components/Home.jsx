@@ -43,7 +43,6 @@ class Home extends React.Component {
         const { allPosts } = this.props.posts
 
         const postElements = allPosts.map((post) => {
-            console.log(post)
             return <Post key={post.postId} post={post} />
         })
 

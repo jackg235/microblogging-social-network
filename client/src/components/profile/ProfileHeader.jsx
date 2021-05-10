@@ -140,7 +140,6 @@ class ProfileHeader extends React.Component {
             file.append('file', image)
             file.append('username', this.props.auth.username)
             file.append("name", "multer-image")
-            console.log(file.get('file'))
             axios.post(`/changeProfilePicture`, file)
                 .then((response) => {
                     if (response) {

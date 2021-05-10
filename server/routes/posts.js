@@ -6,7 +6,7 @@ const {responseError, responseOkay} = require('../data_model/StandardResponse')
 
 function newPost(req, res) {
     const body = req.body
-    PostMethods.newPost(body)
+    PostMethods.newPost(body.username, body.title, body.content, req.file)
         .then(response => {
             if (response.err) {
                 const resJSON = responseError(null, response.err)
@@ -57,8 +57,6 @@ function getPosts(req, res) {
                 const resJSON = responseError(null, null, response.err)
                 res.status(400).send(resJSON)
             } else {
-                console.log('get posts response:')
-                console.log(response)
                 const resJSON = responseOkay(response.data, null)
                 res.status(200).send(resJSON)
             }
@@ -77,7 +75,6 @@ function getUserPosts(req, res) {
                 res.status(400).send(resJSON)
             } else {
                 const resJSON = responseOkay(response.data, null)
-                console.log(resJSON.comments)
                 res.status(200).send(resJSON)
             }
         })
