@@ -79,10 +79,10 @@ class Chat extends React.Component {
                         </h1>
                     </Row>
                     <Row>
-                        <Col classname="stream-sidebar" xs={3}>
+                        <Col xs={3}>
                             <ChatSidebar users={this.state.contacts} current={this.state.current} auth={this.props.auth} currMessaging={this.updateChatWindow}/>
                         </Col>
-                        <Col classname="stream-sidebar">
+                        <Col>
                             <ChatWindow client={this.state.client} channel={this.state.channel} current={this.state.current} uniqueId={username}/>
                         </Col>
                     </Row>
