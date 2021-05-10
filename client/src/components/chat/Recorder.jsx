@@ -46,14 +46,41 @@ class Recorder extends React.Component {
   };
 
   componentDidMount() {
-    navigator.getUserMedia({ audio: true },
+    navigator.getUserMedia = (
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia
+    );
+    
+    if (typeof navigator.mediaDevices.getUserMedia === 'undefined') {
+      navigator.getUserMedia({ audio: true }, 
       () => {
         this.setState({ isBlocked: false });
       },
       () => {
         this.setState({ isBlocked: true })
-      },
-    );
+      });
+    } else {
+        navigator.mediaDevices.getUserMedia({
+            audio: true
+        })
+        .then(() => {
+          this.setState({ isBlocked: false });
+        })
+        .catch(() => {
+          this.setState({ isBlocked: true })
+        });
+    }
+
+    // navigator.mediaDevices.getUserMedia({ audio: true },
+    //   () => {
+    //     this.setState({ isBlocked: false });
+    //   },
+    //   () => {
+    //     this.setState({ isBlocked: true })
+    //   },
+    // );
   }
 
   render(){
