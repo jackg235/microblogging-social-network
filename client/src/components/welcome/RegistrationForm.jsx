@@ -34,7 +34,7 @@ class RegistrationForm extends React.Component {
     render() {
         const {error, authenticated} = this.props;
         if (authenticated) {
-            return <Redirect to="/home"/>;
+            return <Redirect to="/"/>
         }
         if (error) {
             return (
@@ -155,7 +155,6 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    console.log('dispatching')
     return ({
         submitForm: (email, password, first, last, username) => dispatch(register(email, password, first, last, username))
     })

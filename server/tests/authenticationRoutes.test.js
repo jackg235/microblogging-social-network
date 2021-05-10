@@ -15,7 +15,7 @@ const testUserJSON2 = {
     first: "dag",
     last: "dereje",
     username: "test2",
-    email: "test2@gmail.com",
+    email: "test21@gmail.com",
     password: "password"
 }
 
