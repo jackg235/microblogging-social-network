@@ -57,7 +57,6 @@ class Chat extends React.Component {
 
     componentDidUpdate() {
         if (!this.state.gotContacts && this.state.client !== undefined) {
-            console.log(123);
             getAllChannelsContainingUser(this.state.client, this.props.auth)
             .then(contacts => this.setState({ contacts: contacts, gotContacts: true }));
         }
