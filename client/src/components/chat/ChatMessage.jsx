@@ -30,6 +30,10 @@ class ChatMessage extends React.Component {
                 .then(blob => URL.createObjectURL(blob))
                 .then(url => this.setState({ mediaurl: url, type: 'video' }))
                 .catch(err => console.error(err));
+            } else {
+                this.props.message.media.getContentTemporaryUrl().then(url => {
+                    this.setState({ mediaurl: url, type: 'other' });
+                });
             }
         }
     }
@@ -49,11 +53,14 @@ class ChatMessage extends React.Component {
     render() {
         // if a media message
         const media = this.state.mediaurl !== undefined ?
-            (this.state.type === 'image' ? <img style={styles.img} src={this.state.mediaurl} alt="no pic"/> : (
+            (this.state.type === 'image' ? 
+            <img style={styles.img} src={this.state.mediaurl} alt="no pic"/> : (
             this.state.type === 'audio' ? <audio src={this.state.mediaurl} style={{ "display": "block", "width": "100%"}} controls="controls" /> :
+            this.state.type === 'other' ? <a href={this.state.mediaurl}>Click to download file: {this.props.message.media.contentType}</a> :
             <video style={{"width": "80%"} } src={this.state.mediaurl} type={this.props.message.media.contentType} controls></video>)) : null;
         
-        const variant = this.state.mediaurl !== undefined ? 'info' : 'outline-info';
+        const variant = this.state.mediaurl !== undefined ? 
+            (this.state.type === 'other' ? 'outline-info' : 'info') : 'outline-info';
         return (
             <div>
                 <Button block className="mb-4 mx-1" variant={variant}>
