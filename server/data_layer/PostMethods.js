@@ -1,6 +1,6 @@
 const PostModel = require('../data_model/Post')
 const UserModel = require('../data_model/User')
-
+const PostAnalyticsModel = require('../data_model/PostAnalytics')
 function modelResponse(data, error) {
     return {
         data: data,
@@ -19,8 +19,29 @@ async function newPost(post) {
         const posts = userData[0].posts
         posts.push(postId)
         await UserModel.updateOne({username: post.username}, {posts: posts});
+
+        // update post analytics
+        const a = await PostAnalyticsModel.find({username: post.username})
+        if (a.length == 0) {
+            const postDate = Date.now()
+            const newAnalytics = new PostAnalyticsModel({
+                username: post.username,
+                postDate: postDate,
+                numPosts: 1
+            })
+            await newAnalytics.save()
+        } else {
+            const analytics = a[0]
+            const postDate = Date.now()
+            const numPosts = analytics.numPosts + 1
+            await PostAnalyticsModel.updateOne({username: post.username}, {
+                numPosts: numPosts,
+                mostRecentPostDate: postDate
+            });
+        }
         return modelResponse(data, null)
     } catch (e) {
+        console.log(e)
         return modelResponse(null, e)
     }
 }
@@ -38,6 +59,13 @@ async function deletePost(username, postId) {
         }
         await UserModel.updateOne({username: username}, {posts: posts});
         await PostModel.deleteOne({_id: postId})
+        // update post analytics
+        const a = await PostAnalyticsModel.find({username: username})
+        const analytics = a[0]
+        const numPosts = analytics.numPosts - 1
+        await PostAnalyticsModel.updateOne({username: username}, {
+            numPosts: numPosts,
+        });
         return modelResponse(null, null)
     } catch (e) {
         return modelResponse(null, e);
@@ -99,7 +127,6 @@ async function getUserPosts(username, profileUsername) {
         }
         // so most recent posts appear first
         finalPosts.reverse()
-        console.log(finalPosts)
         return modelResponse(finalPosts, null)
     } catch (e) {
         return modelResponse(null, e);
@@ -128,8 +155,23 @@ async function addComment(commenter, postId, content) {
             content: content
         }
         comments.push(comment)
-        console.log(comments)
         const data = await PostModel.updateOne({_id: postId}, {comments: comments});
+
+        // update post analytics
+        const a = await PostAnalyticsModel.find({username: commenter})
+        if (a.length == 0) {
+            const newAnalytics = new PostAnalyticsModel({
+                username: commenter,
+                numComments: 1,
+            })
+            await newAnalytics.save()
+        } else {
+            const analytics = a[0]
+            const numComments = analytics.numComments + 1
+            await PostAnalyticsModel.updateOne({username: commenter}, {
+                numComments: numComments
+            });
+        }
         return modelResponse(data, null)
     } catch (e) {
         console.log(e)
@@ -142,10 +184,18 @@ async function deleteComment(postId, commentId) {
     try {
         const response = await PostModel.find({_id: postId})
         const comments = response[0].comments
+        const username = response[0].username
         for (var i in comments) {
             if (comments[i]._id == commentId) {
                 comments.splice(i, 1);
                 const updated = await PostModel.updateOne({_id: postId}, {comments: comments});
+                // update post analytics
+                const a = await PostAnalyticsModel.find({username: username})
+                const analytics = a[0]
+                const numComments = analytics.numComments - 1
+                await PostAnalyticsModel.updateOne({username: username}, {
+                    numComments: numComments,
+                });
                 return modelResponse(updated, null)
             }
         }
