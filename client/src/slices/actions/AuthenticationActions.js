@@ -14,6 +14,8 @@ import {
     getSuggestedUsersSuccess,
     accountLockout,
     accountUnlocked,
+    updateBlocking,
+    getBlockingSuccess,
 } from '../reducers/AuthenticationReducer'
 
 import {
@@ -172,7 +174,8 @@ export function blockToggle(username, userToBlock) {
                 if (!res.err) {
                     console.log('block user res.data... ')
                     console.log(res.data)
-                    dispatch(updateFollowing(res.data))
+                    dispatch(updateFollowing(res.data.following))
+                    dispatch(updateBlocking(res.data.blocking))
                 } else {
                     // failed to block user
                     dispatch(followFailure(res))
@@ -212,7 +215,7 @@ export function getBlockers(username) {
 export function getContacts(username) {
     console.log('attempting to get the contacts of user... ' + username)
     return function (dispatch) {
-        return fetch(`users/contacts/` + username, {
+        return fetch(`/users/contacts/` + username, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -221,6 +224,7 @@ export function getContacts(username) {
         })
             .then(res => res.json())
             .then(res => {
+                console.log(res)
                 console.log('get user contacts error = ' + res.err)
                 // if getting the user's contacts was successful, add the contact data to state
                 if (!res.err) {
@@ -234,11 +238,37 @@ export function getContacts(username) {
     }
 }
 
+// attempts to get the specified user's blocking and blockedBy
+export function getBlockedUsers(username) {
+    console.log('attempting to get the blocking and blockedBy of user... ' + username)
+    return function (dispatch) {
+        return fetch(`/users/blocking/` + username, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('get blocking info error = ' + res.err)
+                // if getting the user's contacts was successful, add the contact data to state
+                if (!res.err) {
+                    console.log(res.data)
+                    dispatch(getBlockingSuccess(res.data));
+                } else {
+                    // failed to get user's contacts
+                    dispatch(followFailure(res))
+                }
+            })
+    }
+}
+
 // attempts to get suggested users for the specified user
 export function getSuggested(username) {
     console.log('attempting to get suggested users for user... ' + username)
     return function (dispatch) {
-        return fetch(`users/suggested/` + username, {
+        return fetch(`/users/suggested/` + username, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -260,7 +290,7 @@ export function getSuggested(username) {
     }
 }
 
-// logs out a user by removing the token from localStorage
+// allows the user to attempt login again after timer has ended
 export function unlockLoginForm() {
     return function (dispatch) {
         dispatch(accountUnlocked())
