@@ -39,11 +39,46 @@ const getChannel = (cli, fromEmail, toEmail) => {
                         uniqueName: `${fromEmail}:${toEmail}`,
                         friendlyName: `${fromEmail}:${toEmail}`
                     })
-                        .catch(e => {
-                            console.log('error making finding channels...');
-                        });
+                    .catch(e => {
+                        console.log('error making finding channels...');
+                    });
                 });
         });
+};
+
+const getAllChannelsContainingUser = (cli, auth) => {
+    const { username, following, followers, blocking, blockedBy } = auth;
+    return cli.getPublicChannelDescriptors().then((paginator) => {
+        const channelsOut = [];
+        const blockUsernames = blocking.concat(blockedBy);
+        const followUsernames = following.map(u => u.username).concat(followers.map(u => u.username));
+        // follow interaction, but are not blocked
+        followUsernames.forEach(u => {
+            if (!blockUsernames.includes(u) && !channelsOut.includes(u)) {
+                channelsOut.push(u);
+            }
+        });
+        // checking for channels from no-follow interaction users
+        for (var i = 0; i < paginator.items.length; i++) {
+            const channel = paginator.items[i];
+            if (channel.uniqueName !== null) {
+                const channelNameSplit = channel.friendlyName.split(':');
+                if (channelNameSplit.length === 2) {
+                    if (channelNameSplit[0] === username && !channelsOut.includes(channelNameSplit[1]) && !blockUsernames.includes(channelNameSplit[1])) {
+                        if (channelNameSplit[1] !== 'undefined') {
+                            channelsOut.push(channelNameSplit[1]);
+                        }
+                    } else if (channelNameSplit[1] === username && !channelsOut.includes(channelNameSplit[0]) && !blockUsernames.includes(channelNameSplit[0])) {
+                        if (channelNameSplit[0] !== 'undefined') {
+                            channelsOut.push(channelNameSplit[0]);
+                        }
+                    }
+                }
+            }
+            // all followers and following, anybody who has messaged you, NO BLOCKS WHATSOEVER 
+        }
+        return channelsOut;
+    });
 };
 
 // get up to lim next messages
@@ -88,5 +123,6 @@ export {
     getChatClient,
     getChannel,
     getMoreMessages,
-    sortByIndex
+    sortByIndex,
+    getAllChannelsContainingUser
 }

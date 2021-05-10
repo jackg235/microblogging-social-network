@@ -31,7 +31,9 @@ class SidebarUser extends React.Component {
                     <Image className="" style={styles.img} src={this.props.user.userImg} rounded />
                 </Col>
                 <Col xs={8}>
-                    <Button onClick={this.onClick} block className="mb-2 overflow-hidden" variant="outline-info">{this.props.user.username}</Button>
+                    <Button disabled={this.props.disabled} onClick={this.onClick} block className="mb-2 overflow-hidden" variant="outline-info">
+                        {this.props.user}
+                    </Button>
                 </Col>
             </Row>
         )
