@@ -81,7 +81,7 @@ class ProfileHeader extends React.Component {
             currUser
         } = this.props;
         let img = DefaultProPic;
-        if (currUser.img.data != null) {
+        if (currUser.img != null && currUser.img.data != null) {
             const data = currUser.img.data.data
             const base64Flag = 'data:image/jpeg;base64,';
             const imageStr = this.arrayBufferToBase64(data);

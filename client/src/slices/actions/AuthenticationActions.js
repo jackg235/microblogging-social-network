@@ -82,9 +82,8 @@ export function register(email, password, first, last, username) {
             .then(res => res.json())
             .then(res => {
                 console.log('registration error = ' + res.err)
-                // if the login was successful, set the token in localStorage and add user data to state
                 if (!res.err) {
-                    TokenManagement.setToken(res.token)
+                    TokenManagement.removeToken()
                     dispatch(registrationSuccess(res.data))
                 } else {
                     // registration failure

@@ -36,8 +36,7 @@ function verifyRegister(req, res) {
                 res.status(400).send(resJSON)
             } else {
                 const user = response.data
-                let token = signJWT(user, [])
-                const resJSON = responseOkay(response, token)
+                const resJSON = responseOkay(response, null)
                 res.status(200).send(resJSON)
             }
         })

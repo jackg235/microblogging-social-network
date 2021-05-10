@@ -68,16 +68,6 @@ const authSlice = createSlice({
             payload
         }) => {
             state.authenticated = true
-            state.first = payload.first
-            state.last = payload.last
-            state.email = payload.email
-            state.username = payload.username
-            state.posts = payload.posts
-            state.followers = payload.followers
-            state.following = payload.following
-            state.blockedBy = payload.blockedBy
-            state.posts = payload.posts
-            state.img = payload.img
         },
         registrationFailure: (state, {
             payload

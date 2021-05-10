@@ -25,7 +25,7 @@ export default function RouteProtector(ComponentToRender) {
 
         render() {
             if (!TokenManagement.loggedIn()) {
-                // return <Redirect to="/"/>
+                return <Redirect to="/"/>
             }
             return (<ComponentToRender {...this.props}/>);
         }
