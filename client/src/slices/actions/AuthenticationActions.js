@@ -290,6 +290,63 @@ export function getSuggested(username) {
     }
 }
 
+// attempts to change the user's password
+export function changePassword(username, newPassword) {
+    console.log('attempting to update the password for user... ' + username)
+    return function (dispatch) {
+        return fetch(`/changePassword`, {
+            method: 'POST',
+            body: JSON.stringify({
+                username,
+                newPassword,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('change password error = ' + res.err)
+                if (res.err) {
+                    // failed to change password
+                    dispatch(followFailure(res))
+                } else {
+                    console.log('successfully updated password!')
+                }
+            })
+    }
+}
+
+// attempts to delete the blog post with the specified title
+export function deleteUser(username) {
+    console.log('attempting to delete the user... ' + username)
+    return function (dispatch) {
+        return fetch(`/users/delete`, {
+            method: 'DELETE',
+            body: JSON.stringify({
+                username,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('delete post error = ' + res.err)
+                // if the user was deleted successfully, log the user out
+                if (res.err) {
+                    // failed to delete post
+                    dispatch(followFailure(res))
+                } else {
+                    // log user out
+                    dispatch(logout())
+                }
+            })
+    }
+}
+
 // allows the user to attempt login again after timer has ended
 export function unlockLoginForm() {
     return function (dispatch) {

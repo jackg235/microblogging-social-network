@@ -27,7 +27,7 @@ app.post('/verifyLogin', authRoutes.verifyLogin)
 
 app.post('/verifyRegister', authRoutes.verifyRegister)
 
-app.delete('/users/:username', authRoutes.deleteAccount)
+app.delete('/users/delete', authRoutes.deleteAccount)
 
 app.post('/changePassword', authRoutes.changePassword)
 
