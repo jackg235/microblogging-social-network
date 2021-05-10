@@ -4,7 +4,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ChatMessage from './ChatMessage';
 import Form from 'react-bootstrap/Form';
-import { getChatClient, getChannel, getMoreMessages, sortByIndex } from "./TwilioUtils";
+import { getChatClient, getChannel, getMoreMessages, sortByIndex, getAllChannelsContainingUser } from "./TwilioUtils";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Recorder from './Recorder';
 
@@ -35,58 +35,36 @@ class ChatWindow extends React.Component {
     }
 
     handleMessageAdded(message) {
-        const { messages } = this.state;
-        const newmsgs = [...messages, message]
-        this.setState(prevState => {
-            return { messages: sortByIndex(newmsgs) }
-        });
-        this.scrollToBottom();
-    }
-
-    componentDidMount() {
-        console.log(this.props.email);
-        getChatClient(this.props.email).then(client => {
-            this.setState({ client: client });
-        }).catch(err => console.log(err));
+        if (this.props.channel.sid === message.channel.sid) {
+            const { messages } = this.state;
+            const newmsgs = [...messages, message]
+            this.setState(prevState => {
+                return { messages: sortByIndex(newmsgs) }
+            });
+            this.scrollToBottom();
+        }
     }
 
     componentDidUpdate(prevProps) {
         let ch;
-        if (prevProps.current !== this.props.current) {
-            const email = this.props.current.email;
-
-            getChannel(this.state.client, this.props.email, this.props.current.email).then(channel => {
-                ch = channel;
-                if (channel._events.messageAdded.length !== 2) {
-                    channel.on('messageAdded', this.handleMessageAdded);
-                }
-
-                if (channel.channelState.status !== 'joined') {
-                    channel.join().catch(e => {
-                        console.log('error joining channel');
-                    });
-                } else {
-                }
-                return getMoreMessages(channel, -1, 10);
-            }).then(firstPage => {
-                this.setState(prevState => {
-                    return {
-                        current: this.props.current,
-                        channel: ch,
+        if (prevProps.channel !== this.props.channel) {
+            if (this.props.channel._events.messageAdded.length !== 2) {
+                this.props.channel.on('messageAdded', this.handleMessageAdded);
+            }
+            getMoreMessages(this.props.channel, -1, 10)
+            .then(firstPage => {
+                this.setState({
                         messages: firstPage || [],
                         hasMore: true
-                    }
                 });
             }).catch(e => {
                 window.location.reload();
             });
         }
-        // don't need for infinite scrolling
-        // this.scrollToBottom();
     }
 
     sendMessage() {
-        const channel = this.state.channel;
+        const channel = this.props.channel;
 
         // send image
         const fileTag = document.getElementById('file');
@@ -100,7 +78,7 @@ class ChatWindow extends React.Component {
                         media: reader.result
                     });
                 } catch (e) {
-                    console.log(e);
+                    console.error('Message could not be sent');
                 }
                 // clears the input file
                 fileTag.value = '';
@@ -118,7 +96,7 @@ class ChatWindow extends React.Component {
                         media: reader.result
                     });
                 } catch (e) {
-                    console.log(e);
+                    console.error('Message could not be sent');
                 }
             });
             reader.readAsArrayBuffer(file);
@@ -132,7 +110,7 @@ class ChatWindow extends React.Component {
             try {
                 channel.sendMessage(input);
             } catch (e) {
-                console.log(e);
+                console.error('Message could not be sent');
             }
             setTimeout(this.fetchMoreMessages(), 2000);
         }
@@ -152,13 +130,11 @@ class ChatWindow extends React.Component {
 
     fetchMoreMessages = () => {
         const curr = this.state.messages;
-
         if (curr.length === 0) {
             return;
         }
-
         const latestIdx = curr[curr.length - 1].index;
-        getMoreMessages(this.state.channel, latestIdx, 10)
+        getMoreMessages(this.props.channel, latestIdx, 10)
             .then(newmsgs => {
                 if (newmsgs === null) {
                     this.setState({ hasMore: false });
@@ -186,8 +162,7 @@ class ChatWindow extends React.Component {
 
         const messageComps = this.state.messages.length !== 0 ? this.state.messages.map((message) => {
             const author = message.state.author;
-            const styling = author.trim().toLowerCase() === this.props.email.trim().toLowerCase() ? receiveStyle : sendingStyle;
-            // const styling = author.trim().toLowerCase() === this.props.email.trim().toLowerCase() ? receiveStyle : sendingStyle;
+            const styling = author.trim().toLowerCase() === this.props.uniqueId.trim().toLowerCase() ? receiveStyle : sendingStyle;
             return (
                 <Row key={message.sid}>
                     <Col xs={styling}>
@@ -197,7 +172,7 @@ class ChatWindow extends React.Component {
             )
         }): '';
 
-        const sendMessageComponent = this.state.channel !== undefined ?
+        const sendMessageComponent = this.props.channel !== undefined ?
             <Row className="mt-2">
                 {/* <input type="hidden" value="something"/> */}
                 <Col xs={7}>

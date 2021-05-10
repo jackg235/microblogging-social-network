@@ -13,29 +13,58 @@ import Badge from 'react-bootstrap/Badge';
 import '../static/stylesheets/Stream.css';
 import ChatSidebar from './chat/ChatSidebar';
 import ChatWindow from './chat/ChatWindow';
-import {getContacts} from '../slices/actions/AuthenticationActions'
+import { getContacts, getBlockedUsers } from '../slices/actions/AuthenticationActions';
+import { getChatClient, getChannel, getMoreMessages, sortByIndex, getAllChannelsContainingUser } from "./chat/TwilioUtils";
 
 class Chat extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            contacts: []
+            contacts: [],
+            gotContacts: false,
         }
         this.updateChatWindow = this.updateChatWindow.bind(this);
     }
 
     componentDidMount() {
-        console.log('auth: ', this.props.auth);
         this.props.retrieveContacts(this.props.auth.username);
+        this.props.getBlocks(this.props.auth.username);
+        getChatClient(this.props.auth.username).then(client => {
+            this.setState({ client: client });
+        });
     }
 
     updateChatWindow(user) {
         this.setState({ current: user });
+        getChannel(this.state.client, this.props.auth.username, user).then(channel => {
+            if (channel.channelState.status !== 'joined') {
+                channel.join().catch(e => {
+                    console.log('error joining channel');
+                });
+            }
+            this.setState({ channel: channel });
+        })
+        .catch(e => {
+            window.location.reload();
+        });
+    }
+
+    updateContacts = (contacts) => {
+        this.setState({ contacts: contacts });
+        console.log('contacts', contacts);
+    }
+
+    componentDidUpdate() {
+        if (!this.state.gotContacts && this.state.client !== undefined) {
+            console.log(123);
+            getAllChannelsContainingUser(this.state.client, this.props.auth)
+            .then(contacts => this.setState({ contacts: contacts, gotContacts: true }));
+        }
     }
 
     render() {
-        const { email, first, last, authenticated } = this.props.auth;
+        const { authenticated, username} = this.props.auth;
 
         if (!authenticated) {
             return <Redirect to='/'/>
@@ -51,10 +80,10 @@ class Chat extends React.Component {
                     </Row>
                     <Row>
                         <Col classname="stream-sidebar" xs={3}>
-                            <ChatSidebar users={this.props.auth.following} currMessaging={this.updateChatWindow}/>
+                            <ChatSidebar users={this.state.contacts} current={this.state.current} auth={this.props.auth} currMessaging={this.updateChatWindow}/>
                         </Col>
                         <Col classname="stream-sidebar">
-                            <ChatWindow current={this.state.current} email={email}/>
+                            <ChatWindow client={this.state.client} channel={this.state.channel} current={this.state.current} uniqueId={username}/>
                         </Col>
                     </Row>
                 </Container>
@@ -71,6 +100,7 @@ function mapDispatchToProps(dispatch) {
     return ({
         logoutUser: () => dispatch(logout()),
         retrieveContacts: (username) => dispatch(getContacts(username)),
+        getBlocks: (username) => dispatch(getBlockedUsers(username))
     })
 }
 
