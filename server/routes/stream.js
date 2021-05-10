@@ -17,6 +17,7 @@ function startStream(req, res) {
 }
 
 function endStream(req, res) {
+    console.log(req.body)
     const user = req.body.user
     StreamMethods.endStream(user)
         .then(response => {

@@ -43,6 +43,7 @@ class Home extends React.Component {
         const { allPosts } = this.props.posts
 
         const postElements = allPosts.map((post) => {
+            console.log(post)
             return <Post key={post.postId} post={post} />
         })
 
@@ -60,8 +61,6 @@ class Home extends React.Component {
                     <p>My email is {email}</p>
                     <p>My username is {username}</p>
                     <button onClick={this.logoutClick}>Click me to log out</button>
-                    <Link to="/video">Click me to go to video chat</Link>
-                    <Link to={personalProfileLink}>Click me to go to your own profile</Link>
                 </div>
 
                 <div>

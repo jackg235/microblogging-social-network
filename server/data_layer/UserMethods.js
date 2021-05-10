@@ -1,4 +1,6 @@
 const UserModel = require('../data_model/User')
+const PostAnalyticsModel = require('../data_model/PostAnalytics')
+
 const bcrypt = require('bcryptjs');
 const path = require('path')
 const fs = require('fs')
@@ -32,6 +34,8 @@ async function createUser(user) {
         const data = await newUser.save()
         console.log('The following user has been added to the DB: ')
         console.log(data)
+        const newAnalytics = new PostAnalyticsModel({username: user.username})
+        await newAnalytics.save()
         return modelResponse(data, null)
     } catch (e) {
         console.log(e)

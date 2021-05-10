@@ -14,9 +14,6 @@ import {
 } from "@material-ui/core";
 import {Send} from "@material-ui/icons";
 import VideoChatItem from "./VideoChatItem";
-import axios from "axios";
-import {logout} from "../../slices/actions/AuthenticationActions";
-import {getAllPosts} from "../../slices/actions/PostActions";
 import {connect} from "react-redux";
 import RouteProtector from "../../hoc/RouteProtector";
 
@@ -115,13 +112,6 @@ class VideoChatScreen extends React.Component {
                     <CircularProgress style={{color: "white"}}/>
                 </Backdrop>
 
-                <AppBar elevation={10}>
-                    <Toolbar>
-                        <Typography variant="h6">
-                            {`Room: ${room}, User: ${email}, Channel: ${channel}`}
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
 
                 <CssBaseline/>
 
