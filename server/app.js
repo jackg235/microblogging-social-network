@@ -80,7 +80,7 @@ app.get('/users/suggested/:username', userRoutes.getSuggestedUsers)
 
 // ---------- post routes ---------- //
 
-app.post('/posts/new', postRoutes.new)
+app.post('/posts/new', upload.single('file'), postRoutes.new)
 
 app.delete('/posts/delete', postRoutes.delete)
 

@@ -9,36 +9,22 @@ import {
     getCommentsSuccess,
     getCommentsFailure
 } from "../reducers/PostReducer";
+import axios from 'axios'
 
-export function createPost(title, content, username) {
+export function createPost(title, content, username, image) {
+    let file = new FormData()
+    file.append('file', image)
+    file.append('username', username)
+    file.append('title', title)
+    file.append('content', content)
+    file.append("name", "multer-image")
     console.log('attempting to create a post called... ' + title + ' by... ' + username)
-    console.log(content)
     return function (dispatch) {
-        const likes = [];
-        const comments = [];
-        return fetch(`/posts/new`, {
-            method: 'POST',
-            body: JSON.stringify({
-                title,
-                content,
-                username,
-                likes,
-                comments
-            }),
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        })
-            .then(res => res.json())
+        return axios.post(`/posts/new`, file)
             .then(res => {
-                console.log('create post error = ' + res.err)
-                console.log('post: ')
-                console.log(res.data)
-                // if the post was created successfully, update allPosts in state
-                if (res.err) {
+                if (res.data.err) {
                     // failed to create post
-                    dispatch(postFailure(res))
+                    dispatch(postFailure(res.data))
                 } else {
                     // dispatch(postSuccess());
                     dispatch(getAllPosts(username))

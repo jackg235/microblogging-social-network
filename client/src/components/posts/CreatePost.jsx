@@ -37,18 +37,10 @@ class CreatePost extends Component {
     open: false,
     title: '',
     content: '',
-    errors: {}
+    errors: {},
+      image: null
   };
-//   componentWillReceiveProps(nextProps) {
-//     if (nextProps.UI.errors) {
-//       this.setState({
-//         errors: nextProps.UI.errors
-//       });
-//     }
-//     if (!nextProps.UI.errors && !nextProps.UI.loading) {
-//       this.setState({ content: '', open: false, errors: {} });
-//     }
-//   }
+
   handleOpen = () => {
     this.setState({ open: true });
   };
@@ -61,13 +53,17 @@ class CreatePost extends Component {
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
-  handleSubmit = (event) => {
-    event.preventDefault();
-    // this.props.createPost({ content: this.state.content });
 
-    this.props.newPost(this.state.title, this.state.content, this.props.auth.username)
-    // likely a better way to do this (componentWillReceiveProps??)
-    this.setState({ content: '', open: false, errors: {} });
+  handleImageUpload = (e) => {
+      e.preventDefault();
+      this.setState({
+          image: e.target.files[0]
+      })
+  }
+  handleSubmit = (event) => {
+      event.preventDefault();
+      this.props.newPost(this.state.title, this.state.content, this.props.auth.username, this.state.image)
+      this.setState({ content: '', open: false, errors: {} });
   };
   render() {
     const { errors } = this.state;
@@ -75,6 +71,13 @@ class CreatePost extends Component {
       classes,
       // auth
     } = this.props;
+    const changeImage = (
+        <div>
+          <br/>
+          <label htmlFor="image">Upload JPEG Image: </label>
+          <input name="media" onChange={this.handleImageUpload} type="file"/>
+        </div>
+        )
     return (
       <Fragment>
         <Button onClick={this.handleOpen} tip="Create a Post!">
@@ -90,7 +93,6 @@ class CreatePost extends Component {
           <Button
             tip="Close"
             onClick={this.handleClose}
-            // tipClassName={classes.closeButton}
           >
             <CloseIcon />
           </Button>
@@ -121,20 +123,13 @@ class CreatePost extends Component {
                 onChange={this.handleChange}
                 fullWidth
               />
+              {changeImage}
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
-                // className={classes.submitButton}
-                // disabled={loading}
               >
                 Submit
-                {/* {loading && (
-                  <CircularProgress
-                    size={30}
-                    className={classes.progressSpinner}
-                  />
-                )} */}
               </Button>
             </form>
           </DialogContent>
@@ -144,19 +139,13 @@ class CreatePost extends Component {
   }
 }
 
-// CreatePost.propTypes = {
-//   newPost: PropTypes.func.isRequired,
-//   clearErrors: PropTypes.func.isRequired,
-//   UI: PropTypes.object.isRequired
-// };
-
 const mapStateToProps = (state) => ({
     auth: state.auth
 });
 
 function mapDispatchToProps(dispatch) {
   return ({
-      newPost: (title, content, username) => dispatch(createPost(title, content, username))
+      newPost: (title, content, username, image) => dispatch(createPost(title, content, username, image))
   })
 }
 

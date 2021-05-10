@@ -1,6 +1,8 @@
 const PostModel = require('../data_model/Post')
 const UserModel = require('../data_model/User')
 const PostAnalyticsModel = require('../data_model/PostAnalytics')
+const fs = require('fs')
+
 function modelResponse(data, error) {
     return {
         data: data,
@@ -8,20 +10,33 @@ function modelResponse(data, error) {
     }
 }
 
-async function newPost(post) {
+async function newPost(username, title, content, image) {
+    let media = null;
+    if (image != null) {
+        media = {
+            data: fs.readFileSync(image.path),
+            contentType: "image/jpeg"
+        }
+    }
+    const post = {
+        username: username,
+        title: title,
+        content: content,
+        media: media
+    }
     const newPost = new PostModel(post)
     try {
         // save the new post to post db
         const data = await newPost.save()
         const postId = data._id
         // save the new post to users posts
-        const userData = await UserModel.find({username: post.username})
+        const userData = await UserModel.find({username: username})
         const posts = userData[0].posts
         posts.push(postId)
-        await UserModel.updateOne({username: post.username}, {posts: posts});
+        await UserModel.updateOne({username: username}, {posts: posts});
 
         // update post analytics
-        const a = await PostAnalyticsModel.find({username: post.username})
+        const a = await PostAnalyticsModel.find({username: username})
         if (a.length == 0) {
             const postDate = Date.now()
             const newAnalytics = new PostAnalyticsModel({

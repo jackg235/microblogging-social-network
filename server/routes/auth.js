@@ -18,7 +18,6 @@ function verifyLogin(req, res) {
                 res.status(400).send(resJSON)
             } else {
                 const user = response.data
-                console.log(user)
                 let token = signJWT(user, [])
                 const resJSON = responseOkay(user, token)
                 res.status(200).send(resJSON)

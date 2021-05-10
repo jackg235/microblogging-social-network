@@ -5,7 +5,11 @@ const postSchema = new mongoose.Schema({
     username: {type: String, required: true},
     title: String,
     content: {type: String, maxlength: 200, minlength: 1},
-    media: String, // not sure about this yet
+    media:
+        {
+            data: Buffer,
+            contentType: String
+        },
     postDate: {type: Date, default: Date.now},
     comments: [{
         username: String,
