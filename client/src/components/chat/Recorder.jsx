@@ -53,26 +53,29 @@ class Recorder extends React.Component {
       navigator.msGetUserMedia
     );
     
-    if (navigator.mediaDevices === undefined) {
-      navigator.getUserMedia({ audio: true }, 
-      () => {
-        this.setState({ isBlocked: false });
-      },
-      () => {
-        this.setState({ isBlocked: true })
-      });
-    } else {
-        navigator.mediaDevices.getUserMedia({
-            audio: true
-        })
-        .then(() => {
+    try {
+      if (navigator.mediaDevices === undefined) {
+        navigator.getUserMedia({ audio: true }, 
+        () => {
           this.setState({ isBlocked: false });
-        })
-        .catch(() => {
+        },
+        () => {
           this.setState({ isBlocked: true })
         });
-    }
+      } else {
+          navigator.mediaDevices.getUserMedia({
+              audio: true
+          })
+          .then(() => {
+            this.setState({ isBlocked: false });
+          })
+          .catch(() => {
+            this.setState({ isBlocked: true })
+          });
+      }
+    } catch (e) {
 
+    }
     // navigator.mediaDevices.getUserMedia({ audio: true },
     //   () => {
     //     this.setState({ isBlocked: false });
