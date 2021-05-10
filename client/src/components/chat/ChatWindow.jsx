@@ -73,14 +73,10 @@ class ChatWindow extends React.Component {
         if (file !== null) {
             const reader = new FileReader();
             reader.addEventListener('load', () => {
-                try {
-                    channel.sendMessage({
-                        contentType: file.type,
-                        media: reader.result
-                    });
-                } catch (e) {
-                    console.error('Message could not be sent');
-                }
+                channel.sendMessage({
+                    contentType: file.type,
+                    media: reader.result
+                }).catch(e => {});
                 // clears the input file
                 fileTag.value = '';
             });
@@ -91,14 +87,10 @@ class ChatWindow extends React.Component {
             const file = this.state.audio;
             const reader = new FileReader();
             reader.addEventListener('load', () => {
-                try {
-                    channel.sendMessage({
-                        contentType: file.type,
-                        media: reader.result
-                    });
-                } catch (e) {
-                    console.error('Message could not be sent');
-                }
+                channel.sendMessage({
+                    contentType: file.type,
+                    media: reader.result
+                }).catch(e => {});
             });
             reader.readAsArrayBuffer(file);
             this.setState({ audio: '' });
@@ -108,11 +100,7 @@ class ChatWindow extends React.Component {
         if (input !== '') {
             document.getElementById('send-inpt').value = '';
             document.getElementById('send-inpt').focus();
-            try {
-                channel.sendMessage(input);
-            } catch (e) {
-                console.error('Message could not be sent');
-            }
+            channel.sendMessage(input).catch(e => {});
             setTimeout(this.fetchMoreMessages(), 2000);
         }
     }
