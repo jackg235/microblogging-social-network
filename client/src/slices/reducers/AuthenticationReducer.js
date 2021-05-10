@@ -17,6 +17,7 @@ export const initialState = {
     posts: [],
     failedLogins: 0,
     lockedOut: false,
+    img: null
 }
 
 const authSlice = createSlice({
@@ -39,6 +40,7 @@ const authSlice = createSlice({
             state.posts = payload.posts
             state.failedLogins = 0
             state.lockedOut = false
+            state.img = payload.img
         },
         loginFailure: (state, {
             payload
@@ -75,6 +77,7 @@ const authSlice = createSlice({
             state.following = payload.following
             state.blockedBy = payload.blockedBy
             state.posts = payload.posts
+            state.img = payload.img
         },
         registrationFailure: (state, {
             payload
@@ -87,11 +90,19 @@ const authSlice = createSlice({
         authenticateSuccess: (state, {
             payload
         }) => {
+            console.log(payload)
             state.authenticated = true
             state.first = payload.first
             state.last = payload.last
             state.email = payload.email
             state.username = payload.username
+            state.posts = payload.posts
+            state.followers = payload.followers
+            state.following = payload.following
+            state.blockedBy = payload.blockedBy
+            state.posts = payload.posts
+            state.img = payload.img
+
         },
         authenticateFailure: (state) => {
             state.authenticated = false

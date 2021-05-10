@@ -28,6 +28,7 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
+        console.log(this.props.auth)
         this.props.getFollowingPosts(this.props.auth.username);
     }
 
@@ -47,9 +48,6 @@ class Home extends React.Component {
 
         const personalProfileLink = "/profile/" + username;
 
-        if (!authenticated) {
-            return <Redirect to='/'/>
-        }
         return (
             <div>
                 <Navbar/>
@@ -77,10 +75,8 @@ class Home extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    // console.log(state.auth)
     auth: state.auth,
     posts: state.posts
-    // return state.auth
 })
 
 function mapDispatchToProps(dispatch) {
@@ -90,5 +86,5 @@ function mapDispatchToProps(dispatch) {
     })
 }
 
-const HomeConnected = connect(mapStateToProps, mapDispatchToProps)(Home)
-export default RouteProtector(HomeConnected)
+const HomeConnected = connect(mapStateToProps, mapDispatchToProps)(RouteProtector(Home))
+export default HomeConnected

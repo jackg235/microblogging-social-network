@@ -190,7 +190,6 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    console.log('dispatching')
     return ({
         submitForm: (email, password, failedLogins) => dispatch(login(email, password, failedLogins)),
         unlockForm: () => dispatch(unlockLoginForm())

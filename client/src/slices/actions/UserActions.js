@@ -21,7 +21,6 @@ export function getUser(username) {
                 console.log('get user error = ' + res.err)
                 // if getting the user was successful, add the user data to state
                 if (!res.err) {
-                    console.log(res.data)
                     dispatch(getUserSuccess(res.data));
                 } else {
                     // failed to get user
