@@ -7,8 +7,8 @@ import Col from 'react-bootstrap/Col';
 
 const styles = {
     img: {
-        'min-width': '80%',
-        'min-height': '80%',
+        'minWidth': '80%',
+        'minHeight': '80%',
         'height': 'auto',
         'width': '1.75vmax'
     },
@@ -28,7 +28,7 @@ class SidebarUser extends React.Component {
         return (
             <Row className="flex-nowrap overflow-hidden">
                 <Col xs={3}>
-                    <Image className="" style={styles.img} src={this.props.user.userImg} rounded />
+                    <Image className="" style={styles.img} src={''} rounded />
                 </Col>
                 <Col xs={8}>
                     <Button disabled={this.props.disabled} onClick={this.onClick} block className="mb-2 overflow-hidden" variant="outline-info">
