@@ -10,7 +10,7 @@ import DefaultProPic from '../../default_propic.jpg'
 import { connect } from 'react-redux';
 import ShowContacts from './ShowContacts';
 
-import {followToggle, blockToggle, getBlockers} from '../../slices/actions/AuthenticationActions'
+import {followToggle, blockToggle, getBlockers, getBlockedUsers, getContacts} from '../../slices/actions/AuthenticationActions'
 import {getUser} from '../../slices/actions/UserActions'
 
 const styles = {
@@ -41,7 +41,9 @@ class ProfileHeader extends React.Component {
     }
 
     componentDidMount() {
-        this.props.getBlockers(this.props.auth.username)
+        // this.props.getBlockers(this.props.auth.username)
+        this.props.getContacts(this.props.auth.username)
+        this.props.getBlockedUsers(this.props.auth.username)
     }
 
     toggleFollow() {
@@ -60,25 +62,41 @@ class ProfileHeader extends React.Component {
               authenticated,
               username,
               blockedBy,
+              blocking,
+              following,
             },
             currUser
         } = this.props;
+
+        let followUser = following.find(user => {
+            return user.username === currUser.username
+        })
+
+        const followText = 
+            followUser !== undefined ? (
+                'Unfollow'
+            ) : 'Follow'
 
         const followButton = 
             currUser.username !== username && !blockedBy.includes(currUser.username) ? (
                 <Button 
                 onClick={() => {this.toggleFollow()}}
                 >
-                    {'Follow'}
+                    {followText}
                 </Button>
             ) : null;
+
+        const blockText = 
+            blocking.includes(currUser.username) ? (
+                'Unblock'
+            ) : 'Block'
 
         const blockButton = 
             currUser.username !== username ? (
                 <Button 
                 onClick={() => {this.toggleBlock()}}
                 >
-                    {'Block'}
+                    {blockText}
                 </Button>
             ) : null;
 
@@ -147,6 +165,8 @@ function mapDispatchToProps(dispatch) {
         followToggle: (username, otherUserId) => dispatch(followToggle(username, otherUserId)),
         blockToggle: (username, userToBlock) => dispatch(blockToggle(username, userToBlock)),
         getBlockers: (username) => dispatch(getBlockers(username)),
+        getBlockedUsers: (username) => dispatch(getBlockedUsers(username)),
+        getContacts: (username) => dispatch(getContacts(username)),
     })
 }
 

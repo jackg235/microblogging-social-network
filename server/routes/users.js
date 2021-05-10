@@ -1,4 +1,4 @@
-const {getUser, followUser, blockUser, getBlockedBy, getContacts, getSuggested} = require("../data_layer/UserMethods")
+const {getUser, followUser, blockUser, getBlockedBy, getContacts, getSuggested, getBlocking} = require("../data_layer/UserMethods")
 const {responseError, responseOkay} = require('../data_model/StandardResponse')
 
 function getAccount(req, res) {
@@ -98,7 +98,24 @@ function getSuggestedUsers(req, res) {
         })
 }
 
+function getBlockingUsers(req, res) {
+    const username = req.params.username
+    console.log('getting blocking users for ' + username)
+    getBlocking(username)
+        .then(response => {
+            console.log(response)
+            if (response.err) {
+                const resJSON = responseError(null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                const resJSON = responseOkay(response.data)
+                res.status(200).send(resJSON)
+            }
+        })
+}
+
 module.exports = {
+    getBlockingUsers: getBlockingUsers,
     getSuggestedUsers: getSuggestedUsers,
     getUserContacts: getUserContacts,
     getBlockers: getBlockers,

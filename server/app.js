@@ -41,6 +41,9 @@ app.post('/users/block', userRoutes.block)
 
 app.get('/users/blockers/:username', userRoutes.getBlockers)
 
+// returns both blocking and blockedBy
+app.get('/users/blocking/:username', userRoutes.getBlockingUsers)
+
 app.get('/users/contacts/:username', userRoutes.getUserContacts)
 
 app.get('/users/suggested/:username', userRoutes.getSuggestedUsers)
