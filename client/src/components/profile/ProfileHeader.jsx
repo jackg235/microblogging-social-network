@@ -9,8 +9,9 @@ import DefaultProPic from '../../default_propic.jpg'
 import axios from 'axios';
 import { connect } from 'react-redux';
 import ShowContacts from './ShowContacts';
+import ChangePassword from './ChangePassword';
 
-import {followToggle, blockToggle, getBlockers} from '../../slices/actions/AuthenticationActions'
+import {followToggle, blockToggle, getBlockers, getBlockedUsers, getContacts, deleteUser} from '../../slices/actions/AuthenticationActions'
 import {getUser} from '../../slices/actions/UserActions'
 
 const styles = {
@@ -39,10 +40,13 @@ class ProfileHeader extends React.Component {
         }
         this.toggleFollow = this.toggleFollow.bind(this)
         this.toggleBlock = this.toggleBlock.bind(this)
+        this.deactivateAccount = this.deactivateAccount.bind(this)
     }
 
     componentDidMount() {
-        this.props.getBlockers(this.props.auth.username)
+        // this.props.getBlockers(this.props.auth.username)
+        this.props.getContacts(this.props.auth.username)
+        this.props.getBlockedUsers(this.props.auth.username)
     }
 
     toggleFollow() {
@@ -59,6 +63,9 @@ class ProfileHeader extends React.Component {
         bytes.forEach((b) => binary += String.fromCharCode(b));
         return window.btoa(binary);
     };
+    deactivateAccount() {
+        this.props.deactivateAccount(this.props.auth.username)
+    }
 
     render() {
         const {
@@ -68,6 +75,8 @@ class ProfileHeader extends React.Component {
               authenticated,
               username,
               blockedBy,
+              blocking,
+              following,
             },
             currUser
         } = this.props;
@@ -78,33 +87,48 @@ class ProfileHeader extends React.Component {
             const imageStr = this.arrayBufferToBase64(data);
             img = base64Flag + imageStr
         }
-        const followButton =
+
+        let followUser = following.find(user => {
+            return user.username === currUser.username
+        })
+
+        const followText = 
+            followUser !== undefined ? (
+                'Unfollow'
+            ) : 'Follow'
+
+        const followButton = 
             currUser.username !== username && !blockedBy.includes(currUser.username) ? (
-                <Button onClick={() => {this.toggleFollow()}}>
-                    {'Follow'}
+                <Button 
+                onClick={() => {this.toggleFollow()}}
+                >
+                    {followText}
                 </Button>
             ) : null;
 
+        const blockText = 
+            blocking.includes(currUser.username) ? (
+                'Unblock'
+            ) : 'Block'
+
         const blockButton = 
             currUser.username !== username ? (
-                <Button onClick={() => {this.toggleBlock()}}>
-                    {'Block'}
+                <Button 
+                onClick={() => {this.toggleBlock()}}
+                >
+                    {blockText}
                 </Button>
             ) : null;
 
         const changePasswordButton = 
             currUser.username === username ? (
-                <Button 
-                // onclick=changePassword(password)=
-                >
-                    {'Change Password'}
-                </Button>
+                <ChangePassword/>
             ) : null;
 
         const deactivateButton = 
             currUser.username === username ? (
                 <Button 
-                // onclick=changePassword(password)=
+                onClick={() => {this.deactivateAccount()}}
                 >
                     {'Deactivate Account'}
                 </Button>
@@ -186,6 +210,9 @@ function mapDispatchToProps(dispatch) {
         followToggle: (username, otherUserId) => dispatch(followToggle(username, otherUserId)),
         blockToggle: (username, userToBlock) => dispatch(blockToggle(username, userToBlock)),
         getBlockers: (username) => dispatch(getBlockers(username)),
+        getBlockedUsers: (username) => dispatch(getBlockedUsers(username)),
+        getContacts: (username) => dispatch(getContacts(username)),
+        deactivateAccount: (username) => dispatch(deleteUser(username)),
     })
 }
 

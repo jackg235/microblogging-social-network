@@ -6,6 +6,7 @@ import Navbar from '../Navbar'
 import Post from '../posts/Post'
 import {getUser} from '../../slices/actions/UserActions'
 import {getUserPosts} from '../../slices/actions/PostActions'
+import {getContacts, getBlockedUsers} from '../../slices/actions/AuthenticationActions'
 
 import {connect} from 'react-redux'
 
@@ -18,6 +19,8 @@ class Profile extends React.Component {
     componentDidMount() {
         this.props.getProfile(this.props.profileId);
         this.props.getPosts(this.props.auth.username, this.props.profileId)
+        // this.props.getContacts(this.props.auth.username)
+        // this.props.getBlockedUsers(this.props.auth.username)
     }
 
     render() {
@@ -50,7 +53,9 @@ const mapStateToProps = (state) => ({
 function mapDispatchToProps(dispatch) {
     return ({
         getProfile: (username) => dispatch(getUser(username)),
-        getPosts: (username, profileUsername) => dispatch(getUserPosts(username, profileUsername))
+        getPosts: (username, profileUsername) => dispatch(getUserPosts(username, profileUsername)),
+        getBlockedUsers: (username) => dispatch(getBlockedUsers(username)),
+        getContacts: (username) => dispatch(getContacts(username)),
     })
 }
 

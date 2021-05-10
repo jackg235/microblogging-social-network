@@ -61,16 +61,11 @@ class ChatMessage extends React.Component {
                         <Col xs={8}>
                             <p style={{"text-align": "left"}}>{this.convertTime(this.props.message.state.timestamp)}</p>
                         </Col>
-                        <Col>
-                            <p style={{"text-align": "right"}}>Idx: {this.props.message.index}</p>
-                        </Col>
                     </Row>
-                    <p>Author: {this.props.message.state.author}</p>
-                    <p>Body: {this.props.message.state.body}</p>
+                    <p>{this.props.message.state.body}</p>
                     {media}
                 </Button>
             </div>
-
         );
     }
 }

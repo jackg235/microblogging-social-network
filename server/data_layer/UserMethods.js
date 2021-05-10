@@ -150,7 +150,10 @@ async function blockUser(username, userToBlock) {
     try {
         const response = await UserModel.find({username: userToBlock})
         const blockedBy = response[0].blockedBy
-        let blockedFollowing = []
+        let blockedFollowing = response[0].following
+
+        const blockerResponse = await UserModel.find({username: username})
+        const blocking = blockerResponse[0].blocking
         // unblock the user if they are already blocked
         if (blockedBy.includes(username)) {
             console.log('toggling unblock')
@@ -158,16 +161,20 @@ async function blockUser(username, userToBlock) {
             if (index > -1) {
                 blockedBy.splice(index, 1);
             }
+
+            const index2 = blocking.indexOf(userToBlock);
+            if (index2 > -1) {
+                blocking.splice(index2, 1);
+            }
         }
         // block user if not in blockedBy
         else {
             console.log('toggling block')
             blockedBy.push(username)
+            blocking.push(userToBlock)
 
             // remove userToBlock from followers of username if present there
-            const blockerResponse = await UserModel.find({username: username})
             const blockerFollowers = blockerResponse[0].followers
-            blockedFollowing = response[0].following
             if (blockedFollowing.includes(username)) {
                 const followingIndex = blockedFollowing.indexOf(username);
                 if (followingIndex > -1) {
@@ -182,8 +189,13 @@ async function blockUser(username, userToBlock) {
                 await UserModel.updateOne({username: username}, {followers: blockerFollowers});
             }
         }
-        const res = await UserModel.updateOne({username: userToBlock}, {blockedBy: blockedBy});
-        return modelResponse(blockedFollowing, null)
+        await UserModel.updateOne({username: userToBlock}, {blockedBy: blockedBy});
+        await UserModel.updateOne({username: username}, {blocking: blocking});
+        const data = {
+            following: blockedFollowing,
+            blocking: blocking
+        }
+        return modelResponse(data, null)
     } catch (e) {
         console.error(e);
         return modelResponse(null, e)
@@ -209,26 +221,90 @@ async function getContacts(username) {
         followers = userRes[0].followers
         followerObjs = []
         for (let i = 0; i < followers.length; i++) {
-            const follower = allUsers.find(user => {
+            let follower = allUsers.find(user => {
                 return user.username === followers[i]
             })
-            followerObjs.push(follower)
+            if (follower !== undefined) {
+                followerObjs.push({
+                    username: follower.username,
+                    first: follower.first,
+                    last: follower.last,
+                    // img: follower.img,
+                })
+            }
         }
 
         following = userRes[0].following
         followingObjs = []
         for (let i = 0; i < following.length; i++) {
-            const followingUser = allUsers.find(user => {
+            let followingUser = allUsers.find(user => {
                 return user.username === following[i]
             })
-            followingObjs.push(followingUser)
+            if (followingUser !== undefined) {
+                followingObjs.push({
+                    username: followingUser.username,
+                    first: followingUser.first,
+                    last: followingUser.last,
+                    // img: followingUser.img,
+                })
+            }
         }
+        console.log('following object 0... ')
+        console.log(followingObjs[0])
+        console.log(typeof followingObjs[0])
+        console.log(typeof followingObjs)
 
         const data = {
             following: followingObjs,
             followers: followerObjs,
         }
         return modelResponse(data, null)
+    } catch (e) {
+        return modelResponse(null, e);
+    }
+}
+
+async function getBlocking(username) {
+    try {
+        const userRes = await UserModel.find({username: username})
+        const blockedBy = userRes[0].blockedBy
+        const blocking = userRes[0].blocking
+        const data = {
+            blockedBy: blockedBy,
+            blocking: blocking,
+        }
+        return modelResponse(data, null)
+    } catch (e) {
+        return modelResponse(null, e);
+    }
+}
+
+async function getSuggested(username) {
+    try {
+        const userRes = await UserModel.find({username: username})
+        const following = userRes[0].following
+        const blockedBy = userRes[0].blockedBy
+        const allUsers = await UserModel.find()
+        const finalUsers = []
+        for (let i = 0; i < allUsers.length; i++) {
+            if (allUsers[i].username !== username && !following.includes(allUsers[i].username) && !blockedBy.includes(allUsers[i].username)) {
+                finalUsers.push({
+                    username: allUsers[i].username,
+                    first: allUsers[i].first,
+                    last: allUsers[i].last,
+                })
+            }
+        }
+
+        // shuffle array
+        for (let i = finalUsers.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            let temp = finalUsers[i];
+            finalUsers[i] = finalUsers[j];
+            finalUsers[j] = temp;
+        }
+
+        return modelResponse(finalUsers, null)
     } catch (e) {
         return modelResponse(null, e);
     }
@@ -269,6 +345,8 @@ module.exports = {
     blockUser,
     getBlockedBy,
     getContacts,
+    newProfileImage,
+    getSuggested,
     changePasswordMethod: changePassword,
-    newProfileImage
+    getBlocking,
 }

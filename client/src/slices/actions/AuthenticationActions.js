@@ -11,8 +11,11 @@ import {
     followFailure,
     getBlockedBySuccess,
     getContactsSuccess,
+    getSuggestedUsersSuccess,
     accountLockout,
     accountUnlocked,
+    updateBlocking,
+    getBlockingSuccess,
 } from '../reducers/AuthenticationReducer'
 
 import {
@@ -171,7 +174,8 @@ export function blockToggle(username, userToBlock) {
                 if (!res.err) {
                     console.log('block user res.data... ')
                     console.log(res.data)
-                    dispatch(updateFollowing(res.data))
+                    dispatch(updateFollowing(res.data.following))
+                    dispatch(updateBlocking(res.data.blocking))
                 } else {
                     // failed to block user
                     dispatch(followFailure(res))
@@ -211,7 +215,7 @@ export function getBlockers(username) {
 export function getContacts(username) {
     console.log('attempting to get the contacts of user... ' + username)
     return function (dispatch) {
-        return fetch(`http://localhost:5000/users/contacts/` + username, {
+        return fetch(`/users/contacts/` + username, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -220,6 +224,7 @@ export function getContacts(username) {
         })
             .then(res => res.json())
             .then(res => {
+                console.log(res)
                 console.log('get user contacts error = ' + res.err)
                 // if getting the user's contacts was successful, add the contact data to state
                 if (!res.err) {
@@ -233,7 +238,116 @@ export function getContacts(username) {
     }
 }
 
-// logs out a user by removing the token from localStorage
+// attempts to get the specified user's blocking and blockedBy
+export function getBlockedUsers(username) {
+    console.log('attempting to get the blocking and blockedBy of user... ' + username)
+    return function (dispatch) {
+        return fetch(`/users/blocking/` + username, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('get blocking info error = ' + res.err)
+                // if getting the user's contacts was successful, add the contact data to state
+                if (!res.err) {
+                    console.log(res.data)
+                    dispatch(getBlockingSuccess(res.data));
+                } else {
+                    // failed to get user's contacts
+                    dispatch(followFailure(res))
+                }
+            })
+    }
+}
+
+// attempts to get suggested users for the specified user
+export function getSuggested(username) {
+    console.log('attempting to get suggested users for user... ' + username)
+    return function (dispatch) {
+        return fetch(`/users/suggested/` + username, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('get suggested users error = ' + res.err)
+                // if getting the suggested users for this user was successful, add the suggested data to state
+                if (!res.err) {
+                    console.log(res.data)
+                    dispatch(getSuggestedUsersSuccess(res.data));
+                } else {
+                    // failed to get user's suggested users
+                    dispatch(followFailure(res))
+                }
+            })
+    }
+}
+
+// attempts to change the user's password
+export function changePassword(username, newPassword) {
+    console.log('attempting to update the password for user... ' + username)
+    return function (dispatch) {
+        return fetch(`/changePassword`, {
+            method: 'POST',
+            body: JSON.stringify({
+                username,
+                newPassword,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('change password error = ' + res.err)
+                if (res.err) {
+                    // failed to change password
+                    dispatch(followFailure(res))
+                } else {
+                    console.log('successfully updated password!')
+                }
+            })
+    }
+}
+
+// attempts to delete the blog post with the specified title
+export function deleteUser(username) {
+    console.log('attempting to delete the user... ' + username)
+    return function (dispatch) {
+        return fetch(`/users/delete/${username}`, {
+            method: 'DELETE',
+            // body: JSON.stringify({
+            //     username,
+            // }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('delete post error = ' + res.err)
+                // if the user was deleted successfully, log the user out
+                if (res.err) {
+                    // failed to delete post
+                    dispatch(followFailure(res))
+                } else {
+                    // log user out
+                    dispatch(logout())
+                }
+            })
+    }
+}
+
+// allows the user to attempt login again after timer has ended
 export function unlockLoginForm() {
     return function (dispatch) {
         dispatch(accountUnlocked())

@@ -78,13 +78,13 @@ describe('Authentication Endpoints', () => {
             .post('/verifyRegister')
             .send(testUserJSON2)
         expect(res.statusCode).toEqual(200)
-        const res2 = await request(app).delete(`/users/${testUserJSON2.username}`)
+        const res2 = await request(app).delete(`/users/delete/${testUserJSON2.username}`)
         expect(res2.statusCode).toEqual(200)
         done()
     })
     it('should fail to delete a user that doesnt exist', async (done) => {
         const badUsername = "badUsername"
-        const res = await request(app).delete(`/users/${badUsername}`)
+        const res = await request(app).delete(`/users/delete/${badUsername}`)
         expect(res.statusCode).toEqual(400)
         done()
     })

@@ -44,7 +44,7 @@ class LoginForm extends React.Component {
             setTimeout(() => {
                 this.setState({ submitLocked: false })
                 this.props.unlockForm()
-            }, 20000)
+            }, 30000)
         }
     }
 
@@ -59,7 +59,7 @@ class LoginForm extends React.Component {
                 <div className='login-form'>
                     <div className="uk-alert-danger" uk-alert="true">
                         <a className="uk-alert-close" uk-close="true"/>
-                        <p>{'Error: Too many unsuccessful attempts! Locked out for 5 minutes.'}</p>
+                        <p>{'Error: Too many unsuccessful attempts! Locked out for 30 seconds.'}</p>
                     </div>
                     <form onSubmit={this.handleSubmit}>
                         <h3>Sign In</h3>
