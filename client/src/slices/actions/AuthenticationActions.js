@@ -322,11 +322,11 @@ export function changePassword(username, newPassword) {
 export function deleteUser(username) {
     console.log('attempting to delete the user... ' + username)
     return function (dispatch) {
-        return fetch(`/users/delete`, {
+        return fetch(`/users/delete/${username}`, {
             method: 'DELETE',
-            body: JSON.stringify({
-                username,
-            }),
+            // body: JSON.stringify({
+            //     username,
+            // }),
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'

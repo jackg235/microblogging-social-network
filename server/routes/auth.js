@@ -42,7 +42,7 @@ function verifyRegister(req, res) {
 }
 
 function deleteAccount(req, res) {
-    const username = req.body.username
+    const username = req.params.username
     console.log('Deleting user ' + username)
     deleteUser(username)
         .then(response => {
