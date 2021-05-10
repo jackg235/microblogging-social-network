@@ -9,16 +9,44 @@ const cors = require('cors');
 const db = require('./data_layer/MongoAccessor')
 const app = express();
 const path = require('path');
+const multer = require('multer');
 
-db._connect('whiteboarders') // set to 'whiteboarders' for deployment mode, 'test' for testing
+db._connect('whiteboarders')
 
 app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+//app.use('/uploads', express.static('uploads'))
+app.use(express.static(__dirname));
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, __dirname);
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true);
+    } else {
+        // rejects storing a file
+        cb(null, false);
+    }
+}
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+});
 
 // Root endpoint
 app.use(express.static(path.join(__dirname, '../client/build')));
-
 
 // ---------- auth routes ---------- //
 app.get('/testAPI', authRoutes.testAPI)
@@ -30,6 +58,8 @@ app.post('/verifyRegister', authRoutes.verifyRegister)
 app.delete('/users/:username', authRoutes.deleteAccount)
 
 app.post('/changePassword', authRoutes.changePassword)
+
+app.post('/changeProfilePicture', upload.single('file'), authRoutes.changeProfilePhoto)
 
 // ---------- user routes ---------- //
 

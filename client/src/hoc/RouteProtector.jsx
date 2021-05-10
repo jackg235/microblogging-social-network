@@ -24,8 +24,7 @@ export default function RouteProtector(ComponentToRender) {
 
 
         render() {
-            const {authenticated} = this.props
-            if (!authenticated) {
+            if (!TokenManagement.loggedIn()) {
                 // return <Redirect to="/"/>
             }
             return (<ComponentToRender {...this.props}/>);

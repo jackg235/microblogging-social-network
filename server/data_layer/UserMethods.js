@@ -1,10 +1,26 @@
 const UserModel = require('../data_model/User')
 const bcrypt = require('bcryptjs');
+const path = require('path')
+const fs = require('fs')
 
 function modelResponse(data, error) {
     return {
         data: data,
         err: error
+    }
+}
+
+async function newProfileImage(username, file) {
+    const img = {
+        data: fs.readFileSync(file.path),
+        contentType: "image/jpeg"
+    }
+    try {
+        const response = await UserModel.updateOne({username: username}, {img: img})
+        return modelResponse(response, null)
+    } catch (e) {
+        console.log(e)
+        return modelResponse(null, e)
     }
 }
 
@@ -253,5 +269,6 @@ module.exports = {
     blockUser,
     getBlockedBy,
     getContacts,
-    changePasswordMethod: changePassword
+    changePasswordMethod: changePassword,
+    newProfileImage
 }

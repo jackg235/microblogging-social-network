@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Button } from '@material-ui/core';
 import DefaultProPic from '../../default_propic.jpg'
-
+import axios from 'axios';
 import { connect } from 'react-redux';
 import ShowContacts from './ShowContacts';
 
@@ -15,8 +15,8 @@ import {getUser} from '../../slices/actions/UserActions'
 
 const styles = {
     image: {
-        width: 100,
-        height: 100,
+        width: 200,
+        height: 200,
         display: 'inline-block',
         marginLeft: 'auto',
         marginRight: 'auto',
@@ -31,9 +31,10 @@ class ProfileHeader extends React.Component {
             user: {
                 first_name: "Dag",
                 last_name: "Dereje",
-                username: "dag1",
+                username: "dag1"
                 // other necessary user fields
-            }
+            },
+            img: ""
             // other necessary fields needed in the component
         }
         this.toggleFollow = this.toggleFollow.bind(this)
@@ -52,6 +53,13 @@ class ProfileHeader extends React.Component {
         this.props.blockToggle(this.props.auth.username, this.props.currUser.username)
     }
 
+    arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = [].slice.call(new Uint8Array(buffer));
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+        return window.btoa(binary);
+    };
+
     render() {
         const {
             classes,
@@ -63,21 +71,23 @@ class ProfileHeader extends React.Component {
             },
             currUser
         } = this.props;
-
-        const followButton = 
+        let img = DefaultProPic;
+        if (currUser.img.data != null) {
+            const data = currUser.img.data.data
+            const base64Flag = 'data:image/jpeg;base64,';
+            const imageStr = this.arrayBufferToBase64(data);
+            img = base64Flag + imageStr
+        }
+        const followButton =
             currUser.username !== username && !blockedBy.includes(currUser.username) ? (
-                <Button 
-                onClick={() => {this.toggleFollow()}}
-                >
+                <Button onClick={() => {this.toggleFollow()}}>
                     {'Follow'}
                 </Button>
             ) : null;
 
         const blockButton = 
             currUser.username !== username ? (
-                <Button 
-                onClick={() => {this.toggleBlock()}}
-                >
+                <Button onClick={() => {this.toggleBlock()}}>
                     {'Block'}
                 </Button>
             ) : null;
@@ -99,16 +109,46 @@ class ProfileHeader extends React.Component {
                     {'Deactivate Account'}
                 </Button>
             ) : null;
+        const handleImageUpload = e => {
+            e.preventDefault();
+            let file = new FormData()
+            const image = e.target.files[0];
+            file.append('file', image)
+            file.append('username', this.props.auth.username)
+            file.append("name", "multer-image")
+            console.log(file.get('file'))
+            axios.post(`/changeProfilePicture`, file)
+                .then((response) => {
+                    if (response) {
+                        console.log(response)
+                        alert("Profile Image has been changed successfully");
+                    }
+                })
+                .catch((err) => {
+                    alert("Error while uploading image using multer");
+                });
+        };
+
+        const changeImage =
+            currUser.username === username ? (
+                <div>
+                    <br/>
+                    <label htmlFor="image">Upload Profile Image: </label>
+                    <input onChange={handleImageUpload} type="file"/>
+                </div>
+            ) : null;
 
         return (
             <div>
                 <Card>
                     <CardMedia
-                        image={DefaultProPic}
+                        image={img}
                         title="Profile image"
+                        alt='uh oh no image!'
                         className={classes.image}
                         style={styles.image}
                     />
+                    {changeImage}
                     <CardContent>
                         {currUser.username}
                     </CardContent>
@@ -141,7 +181,6 @@ const mapStateToProps = (state) => ({
 });
 
 function mapDispatchToProps(dispatch) {
-    console.log('dispatching')
     return ({
         getProfile: (username) => dispatch(getUser(username)),
         followToggle: (username, otherUserId) => dispatch(followToggle(username, otherUserId)),

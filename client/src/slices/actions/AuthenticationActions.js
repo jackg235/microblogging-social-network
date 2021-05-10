@@ -44,6 +44,7 @@ export function login(email, password, failedLogins) {
                 if (!res.err) {
                     TokenManagement.setToken(res.token)
                     const user = TokenManagement.getUser()
+                    console.log(res.data)
                     dispatch(loginSuccess(res.data));
                 } else {
                     // failed login
@@ -81,8 +82,7 @@ export function register(email, password, first, last, username) {
                 // if the login was successful, set the token in localStorage and add user data to state
                 if (!res.err) {
                     TokenManagement.setToken(res.token)
-                    const user = TokenManagement.getUser()
-                    dispatch(registrationSuccess(user))
+                    dispatch(registrationSuccess(res.data))
                 } else {
                     // registration failure
                     dispatch(registrationFailure(res))

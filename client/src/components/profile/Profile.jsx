@@ -13,31 +13,12 @@ class Profile extends React.Component {
 
     constructor(props) {
         super(props);
-        // this.state = {
-        //     user: {
-        //         first_name: "Dag",
-        //         last_name: "Dereje",
-        //         username: "dag1"
-        //         // other necessary user fields
-        //     }
-        //     // other necessary fields needed in the component
-        // }
-        this.handleClick = this.handleClick.bind(this)
-    }
-
-    // should have a more creative name
-    handleClick() {
-        // do something
     }
 
     componentDidMount() {
         this.props.getProfile(this.props.profileId);
         this.props.getPosts(this.props.auth.username, this.props.profileId)
     }
-
-    // componentDidUpdate() {
-    //     this.props.getPosts(this.props.profileId)
-    // }
 
     render() {
 
@@ -46,20 +27,13 @@ class Profile extends React.Component {
         const postElements = posts.map((post) => {
             return <Post key={post.postId} post={post}/>
         })
-
-        if (!auth.authenticated) {
-            return <Redirect to='/'/>
-        }
         return (
             <div>
                 <Navbar/>
 
                 <div className={'container'}>
                     <ProfileHeader profileId={this.props.profileId}/>
-                    {/* Other stuff. mix of HTML and more react components.
-                    <button onClick={this.handleClick}>Click me to do something</button> */}
                 </div>
-
                 {postElements}
             </div>
         )
@@ -74,7 +48,6 @@ const mapStateToProps = (state) => ({
 });
 
 function mapDispatchToProps(dispatch) {
-    console.log('dispatching')
     return ({
         getProfile: (username) => dispatch(getUser(username)),
         getPosts: (username, profileUsername) => dispatch(getUserPosts(username, profileUsername))

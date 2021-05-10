@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const {createUser, loginUser, deleteUser, changePasswordMethod} = require("../data_layer/UserMethods")
+const {createUser, loginUser, deleteUser, changePasswordMethod, newProfileImage} = require("../data_layer/UserMethods")
 const {responseError, responseOkay} = require('../data_model/StandardResponse')
 
 function testAPI(req, res) {
@@ -18,7 +18,8 @@ function verifyLogin(req, res) {
                 res.status(400).send(resJSON)
             } else {
                 const user = response.data
-                let token = signJWT(user.email, user.first, user.last, user.username, [])
+                console.log(user)
+                let token = signJWT(user, [])
                 const resJSON = responseOkay(user, token)
                 res.status(200).send(resJSON)
             }
@@ -34,8 +35,9 @@ function verifyRegister(req, res) {
                 const resJSON = responseError(null, response.err)
                 res.status(400).send(resJSON)
             } else {
-                let token = signJWT(body.email, body.first, body.last, body.username, [])
-                const resJSON = responseOkay(null, token)
+                const user = response.data
+                let token = signJWT(user, [])
+                const resJSON = responseOkay(response, token)
                 res.status(200).send(resJSON)
             }
         })
@@ -72,21 +74,30 @@ function changePassword(req, res) {
 
 }
 
-function signJWT(email, first, last, username, scopes) {
+function signJWT(user, scopes) {
     return jwt.sign({
-        sub: email,
+        sub: user.username,
         context: {
             scopes: scopes,
-            user: {
-                first: first,
-                last: last,
-                email: email,
-                username: username,
-            }
+            user: user
         }
     }, "mykey", {
         expiresIn: 600
     })
+}
+
+function changeProfilePhoto (req, res) {
+    const username = req.body.username
+    newProfileImage(username, req.file)
+        .then(response => {
+            if (response.err) {
+                const resJSON = responseError(null, response.err)
+                res.status(400).send(resJSON)
+            } else {
+                const resJSON = responseOkay(response.data, null)
+                res.status(200).send(resJSON)
+            }
+        })
 }
 
 module.exports = {
@@ -94,5 +105,6 @@ module.exports = {
     verifyLogin: verifyLogin,
     verifyRegister: verifyRegister,
     deleteAccount: deleteAccount,
-    changePassword
+    changePassword,
+    changeProfilePhoto
 }
