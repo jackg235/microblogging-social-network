@@ -9,8 +9,9 @@ import DefaultProPic from '../../default_propic.jpg'
 
 import { connect } from 'react-redux';
 import ShowContacts from './ShowContacts';
+import ChangePassword from './ChangePassword';
 
-import {followToggle, blockToggle, getBlockers, getBlockedUsers, getContacts} from '../../slices/actions/AuthenticationActions'
+import {followToggle, blockToggle, getBlockers, getBlockedUsers, getContacts, deleteUser} from '../../slices/actions/AuthenticationActions'
 import {getUser} from '../../slices/actions/UserActions'
 
 const styles = {
@@ -38,6 +39,7 @@ class ProfileHeader extends React.Component {
         }
         this.toggleFollow = this.toggleFollow.bind(this)
         this.toggleBlock = this.toggleBlock.bind(this)
+        this.deactivateAccount = this.deactivateAccount.bind(this)
     }
 
     componentDidMount() {
@@ -52,6 +54,10 @@ class ProfileHeader extends React.Component {
 
     toggleBlock() {
         this.props.blockToggle(this.props.auth.username, this.props.currUser.username)
+    }
+
+    deactivateAccount() {
+        this.props.deactivateAccount(this.props.auth.username)
     }
 
     render() {
@@ -102,17 +108,13 @@ class ProfileHeader extends React.Component {
 
         const changePasswordButton = 
             currUser.username === username ? (
-                <Button 
-                // onclick=changePassword(password)=
-                >
-                    {'Change Password'}
-                </Button>
+                <ChangePassword/>
             ) : null;
 
         const deactivateButton = 
             currUser.username === username ? (
                 <Button 
-                // onclick=changePassword(password)=
+                onClick={() => {this.deactivateAccount()}}
                 >
                     {'Deactivate Account'}
                 </Button>
@@ -167,6 +169,7 @@ function mapDispatchToProps(dispatch) {
         getBlockers: (username) => dispatch(getBlockers(username)),
         getBlockedUsers: (username) => dispatch(getBlockedUsers(username)),
         getContacts: (username) => dispatch(getContacts(username)),
+        deactivateAccount: (username) => dispatch(deleteUser(username)),
     })
 }
 
