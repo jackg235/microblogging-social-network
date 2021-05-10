@@ -53,7 +53,7 @@ class Recorder extends React.Component {
       navigator.msGetUserMedia
     );
     
-    if (typeof navigator.mediaDevices.getUserMedia === 'undefined') {
+    if (navigator.mediaDevices === undefined) {
       navigator.getUserMedia({ audio: true }, 
       () => {
         this.setState({ isBlocked: false });
