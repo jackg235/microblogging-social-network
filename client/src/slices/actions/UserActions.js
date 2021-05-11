@@ -29,3 +29,28 @@ export function getUser(username) {
             })
     }
 }
+
+// attempts to get all usernames
+export function getAllUsernames() {
+    console.log('attempting to get all usernames for state... ')
+    return function (dispatch) {
+        return fetch(`/getAllUsers`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('get all usernames error = ' + res.err)
+                if (!res.err) {
+                    console.log(res.data)
+                    dispatch(getAllUsersSuccess(res.data));
+                } else {
+                    // failed to get user's suggested users
+                    dispatch(getAllUsersFailure(res))
+                }
+            })
+    }
+}

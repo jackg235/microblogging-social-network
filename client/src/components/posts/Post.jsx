@@ -44,8 +44,14 @@ class Post extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      words: [],
+      mentions: [],
+    }
     this.hidePost = this.hidePost.bind(this)
     this.deletePost = this.deletePost.bind(this)
+    this.addMentions = this.addMentions.bind(this)
+    // this.addMentions(this.props.post.content)
   }
 
   hidePost() {
@@ -62,6 +68,26 @@ class Post extends Component {
     bytes.forEach((b) => binary += String.fromCharCode(b));
     return window.btoa(binary);
   };
+  addMentions(content) {
+    const words = content.split(" ")
+    const mentionIndexes = []
+    for (let i = 0; i < words.length; i++) {
+      const name = words[i].substring(1)
+      if (words[i].charAt(0) === '@' && this.props.users.allUsers.includes(name)) {
+        mentionIndexes.push(1)
+      } else {
+        mentionIndexes.push(0)
+      }
+    }
+    this.setState({
+      words: words,
+      mentions: mentionIndexes
+    })
+  }
+
+  componentDidMount() {
+    this.addMentions(this.props.post.content)
+  }
 
   render() {
     // dayjs.extend(relativeTime);
@@ -81,6 +107,8 @@ class Post extends Component {
         authenticated,
       }
     } = this.props;
+
+    // post image stuff
     let img;
     if (media != null) {
       const data = media.data.data
@@ -96,6 +124,15 @@ class Post extends Component {
                 style={styles.image}
             />
         ) : null
+
+    // mentions stuff
+    const wordElements = this.state.words.map((word, i) => {
+      let withSpace = word + " "
+      return this.state.mentions[i] === 1 ? (
+        <Link to={`/profile/${word.substring(1)}`}>{withSpace}</Link>
+      ) : withSpace
+    })
+
     // code to display delete button only to owner of post
     const deleteButton =
       authenticated && username === this.props.auth.username ? (
@@ -122,7 +159,7 @@ class Post extends Component {
             {postDate}
           </Typography>
           <Typography variant="title1">{title}</Typography>
-          <Typography variant="body1">{content}</Typography>
+          <Typography variant="body1">{wordElements}</Typography>
           <span>{comments.length} comments </span>
           <CommentList post={this.props.post} />
         </CardContent>
@@ -146,7 +183,8 @@ class Post extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  auth: state.auth
+  auth: state.auth,
+  users: state.users,
 });
 
 function mapDispatchToProps(dispatch) {
