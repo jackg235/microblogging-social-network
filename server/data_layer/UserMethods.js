@@ -55,6 +55,9 @@ async function loginUser(email, password) {
             return modelResponse(null, "Error: can't login with provided credentials")
         }
         const user = response[0]
+        if (user.deactivated) {
+            return modelResponse(null, "Error: this account has been deactivated")
+        }
         if (bcrypt.compareSync(password, user.password)) {
             return modelResponse(user, null)
         } else {
@@ -84,22 +87,50 @@ async function deleteUser(username) {
         if (response.length == 0) {
             return modelResponse(null, "Error: can't delete user that doesn't exist")
         }
-        const posts = response[0].posts
-        for (let i = 0; i < posts.length; i++) {
-            if (posts[i].username === username) {
-                await PostModel.deleteOne({_id: posts[i]._id})
-            } else {
-                // remove username's comments and update post
-                let comments = posts[i].comments
-                let newComments = []
-                for (let i = 0; i < comments.length; i++) {
-                    if (!comments[i].username === username) {
-                        // newComments.push(comments[i])
+
+        //remove user from followers of everyone they follow
+        const following = response[0].following
+        for (let i = 0; i < following.length; i++) {
+            const followingThisUser = await UserModel.find({username: following[i]})
+            const theirFollowers = followingThisUser[0].followers
+            const index = theirFollowers.indexOf(username);
+            if (index > -1) {
+                theirFollowers.splice(index, 1);
+            }
+            await UserModel.updateOne({username: following[i]}, {followers: theirFollowers})
+        }
+
+        //remove user from following of everyone who follows them
+        const followers = response[0].followers
+        for (let i = 0; i < followers.length; i++) {
+            const followedByThisUser = await UserModel.find({username: followers[i]})
+            const theirFollowing = followedByThisUser[0].following
+            const index2 = theirFollowing.indexOf(username);
+            if (index2 > -1) {
+                theirFollowing.splice(index2, 1);
+            }
+            await UserModel.updateOne({username: followers[i]}, {following: theirFollowing})
+        }
+
+        // remove comments created by this user
+        const allPosts = await PostModel.find()
+        for (let i = 0; i < allPosts.length; i++) {
+            if (allPosts[i].username !== username) {
+                const comments = allPosts[i].comments
+                const newComments = []
+                for (let j = 0; j < comments.length; j++) {
+                    if (comments[j].username !== username) {
+                        newComments.push(comments[j])
                     }
                 }
+                await PostModel.updateOne({_id: allPosts[i]._id}, {comments: newComments})
             }
         }
-        await UserModel.deleteOne({username: username})
+
+        await UserModel.updateOne({username: username}, {deactivated: true})
+        await UserModel.updateOne({username: username}, {following: []})
+        await UserModel.updateOne({username: username}, {followers: []})
+        await UserModel.updateOne({username: username}, {posts: []})
         return modelResponse(null, null)
     } catch (e) {
         return modelResponse(null, e)
