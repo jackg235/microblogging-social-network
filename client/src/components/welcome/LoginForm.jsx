@@ -81,16 +81,11 @@ class LoginForm extends React.Component {
                                 <label className="custom-control-label" htmlFor="customCheck1">Remember me</label>
                             </div>
                         </div>
-                        <button type="submit" className="btn btn-primary btn-block">Submit</button>
+                        <button id="submit-btn" type="submit" className="btn btn-primary btn-block">Submit</button>
                         <div class="row">
                             <div class="col">
                                 <p className="register text-left">
                                     Need an account? <a href="/register">Register here</a>
-                                </p>
-                            </div>
-                            <div class="col">
-                                <p className="forgot-password text-right">
-                                    <a href="#">I forgot my password</a>
                                 </p>
                             </div>
                         </div>
@@ -126,16 +121,11 @@ class LoginForm extends React.Component {
                                 <label className="custom-control-label" htmlFor="customCheck1">Remember me</label>
                             </div>
                         </div>
-                        <button type="submit" className="btn btn-primary btn-block">Submit</button>
+                        <button id="submit-btn" type="submit" className="btn btn-primary btn-block">Submit</button>
                         <div class="row">
                             <div class="col">
                                 <p className="register text-left">
                                     Need an account? <a href="/register">Register here</a>
-                                </p>
-                            </div>
-                            <div class="col">
-                                <p className="forgot-password text-right">
-                                    <a href="#">I forgot my password</a>
                                 </p>
                             </div>
                         </div>
@@ -165,16 +155,11 @@ class LoginForm extends React.Component {
                             <label className="custom-control-label" htmlFor="customCheck1">Remember me</label>
                         </div>
                     </div>
-                    <button type="submit" className="btn btn-primary btn-block">Submit</button>
+                    <button id="submit-btn" type="submit" className="btn btn-primary btn-block">Submit</button>
                     <div className="row">
                         <div className="col">
                             <p className="register text-left">
                                 Need an account? <a href="/register">Register here</a>
-                            </p>
-                        </div>
-                        <div className="col">
-                            <p className="forgot-password text-right">
-                                <a href="#">I forgot my password</a>
                             </p>
                         </div>
                     </div>
