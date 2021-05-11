@@ -85,7 +85,7 @@ class RegistrationForm extends React.Component {
                             </div>
                         </div>
 
-                        <button type="submit" className="btn btn-primary btn-block">Submit</button>
+                        <button id="submit-btn" type="submit" className="btn btn-primary btn-block">Submit</button>
                         <p className="forgot-password text-right">
                             Already have an account? <a href="/login">Log in here.</a>
                         </p>
