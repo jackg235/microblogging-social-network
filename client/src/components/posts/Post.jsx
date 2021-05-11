@@ -72,11 +72,11 @@ class Post extends Component {
     const words = content.split(" ")
     const mentionIndexes = []
     for (let i = 0; i < words.length; i++) {
-      const name = words[i].substring(1)
+      let name = words[i].substring(1)
       if (words[i].charAt(0) === '@' && this.props.users.allUsers.includes(name)) {
-        mentionIndexes.push(1)
+        mentionIndexes.push(true)
       } else {
-        mentionIndexes.push(0)
+        mentionIndexes.push(false)
       }
     }
     this.setState({
@@ -128,7 +128,7 @@ class Post extends Component {
     // mentions stuff
     const wordElements = this.state.words.map((word, i) => {
       let withSpace = word + " "
-      return this.state.mentions[i] === 1 ? (
+      return this.state.mentions[i] === true ? (
         <Link to={`/profile/${word.substring(1)}`}>{withSpace}</Link>
       ) : withSpace
     })
