@@ -6,6 +6,7 @@ import Navbar from '../Navbar'
 import Post from '../posts/Post'
 import {getUser, getAllUsernames} from '../../slices/actions/UserActions'
 import {getUserPosts} from '../../slices/actions/PostActions'
+import Typography from '@material-ui/core/Typography';
 
 import {connect} from 'react-redux'
 
@@ -23,11 +24,18 @@ class Profile extends React.Component {
 
     render() {
 
-        const { auth, allComments, posts } = this.props
+        const { auth, allComments, posts, currUser } = this.props
 
-        const postElements = posts.map((post) => {
-            return <Post key={post.postId} post={post}/>
-        })
+        const postElements = !currUser.deactivated ? (
+            posts.map((post) => {
+                return <Post key={post.postId} post={post}/>
+            })
+        ) : null
+
+        const deactivatedWarning = currUser.deactivated ? (
+            <Typography variant="h2">{"This user has deactivated their account!"}</Typography>
+        ) : null
+
         if (!auth.authenticated) {
             return <Redirect to='/'/>
         }
@@ -39,6 +47,7 @@ class Profile extends React.Component {
                     <ProfileHeader profileId={this.props.profileId}/>
                 </div>
                 {postElements}
+                {deactivatedWarning}
             </div>
         )
     }

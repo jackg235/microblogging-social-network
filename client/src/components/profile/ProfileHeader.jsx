@@ -98,7 +98,7 @@ class ProfileHeader extends React.Component {
             ) : 'Follow'
 
         const followButton = 
-            currUser.username !== username && !blockedBy.includes(currUser.username) ? (
+            !currUser.deactivated && currUser.username !== username && !blockedBy.includes(currUser.username) ? (
                 <Button 
                 onClick={() => {this.toggleFollow()}}
                 >
@@ -112,7 +112,7 @@ class ProfileHeader extends React.Component {
             ) : 'Block'
 
         const blockButton = 
-            currUser.username !== username ? (
+            !currUser.deactivated && currUser.username !== username ? (
                 <Button 
                 onClick={() => {this.toggleBlock()}}
                 >
@@ -121,12 +121,12 @@ class ProfileHeader extends React.Component {
             ) : null;
 
         const changePasswordButton = 
-            currUser.username === username ? (
+            !currUser.deactivated && currUser.username === username ? (
                 <ChangePassword/>
             ) : null;
 
         const deactivateButton = 
-            currUser.username === username ? (
+            !currUser.deactivated && currUser.username === username ? (
                 <Button 
                 onClick={() => {this.deactivateAccount()}}
                 >
@@ -153,7 +153,7 @@ class ProfileHeader extends React.Component {
         };
 
         const changeImage =
-            currUser.username === username ? (
+            !currUser.deactivated && currUser.username === username ? (
                 <div>
                     <br/>
                     <label htmlFor="image">Upload Profile Image: </label>

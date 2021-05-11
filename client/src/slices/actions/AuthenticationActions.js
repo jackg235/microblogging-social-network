@@ -333,7 +333,7 @@ export function deleteUser(username) {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('delete post error = ' + res.err)
+                console.log('delete user error = ' + res.err)
                 // if the user was deleted successfully, log the user out
                 if (res.err) {
                     // failed to delete post
