@@ -1,6 +1,7 @@
 const UserModel = require('../data_model/User')
 const PostAnalyticsModel = require('../data_model/PostAnalytics')
 
+const PostModel = require('../data_model/Post')
 const bcrypt = require('bcryptjs');
 const path = require('path')
 const fs = require('fs')
@@ -82,6 +83,21 @@ async function deleteUser(username) {
         const response = await UserModel.find({username: username})
         if (response.length == 0) {
             return modelResponse(null, "Error: can't delete user that doesn't exist")
+        }
+        const posts = response[0].posts
+        for (let i = 0; i < posts.length; i++) {
+            if (posts[i].username === username) {
+                await PostModel.deleteOne({_id: posts[i]._id})
+            } else {
+                // remove username's comments and update post
+                let comments = posts[i].comments
+                let newComments = []
+                for (let i = 0; i < comments.length; i++) {
+                    if (!comments[i].username === username) {
+                        // newComments.push(comments[i])
+                    }
+                }
+            }
         }
         await UserModel.deleteOne({username: username})
         return modelResponse(null, null)
@@ -314,6 +330,20 @@ async function getSuggested(username) {
     }
 }
 
+async function getAllUsers() {
+    try {
+        const usersRes = await UserModel.find()
+        const usernames = []
+        for (let i = 0; i < usersRes.length; i++) {
+            usernames.push(usersRes[i].username)
+        }
+
+        return modelResponse(usernames, null)
+    } catch (e) {
+        return modelResponse(null, e);
+    }
+}
+
 // DELETE (already in post methods)
 async function getUserPosts(username) {
     console.log("getting posts for user " + username)
@@ -353,4 +383,5 @@ module.exports = {
     getSuggested,
     changePasswordMethod: changePassword,
     getBlocking,
+    getAllUsers,
 }

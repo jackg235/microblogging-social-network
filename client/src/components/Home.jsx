@@ -4,6 +4,7 @@ import {connect} from 'react-redux'
 import RouteProtector from '../hoc/RouteProtector'
 import {logout} from '../slices/actions/AuthenticationActions'
 import {getAllPosts} from '../slices/actions/PostActions'
+import {getAllUsernames} from '../slices/actions/UserActions'
 import {Redirect} from 'react-router-dom'
 import Navbar from './Navbar'
 import Post from './posts/Post'
@@ -30,6 +31,7 @@ class Home extends React.Component {
     componentDidMount() {
         console.log(this.props.auth)
         this.props.getFollowingPosts(this.props.auth.username);
+        this.props.getAllUsernames();
     }
 
     logoutClick() {
@@ -84,6 +86,7 @@ function mapDispatchToProps(dispatch) {
     return ({
         logoutUser: () => dispatch(logout()),
         getFollowingPosts: (username) => dispatch(getAllPosts(username)),
+        getAllUsernames: () => dispatch(getAllUsernames()),
     })
 }
 

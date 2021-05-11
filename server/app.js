@@ -78,6 +78,8 @@ app.get('/users/contacts/:username', userRoutes.getUserContacts)
 
 app.get('/users/suggested/:username', userRoutes.getSuggestedUsers)
 
+app.get('/getAllUsers', userRoutes.getAllUsernames)
+
 // ---------- post routes ---------- //
 
 app.post('/posts/new', upload.single('file'), postRoutes.new)
