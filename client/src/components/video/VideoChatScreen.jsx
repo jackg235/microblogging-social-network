@@ -37,7 +37,6 @@ class VideoChatScreen extends React.Component {
     componentDidMount = async () => {
         const token = this.state.token
         const client = this.state.client
-
         client.on("channelJoined", async (channel) => {
             // getting list of all messages since this is an existing channel
             const messages = await channel.getMessages();
