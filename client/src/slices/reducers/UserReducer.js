@@ -18,6 +18,7 @@ export const initialState = {
             data: null,
             contentType: "",
         },
+        deactivated: false,
     },
     error: null,
 }

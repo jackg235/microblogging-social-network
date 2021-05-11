@@ -18,7 +18,8 @@ let userSchema = new mongoose.Schema({
         {
             data: Buffer,
             contentType: String
-        }
+        },
+    deactivated: {type: Boolean, default: false}
 });
 
 userSchema.index({email: 1, username: 1}, {unique: true})

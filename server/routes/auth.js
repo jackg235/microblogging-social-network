@@ -47,6 +47,7 @@ function deleteAccount(req, res) {
     deleteUser(username)
         .then(response => {
             if (response.err) {
+                console.log(response.err)
                 const resJSON = responseError(null, response.err)
                 res.status(400).send(resJSON)
             } else {

@@ -74,11 +74,6 @@ class CommentList extends Component {
               <Grid item sm={12}>
                 <Grid container className={classes.commentContainer}>
                   <Grid item sm={2}>
-                    <img
-                      src={DefaultProPic}
-                      alt="comment"
-                      className={classes.commentImage}
-                    />
                   </Grid>
                   <Grid item sm={9}>
                     <div className={classes.commentData}>
