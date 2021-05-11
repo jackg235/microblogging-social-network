@@ -147,18 +147,6 @@ async function getUserPosts(username, profileUsername) {
         return modelResponse(null, e);
     }
 }
-
-async function likePost(postId, username) {
-    try {
-        // TO DO
-    } catch (e) {
-        console.error(e);
-        return e;
-    }
-    return null
-}
-
-
 async function addComment(commenter, postId, content) {
     console.log("commenting on post " + postId)
     try {
@@ -239,7 +227,6 @@ module.exports = {
     getPost,
     getPosts,
     getUserPosts,
-    likePost,
     addComment,
     deleteComment,
     hidePost

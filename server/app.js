@@ -96,8 +96,6 @@ app.post('/posts/addComment', postRoutes.addComment)
 
 app.delete('/posts/deleteComment', postRoutes.deleteComment)
 
-app.post('/posts/like', postRoutes.like)
-
 app.post('/posts/hide', postRoutes.hidePost)
 
 // ---------- chat routes ---------- //

@@ -116,6 +116,28 @@ describe('Blog/post Endpoints', () => {
         expect(comments2.length).toEqual(0)
         done()
     })
+    it('should get posts for a users feed', async (done) => {
+        const res = await request(app).get(`/posts/getPosts/${testUser.username}`)
+        expect(res.statusCode).toEqual(200)
+        done()
+    })
+    it('should fail to get posts for a users feed because bad username', async (done) => {
+        const badUsername = "i_dont_exist"
+        const res = await request(app).get(`/posts/getPosts/${badUsername}`)
+        expect(res.statusCode).toEqual(400)
+        done()
+    })
+    it('should get posts for a profile user', async (done) => {
+        const res = await request(app).get(`/posts/getUserPosts/${testUser.username}&${testUser.username}`)
+        expect(res.statusCode).toEqual(200)
+        done()
+    })
+    it('should fail to get posts for a profile user because bad username', async (done) => {
+        const badUsername = "i_dont_exist"
+        const res = await request(app).get(`/posts/getUserPosts/${badUsername}&${testUser.username}`)
+        expect(res.statusCode).toEqual(400)
+        done()
+    })
     afterAll(async (done) => {
         await PostModel.deleteMany({title: testPost.title})
         await PostModel.deleteMany({title: testPost2.title})

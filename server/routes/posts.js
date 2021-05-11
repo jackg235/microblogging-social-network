@@ -1,6 +1,4 @@
-const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
-const PostModel = require('../data_model/Post')
+
 const PostMethods = require('../data_layer/PostMethods')
 const {responseError, responseOkay} = require('../data_model/StandardResponse')
 
@@ -113,22 +111,6 @@ function deleteComment(req, res) {
 
 }
 
-function likePost(req, res) {
-    const postId = req.body.postId
-    const username = req.body.username
-    PostMethods.likePost(postId, username)
-        .then((err) => {
-            if (err) {
-                const resJSON = responseError(null, null, err)
-                res.status(400).send(resJSON)
-            } else {
-                const resJSON = responseOkay(null, null)
-                res.status(200).send(resJSON)
-            }
-        })
-
-}
-
 function hidePost(req, res) {
     const username = req.body.username
     const postId = req.body.postId
@@ -153,6 +135,5 @@ module.exports = {
     getUserPosts: getUserPosts,
     addComment: addComment,
     deleteComment: deleteComment,
-    like: likePost,
     hidePost
 }

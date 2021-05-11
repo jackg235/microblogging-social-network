@@ -85,6 +85,67 @@ describe('User Endpoints', () => {
         expect(!followers1.includes(testUserJSON.username))
         done()
     })
+    it('should block a user', async (done) => {
+        const blockReq = {
+            username: testUserJSON.username,
+            userToBlock: testUserJSON2.username
+        }
+        // block the user
+        const res = await request(app)
+            .post(`/users/block`)
+            .send(blockReq)
+        expect(res.statusCode).toEqual(200)
+
+        // get blockers
+        const res2 = await request(app).get(`/users/blockers/${testUserJSON.username}`)
+        expect(res2.statusCode).toEqual(200)
+        done()
+    })
+    it('should fail block a user for a bad username', async (done) => {
+        const blockReq = {
+            username: "i_dont_exist",
+            userToBlock: testUserJSON2.username
+        }
+        // block the user
+        const res = await request(app)
+            .post(`/users/block`)
+            .send(blockReq)
+        expect(res.statusCode).toEqual(400)
+        done()
+    })
+    it('should get a users contacts', async (done) => {
+        const res = await request(app).get(`/users/contacts/${testUserJSON.username}`)
+        expect(res.statusCode).toEqual(200)
+        done()
+    })
+    it('should fail to get a users contacts for a bad username', async (done) => {
+        const badUsername = "i_dont_exist"
+        const res = await request(app).get(`/users/contacts/${badUsername}`)
+        expect(res.statusCode).toEqual(400)
+        done()
+    })
+    it('should get a users suggested contacts', async (done) => {
+        const res = await request(app).get(`/users/suggested/${testUserJSON.username}`)
+        expect(res.statusCode).toEqual(200)
+        done()
+    })
+    it('should fail to get a users suggested contacts for a bad username', async (done) => {
+        const badUsername = "i_dont_exist"
+        const res = await request(app).get(`/users/suggested/${badUsername}`)
+        expect(res.statusCode).toEqual(400)
+        done()
+    })
+    it('should get a users blocked contacts', async (done) => {
+        const res = await request(app).get(`/users/blocking/${testUserJSON.username}`)
+        expect(res.statusCode).toEqual(200)
+        done()
+    })
+    it('should fail to get a users blocked contacts for a bad username', async (done) => {
+        const badUsername = "i_dont_exist"
+        const res = await request(app).get(`/users/blocking/${badUsername}`)
+        expect(res.statusCode).toEqual(400)
+        done()
+    })
     afterAll(async (done) => {
         await UserModel.deleteOne({username: testUserJSON.username})
         await UserModel.deleteOne({username: testUserJSON2.username})
