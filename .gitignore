@@ -3,3 +3,4 @@
 /server/coverage
 /.idea
 /.vscode
+/functional-testing/venv
