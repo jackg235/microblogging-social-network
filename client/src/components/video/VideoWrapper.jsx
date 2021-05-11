@@ -3,6 +3,7 @@ import {getStreams} from "../../slices/actions/StreamActions";
 import {connect} from "react-redux";
 import RouteProtector from "../../hoc/RouteProtector";
 import VideoChat from "./VideoChat";
+import Navbar from "../Navbar";
 
 class VideoWrapper extends React.Component {
     constructor() {
@@ -17,6 +18,7 @@ class VideoWrapper extends React.Component {
     render() {
         return (
             <div>
+                <Navbar/>
                 <VideoChat/>
             </div>
         )

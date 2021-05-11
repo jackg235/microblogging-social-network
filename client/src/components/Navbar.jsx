@@ -4,12 +4,18 @@ import RouteProtector from '../hoc/RouteProtector'
 import {Redirect} from 'react-router-dom'
 import '../static/stylesheets/Navbar.css'
 import SearchBar from './SearchBar'
+import {logout} from "../slices/actions/AuthenticationActions";
+import {getAllPosts} from "../slices/actions/PostActions";
+import {getAllUsernames} from "../slices/actions/UserActions";
 
 class Navbar extends React.Component {
     constructor(props) {
         super(props)
+        this.logoutClick = this.logoutClick.bind(this)
     }
-
+    logoutClick() {
+        this.props.logoutUser()
+    }
 
     render() {
         const {
@@ -46,10 +52,10 @@ class Navbar extends React.Component {
                         <li className="nav-item">
                             <a className="nav-link" href="/video">Stream</a>
                         </li>
+                        <li className="nav-item">
+                            <button onClick={this.logoutClick}>Log out</button>
+                        </li>
                     </ul>
-                    <div uk-dropdown="mode: click">
-                        <SearchBar/>
-                    </div>
                 </div>
             </nav>
         )
@@ -60,4 +66,11 @@ const mapStateToProps = (state) => ({
     auth: state.auth
 });
 
-export default connect(mapStateToProps)(Navbar);
+function mapDispatchToProps(dispatch) {
+    return ({
+        logoutUser: () => dispatch(logout()),
+    })
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

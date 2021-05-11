@@ -20,54 +20,30 @@ import {
 class Home extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {
-            first: '',
-            last: '',
-            email: ''
-        }
-        this.logoutClick = this.logoutClick.bind(this)
     }
 
     componentDidMount() {
-        console.log(this.props.auth)
         this.props.getFollowingPosts(this.props.auth.username);
         this.props.getAllUsernames();
     }
 
-    logoutClick() {
-        this.props.logoutUser()
-    }
-
 
     render() {
-        const {first, last, email, username, authenticated} = this.props.auth
-        const allComments = this.props.posts.allComments
-        const { allPosts } = this.props.posts
-
-        const postElements = allPosts.map((post) => {
-            return <Post key={post.postId} post={post} />
-        })
-
-        const personalProfileLink = "/profile/" + username;
+        const {authenticated} = this.props.auth
         if (!authenticated) {
             return <Redirect to='/'/>
         }
+        const { allPosts } = this.props.posts
+        const postElements = allPosts.map((post) => {
+            return <Post key={post.postId} post={post} />
+        })
 
         return (
             <div>
                 <Navbar/>
                 <div>
-                    <p>My first name is {first}</p>
-                    <p>My last name is {last}</p>
-                    <p>My email is {email}</p>
-                    <p>My username is {username}</p>
-                    <button onClick={this.logoutClick}>Click me to log out</button>
-                </div>
-
-                <div>
                     <CreatePost/>
                 </div>
-
                 <div>
                     {postElements}
                 </div>
@@ -84,7 +60,6 @@ const mapStateToProps = (state) => ({
 
 function mapDispatchToProps(dispatch) {
     return ({
-        logoutUser: () => dispatch(logout()),
         getFollowingPosts: (username) => dispatch(getAllPosts(username)),
         getAllUsernames: () => dispatch(getAllUsernames()),
     })

@@ -20,7 +20,7 @@ const Lobby = ({
                 />
             </div>
 
-            <button type="submit">Submit</button>
+            <button type="submit">Create</button>
         </form>
     );
 };
