@@ -38,9 +38,9 @@ def test_login_failure_bad_format_email(driver):
 
 def test_login_success(driver):
     email = driver.find_element_by_id("email")
-    email.send_keys('test@test.com')
+    email.send_keys('demo1@gmail.com')
     password = driver.find_element_by_id("password")
-    password.send_keys('test')
+    password.send_keys('password')
     submit_button = driver.find_element_by_id("submit-btn")
     submit_button.click()
     while True:
